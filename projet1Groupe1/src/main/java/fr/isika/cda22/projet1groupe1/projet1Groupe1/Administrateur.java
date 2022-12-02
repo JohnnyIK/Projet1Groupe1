@@ -1,6 +1,11 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 
-public class Administrateur {
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Administrateur implements FonctionnaliteCommune {
 
 		//Attributs 
 		private String loginAdmin; 
@@ -40,8 +45,30 @@ public class Administrateur {
 			
 		}
 		
-		public void ImportAnnuaire() {
+		public void ImportAnnuaire(Annuaire annuaire,FileReader fichier) {
+			// Annuaire annuaire = new Annuaire();
+			fichier = new FileReader("src/Fichier/Stagiaires.don");
+			BufferedReader br = new BufferedReader(fichier);
 			
+			if (annuaire.isEmpty()){
+				
+				while (br.ready()) {
+					
+					while(!br.readLine().equals("*"){
+						
+						Stagiaire stagiaire = new Stagiaire(br.readLine(),br.readLine(),br.readLine(),br.readLine(),br.readLine());
+						ajouterStagiaire(stagiaire);
+						
+					}
+					
+				
+				}
+					
+			} else {
+				
+			}
+			
+		
 		}
 		
 		
