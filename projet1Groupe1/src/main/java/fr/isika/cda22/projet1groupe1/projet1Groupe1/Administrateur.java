@@ -3,8 +3,8 @@ package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 public class Administrateur {
 
 		//Attributs 
-		protected String loginAdmin; 
-		protected String mdpAdmin;
+		private String loginAdmin; 
+		private String mdpAdmin;
 		
 		
 		//Constructeur
