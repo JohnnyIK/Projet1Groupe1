@@ -37,41 +37,45 @@ public class Administrateur implements FonctionnaliteCommune {
 		}
 		
 		//Méthode spécifique à l'administrateur
-		public void ModifStagiaire() {
-			
+		public void ModifStagiaire() {	
 		}
 		
-		public void supprimerStagiaire() {
-			
+		public void supprimerStagiaire() {	
 		}
-		
-		public void ImportAnnuaire(Annuaire annuaire,FileReader fichier) {
-			// Annuaire annuaire = new Annuaire();
-			fichier = new FileReader("src/Fichier/Stagiaires.don");
-			BufferedReader br = new BufferedReader(fichier);
-			
-			if (annuaire.isEmpty()){
-				
-				while (br.ready()) {
-					
-					while(!br.readLine().equals("*"){
-						
-						Stagiaire stagiaire = new Stagiaire(br.readLine(),br.readLine(),br.readLine(),br.readLine(),br.readLine());
-						ajouterStagiaire(stagiaire);
-						
-					}
-					
-				
-				}
-					
-			} else {
-				
-			}
-			
-		
+
+		public void ajouterStagiaire() {
+			// TODO Auto-generated method stub	
 		}
+
 		
 		
+//		BROUILLON METHODE DU VENDREDI 02 DEC
+		
+//		public void ImportAnnuaire(Annuaire annuaire,FileReader fichier) {
+//			// Annuaire annuaire = new Annuaire();
+//			fichier = new FileReader("src/Fichier/Stagiaires.don");
+//			BufferedReader br = new BufferedReader(fichier);
+//			
+//			if (annuaire.isEmpty()){
+//				
+//				while (br.ready()) {
+//					
+//					while(!br.readLine().equals("*"){
+//						
+//						Stagiaire stagiaire = new Stagiaire(br.readLine(),br.readLine(),br.readLine(),br.readLine(),br.readLine());
+//						ajouterStagiaire(stagiaire);
+//						
+//					}
+//					
+//				
+//				}
+//					
+//			} else {
+//				
+//			}
+//			
+//		
+//		}
 		
 		
 	
