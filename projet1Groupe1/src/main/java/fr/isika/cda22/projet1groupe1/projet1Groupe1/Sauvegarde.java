@@ -55,8 +55,64 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 
 	}
 	*/
+	
+	public void importAnnuaireTexte() {
 
+		//Annuaire annuaire = new Annuaire();
+		
+		try {
 
+			FileReader fichier = new FileReader("src/main/java/Fichier/STAGIAIRES_10.DON");
+			BufferedReader br = new BufferedReader(fichier);
+			
+			RandomAccessFile raf = new RandomAccessFile(CHEMIN_BIN, "rw");
+			
+			if (raf.length() == 0) {
+				System.out.println("ERROR Call Patrick N-O-W !");
+			}
+			else {
+
+			
+			// if (annuaire != null) {
+			// si l'annuaire est vide
+
+			while (br.ready()) {
+
+				String nom = br.readLine();
+				String prenom = br.readLine();
+				String departement = br.readLine();
+				String formation = br.readLine();
+				String annee = br.readLine();
+				br.readLine();
+
+				Stagiaire stagiaire = new Stagiaire(nom, prenom, departement, formation, annee);
+				
+				Noeud noeud = new Noeud(stagiaire,-1,-1,-1);
+				noeud.ajouterStagiaireBin(noeud,raf);
+
+				//stagiaire.ajouterStagiaireBin(stagiaire);
+				
+				//annuaire.ajouter(stagiaire);
+
+			}
+			// } accolade du if
+			//System.out.println(annuaire);
+
+			fichier.close();
+			raf.close();
+			
+			}
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//return annuaire;
+		
+	}
+	
+
+	/* METHODE TEXTE > ARBRE
 	public Annuaire importAnnuaireTexte() {
 
 		Annuaire annuaire = new Annuaire();
@@ -96,11 +152,14 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 		return annuaire;
 		
 	}
+	*/
+	
 	
 	// Methode pour sauvegarder un annuaire dans un fichier binaire
-	public void sauvegarderFichierBinaire(Annuaire annuaire) {
-		annuaire.sauvegarderFichierBinaire();
+	public void sauvegarderFichierBinaire() {
+		//annuaire.sauvegarderFichierBinaire();
 	}
+	
 	
 	/* FONCTION OPERATIONNELE DU 03/12/2022
 	// Méthode pour afficher dans la console le contenu du fichier binaire
@@ -165,20 +224,20 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 	}
 	*/
 	
-	// DEBUGGER 
-	// Méthode pour afficher dans la console le contenu du fichier binaire
+	// Méthode pour importer un fichier de sauvegarde bin et générer un annuaire
 		public Annuaire importSauvegardeBin() {
 			
 			Annuaire annuaire = new Annuaire();
 			
 			try {
 				// on ouvre le flux "raf" associé au fichier binaire
-				RandomAccessFile raf = new RandomAccessFile("src/main/java/Fichier/sauvegardeAnnuaire.bin", "rw");
+				RandomAccessFile raf = new RandomAccessFile(CHEMIN_BIN, "rw");
 
-				long longueur = raf.length();
-				System.out.println(TAILLE_STAGIAIRE_OCTET);
-				System.out.println(longueur);
-				long nbrStagiaire = longueur/TAILLE_STAGIAIRE_OCTET;
+				long tailleBinOctet = raf.length();
+				System.out.println("TAILLE_STAGIAIRE_OCTET =" +TAILLE_STAGIAIRE_OCTET);
+				System.out.println("longueur ="+tailleBinOctet);
+				long nbrStagiaire = tailleBinOctet/TAILLE_STAGIAIRE_OCTET;
+				System.out.println("nbrStagiaire ="+nbrStagiaire);
 				
 				long i = 0;
 				
@@ -187,9 +246,8 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 					// car .seek() se base sur l'octet et non sur le caractère (1 letter = 2 octets / 1 int = 4 octets)
 					// contrairement à .readChar() qui lui se déplace de caractère en caractère
 					raf.seek(i * TAILLE_STAGIAIRE_OCTET);
-					//raf.seek(0);
 					
-					// on crée les variables qui vont stocker les valeurs des attributs
+					// on crée les variables qui vont stocker les valeurs des attributs du stagiaire
 					String nom = "";
 					String prenom = "";
 					String departement = "";
@@ -220,8 +278,8 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 					}
 					//FIN DE LA LECTURE
 					
-					// On affiche les résultats
-					annuaire.ajouter(new Stagiaire(nom.trim(), prenom.trim(), departement.trim(), formation.trim(), anneeFormation.trim()));
+					// On ajoute le stagiaire à l'annuaire
+					//annuaire.ajouter(new Stagiaire(nom.trim(), prenom.trim(), departement, formation.trim(), anneeFormation));
 					i++;
 
 
@@ -233,8 +291,11 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+			// on retourne l'annuaire
 			return annuaire;
 		}
+
 	
 
 	

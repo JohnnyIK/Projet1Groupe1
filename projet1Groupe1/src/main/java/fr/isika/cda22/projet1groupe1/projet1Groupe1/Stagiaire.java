@@ -74,9 +74,9 @@ public class Stagiaire implements ParametreGestionnaire {
 	}
 
 	// ToString
-	public String toString() {
-		return " Stagiaire : " + nom + " " + prenom + ".";
-	}
+//	public String toString() {
+//		return " Stagiaire : " + nom + " " + prenom + ".";
+//	}
 
 	// Méthode compareTo pour Stagiaire
 	public int compareTo(Stagiaire myStagiaire) {
@@ -136,7 +136,7 @@ public class Stagiaire implements ParametreGestionnaire {
 
 		try {
 			// on accède au fichier binaire et on ouvre le flux "raf"
-			RandomAccessFile raf = new RandomAccessFile("src/main/java/Fichier/sauvegardeAnnuaire.bin", "rw");
+			RandomAccessFile raf = new RandomAccessFile(CHEMIN_BIN, "rw");
 
 			// le lecteur de fichier binaire se place à la position "cptNumStagiaire *
 			// TAILLE_STAGIAIRE_OCTET"

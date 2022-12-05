@@ -43,6 +43,7 @@ public class Annuaire {
 		}
 	}
 
+	/*
 	// Méthode ajouter Stagiaire dans arbre
 	public void ajouter(Stagiaire clef) {
 		if (this.isEmpty()) {
@@ -68,6 +69,7 @@ public class Annuaire {
 			return this.racine.nombreNoeuds();
 		}
 	}
+	*/
 	
 
 
