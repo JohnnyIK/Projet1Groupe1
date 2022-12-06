@@ -31,9 +31,9 @@ public class Lanceur implements ParametreGestionnaire{
 		//System.out.println(annuaire);
 //		System.out.println(annuaireVide);
 
-		Sauvegarde sauvegarde = new Sauvegarde();
+		
 		//Annuaire annuaire = new Annuaire();
-		sauvegarde.importAnnuaireTexte();
+		//sauvegarde.importAnnuaireTexte();
 //		System.out.println(annuaire);
 //		annuaire.ajouter(s0);
 //		//sauvegarde.sauvegarderFichierBinaire(annuaire);
@@ -47,9 +47,13 @@ public class Lanceur implements ParametreGestionnaire{
 //		//sauvegarde.lireSauvegardeStagiaire(nbrStagiaires);
 //		System.out.println("import" +importAnnuaire);
 //		System.out.println(s0.toString());
-		System.out.println(TAILLE_NOEUD_OCTET);
-		System.out.println(TAILLE_STAGIAIRE_OCTET);
-	
+//		System.out.println(TAILLE_NOEUD_OCTET);
+//		System.out.println(TAILLE_STAGIAIRE_OCTET);
+		
+		Sauvegarde sauvegarde = new Sauvegarde();
+		sauvegarde.importAnnuaireTexte();
+		sauvegarde.lireSauvegardeStagiaire();
+			
 		
 
 	}

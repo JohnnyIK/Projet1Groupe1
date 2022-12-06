@@ -11,16 +11,8 @@ public class Stagiaire implements ParametreGestionnaire {
 	private String departement;
 	private String formation;
 	private String anneeFormation;
-
-//	public final static int TAILLE_MAX_NOM = 20;
-//	public final static int TAILLE_MAX_PRENOM = 20;
-//	public final static int TAILLE_MAX_DEPARTEMENT = 2;
-//	public final static int TAILLE_MAX_FORMATION = 15;
-//	public final static int TAILLE_MAX_ANNEEFORMATION = 4;
-//	public final static int TAILLE_STAGIAIRE_OCTET = (2 * TAILLE_MAX_NOM) + (2 * TAILLE_MAX_PRENOM)
-//			+ (2 * TAILLE_MAX_DEPARTEMENT) + (2 * TAILLE_MAX_FORMATION) + (2 * TAILLE_MAX_ANNEEFORMATION);
-
-	private static int cptNumStagiaire = 0;
+	
+	
 
 	// Constructeur
 	public Stagiaire(String nom, String prenom, String departement, String formation, String anneeFormation) {
@@ -74,21 +66,22 @@ public class Stagiaire implements ParametreGestionnaire {
 	}
 
 	// ToString
-//	public String toString() {
-//		return " Stagiaire : " + nom + " " + prenom + ".";
-//	}
+	public String toString() {
+		return " Stagiaire : " + nom + " " + prenom + ".";
+	}
 
 	// Méthode compareTo pour Stagiaire
 	public int compareTo(Stagiaire myStagiaire) {
+		
 		if (myStagiaire.getNom().compareTo(this.nom) == 0) {
 			return myStagiaire.getPrenom().compareTo(this.prenom);
 		} else {
 			return myStagiaire.getNom().compareTo(this.nom);
 		}
 	}
+	
 
-	// Creation d'un "nomLong" de TAILLE_MAX_NOM pour l'écriture dans le fichier
-	// binaire
+	// Creation d'un "nomLong" de TAILLE_MAX_NOM pour l'écriture dans le fichier binaire
 	public String getNomFormate() {
 		// Dans tous les cas, on ne va pas tronquer le nom / prenom car sinon on perd
 		// l'information.
@@ -101,8 +94,7 @@ public class Stagiaire implements ParametreGestionnaire {
 		return nomLong;
 	}
 
-	// Creation d'un "prenomLong" de TAILLE_MAX_PRENOM pour l'écriture dans le
-	// fichier binaire
+	// Creation d'un "prenomLong" de TAILLE_MAX_PRENOM pour l'écriture dans le fichier binaire
 	public String getPrenomFormate() {
 		// Dans tous les cas, on ne va pas tronquer le nom / prenom car sinon on perd
 		// l'information.
@@ -115,13 +107,14 @@ public class Stagiaire implements ParametreGestionnaire {
 		return prenomLong;
 	}
 
-	// Creation d'un "prenomLong" de TAILLE_MAX_PRENOM pour l'écriture dans le
-	// fichier binaire
+	// Creation d'un "formationLong" de TAILLE_MAX_PRENOM pour l'écriture dans le fichier binaire
 	public String getFormationFormate() {
-		// Dans tous les cas, on ne va pas tronquer le nom / prenom car sinon on perd
+		// Dans tous les cas, on ne va pas tronquer le nom de la formation car sinon on
+		// perd
 		// l'information.
-		// Donc on rajoute " " après chaque nom/prenom pour atteindre une string nomLong
-		// de taille TAILLE_MAX_NOMPRENOM
+		// Donc on rajoute " " après chaque nom de formation pour atteindre une string
+		// formationLong
+		// de taille TAILLE_MAX_FORMATION
 		String formationLong = this.getFormation();
 		for (int i = this.getFormation().length(); i < TAILLE_MAX_FORMATION; i++) {
 			formationLong += " ";
@@ -129,41 +122,32 @@ public class Stagiaire implements ParametreGestionnaire {
 		return formationLong;
 	}
 
-
-	// Sauvegarde d'un stagiaire = ecriture de ses attributs dans le fichier binaire
-	// + on incrémente le compteur stagiaires cptNumStagiaire
-	public void sauvegarderFichierBinaireStagiaire() {
-
-		try {
-			// on accède au fichier binaire et on ouvre le flux "raf"
-			RandomAccessFile raf = new RandomAccessFile(CHEMIN_BIN, "rw");
-
-			// le lecteur de fichier binaire se place à la position "cptNumStagiaire *
-			// TAILLE_STAGIAIRE_OCTET"
-			// car .seek() se base sur l'octet et non sur le caractère (1 letter = 2 octets
-			// / 1 int = 4 octets)
-			raf.seek(cptNumStagiaire * TAILLE_STAGIAIRE_OCTET);
-
-			// puis on ecrit dans le fichier binaire les attributs du stagiaire (avec si
-			// besoin un formatage de la longueur de l'attribut)
-			String nomLong = this.getNomFormate();
-			String prenomLong = this.getPrenomFormate();
-			raf.writeChars(nomLong);
-			raf.writeChars(prenomLong);
-			raf.writeChars(this.getDepartement());
-			raf.writeChars(this.getFormationFormate());
-			raf.writeChars(this.getAnneeFormation());
-
-			// puis on incrémente le compteur stagiaires cptNumStagiaire
-			cptNumStagiaire++;
-
-			// On ferme le flux "raf"
-			raf.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+	// Creation d'un "departementLong" de TAILLE_MAX_DEPARTEMENT pour l'écriture dans le fichier binaire
+	public String getDepartementFormate() {
+		// Dans tous les cas, on ne va pas tronquer le departement car sinon on perd
+		// l'information.
+		// Donc on rajoute " " après chaque departement pour atteindre une string
+		// departementLong
+		// de taille TAILLE_MAX_DEPARTEMENT
+		String departementLong = this.getDepartement();
+		for (int i = this.getDepartement().length(); i < TAILLE_MAX_DEPARTEMENT; i++) {
+			departementLong += " ";
 		}
+		return departementLong;
+	}
 
+	// Creation d'un "anneeLong" de TAILLE_MAX_ANNEEFORMATION pour l'écriture dans le fichier binaire
+	public String getAnneeFormationFormate() {
+		// Dans tous les cas, on ne va pas tronquer l'annee car sinon on perd
+		// l'information.
+		// Donc on rajoute " " après chaque annee pour atteindre une string
+		// anneeLong
+		// de taille TAILLE_MAX_ANNEEFORMATION
+		String anneeLong = this.getAnneeFormation();
+		for (int i = this.getAnneeFormation().length(); i < TAILLE_MAX_ANNEEFORMATION; i++) {
+			anneeLong += " ";
+		}
+		return anneeLong;
 	}
 
 }
