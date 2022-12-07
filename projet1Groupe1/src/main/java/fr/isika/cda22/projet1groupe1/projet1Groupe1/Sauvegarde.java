@@ -65,6 +65,7 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 					raf.seek(i * TAILLE_NOEUD_OCTET);
 					
 					// on crée les variables qui vont stocker les valeurs des attributs
+					int indexNoeud = 0;
 					String nomRecup = "";
 					String prenomRecup = "";
 					String departementRecup = "";
@@ -76,6 +77,7 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 					
 					//DEBUT DE LA LECTURE DU "raf"
 					// On commence à parcourir/lire le fichier binaire selon ce principe :
+					indexNoeud = raf.readInt();
 					// 1--> de 0 à TAILLE_MAX_NOM, on sait qu'il s'agit des lettres du "nom" du stagiaire
 					for (int k = 0; k < TAILLE_MAX_NOM; k++) {
 						nomRecup += raf.readChar();
@@ -103,6 +105,7 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 					//FIN DE LA LECTURE
 					
 					// On affiche les résultats
+					System.out.println("IndexRecup = " + indexNoeud);
 					System.out.println("nomRecup = " + nomRecup.trim());
 					System.out.println("prenomRecup = " + prenomRecup.trim());
 					System.out.println("departementRecup = " + departementRecup.trim());
@@ -110,7 +113,7 @@ public class Sauvegarde extends Annuaire implements ParametreGestionnaire {
 					System.out.println("anneeFormationRecup = " + anneeFormationRecup.trim());
 					System.out.println("indexFilsGauche = " + indexFilsGauche);
 					System.out.println("indexFilsDroit = " + indexFilsDroit);
-					System.out.println("doublon = " + indexDoublon);
+					System.out.println("doublon = " + indexDoublon +"\n");
 				}
 				
 				// on ferme le flux "raf"

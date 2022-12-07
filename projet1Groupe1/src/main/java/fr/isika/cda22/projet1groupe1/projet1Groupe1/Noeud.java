@@ -56,11 +56,12 @@ public class Noeud implements ParametreGestionnaire {
 	// Méthode qui crée la racine si le fichier est vide, et sinon ajoute le stagiaire sur fichier bin
 	public void ajouterStagiaireBin(Noeud noeudAjout, RandomAccessFile raf) {
 		try {
+			int indexNoeudRacine = 0;
 			if (raf.length() == 0) { // si le fichier binaire est vide, on écrit le stagiaire
-				ecrireNoeudBin(noeudAjout, raf);
+				ecrireNoeudBin(noeudAjout, raf, indexNoeudRacine);
 			} else {
 				raf.seek(TAILLE_NOEUD_OCTET);
-				ecritureBinRecursive(noeudAjout, raf, 0);
+				ecritureBinRecursive(noeudAjout, raf, indexNoeudRacine);
 			}
 
 		} catch (IOException e) {
@@ -80,7 +81,7 @@ public class Noeud implements ParametreGestionnaire {
 					ecritureBinRecursive(noeudAjout, raf, indexParent); // on passe la methode au fils gauche
 				} else { // il n'y a pas de fils gauche
 					ecrireFilsGauche(indexParent, raf, indexNoeud);
-					ecrireNoeudBin(noeudAjout, raf);
+					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
 				}
 			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) > 0) { // on part a Droite
 
@@ -89,7 +90,7 @@ public class Noeud implements ParametreGestionnaire {
 					ecritureBinRecursive(noeudAjout, raf, indexParent); // on passe la methode au fils Droit
 				} else { // il n'y a pas de fils Droit
 					ecrireFilsDroit(indexParent, raf, indexNoeud);
-					ecrireNoeudBin(noeudAjout, raf);
+					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
 				}
 			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) == 0) {
 				if (recupererIndexDoublon(indexParent, raf) != -1) {
@@ -97,7 +98,7 @@ public class Noeud implements ParametreGestionnaire {
 					ecritureBinRecursive(noeudAjout, raf, indexParent);
 				} else {
 					ecrireDoublon(indexParent, raf, indexNoeud);
-					ecrireNoeudBin(noeudAjout, raf);
+					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
 				}
 
 			}
@@ -109,10 +110,11 @@ public class Noeud implements ParametreGestionnaire {
 	}
 	
 	// Methode pour écrire le noeud stagiaire dans le fichier binaire à la fin du fichier binaire
-	public void ecrireNoeudBin(Noeud noeudAjout, RandomAccessFile raf) {
+	public void ecrireNoeudBin(Noeud noeudAjout, RandomAccessFile raf, int indexNoeud) {
 		try {
 			
 		raf.seek(raf.length());
+		raf.writeInt(indexNoeud);
 		recuperationAttributsStagiaireBin(noeudAjout.getCle(), raf);
 		raf.writeInt(noeudAjout.getIndexFilsGauche());
 		raf.writeInt(noeudAjout.getIndexFilsDroit());
