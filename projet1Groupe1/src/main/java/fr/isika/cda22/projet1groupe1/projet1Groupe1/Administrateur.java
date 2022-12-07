@@ -5,46 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Administrateur implements FonctionnaliteCommune {
-
-		//Attributs 
-		private String loginAdmin; 
-		private String mdpAdmin;
+public class Administrateur extends User {
+	// Constructeur de la class mère
+	public Administrateur(String login, String mdp) {
+		super(login, mdp);
 		
-		
-		//Constructeur
-		public Administrateur(String loginAdmin, String mdpAdmin) {
-			super();
-			this.loginAdmin = loginAdmin;
-			this.mdpAdmin = mdpAdmin;
-		}
-
-		//Getters & Setters
-		public String getLoginAdmin() {
-			return loginAdmin;
-		}
-
-		public void setLoginAdmin(String loginAdmin) {
-			this.loginAdmin = loginAdmin;
-		}
-
-		public String getMdpAdmin() {
-			return mdpAdmin;
-		}
-
-		public void setMdpAdmin(String mdpAdmin) {
-			this.mdpAdmin = mdpAdmin;
-		}
-		
-		//Méthode spécifique à l'administrateur
-		public void ModifStagiaire() {	
-		}
-		
-		public void supprimerStagiaire() {	
-		}
-
-		public void ajouterStagiaire() {
-			// TODO Auto-generated method stub	
-		}
-		
+	}
+	
+	// Méthode spécifique à l'administrateur
+	public void ModifStagiaire() {
+	}
+	public void supprimerStagiaire() {
+	}
+	public void ajouterStagiaire() {
+	}
 }

@@ -20,6 +20,16 @@ public interface ParametreGestionnaire {
 	
 	
 	
+	// ******** AJOUT 20221207 *******************************************************************************
+	public final static String CHEMIN_RESULTATS_RECHERCHE_BIN = "src/main/java/Fichier/resultatsRecherche.bin";
+	public final static int INDEX_NOM_OCTET = 4 ;
+	public final static int INDEX_PRENOM_OCTET = 4 + (2 * TAILLE_MAX_NOM) ;
+	public final static int INDEX_DEPARTEMENT_OCTET = INDEX_PRENOM_OCTET + 2 * TAILLE_MAX_PRENOM ;
+	public final static int INDEX_FORMATION_OCTET = INDEX_DEPARTEMENT_OCTET + 2 * TAILLE_MAX_DEPARTEMENT ;
+	public final static int INDEX_ANNEEFORMATION_OCTET = INDEX_FORMATION_OCTET + 2 * TAILLE_MAX_FORMATION ;
+	
+	public final static String CHEMIN_BIN_SAUVEGARDE_V02 = "src/main/java/Fichier/sauvegardeAnnuaireV02.bin";
+	
 	
 	
 	

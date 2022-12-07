@@ -8,7 +8,6 @@ public interface FonctionnaliteCommune {
 	//public void impressionAnnuaire
 	
 	public abstract void ajouterStagiaire();
-		
 
 }
 

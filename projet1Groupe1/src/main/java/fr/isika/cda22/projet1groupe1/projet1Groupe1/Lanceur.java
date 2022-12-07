@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Lanceur implements ParametreGestionnaire{
 
@@ -13,7 +15,7 @@ public class Lanceur implements ParametreGestionnaire{
 
 //		Annuaire annuaire = new Annuaire();
 
-//		Stagiaire s1 = new Stagiaire("Alpha", "Mathieu Matt", "75", "CDA 22", "2002");
+		Stagiaire s1 = new Stagiaire("Alpha", "Mathieu Matt", "75", "CDA 22", "2002");
 //		Stagiaire s2 = new Stagiaire("Bravo", "Marc", "10", "FGR 456", "2012");
 //		Stagiaire s3 = new Stagiaire("Echo", "Luc", "52", "HJUHJU" , "2020");
 //		Stagiaire s4 = new Stagiaire("Charli", "Jean", "63", "EFT 45 IK 256", "1980");
@@ -50,11 +52,46 @@ public class Lanceur implements ParametreGestionnaire{
 //		System.out.println(TAILLE_NOEUD_OCTET);
 //		System.out.println(TAILLE_STAGIAIRE_OCTET);
 		
-		Sauvegarde sauvegarde = new Sauvegarde();
-		sauvegarde.importAnnuaireTexte();
-		sauvegarde.lireSauvegardeStagiaire();
-			
+//		Sauvegarde sauvegarde = new Sauvegarde();
+//		sauvegarde.importAnnuaireTexte();
+//		sauvegarde.lireSauvegardeStagiaire(CHEMIN_BIN);
+//		
+//		List<String> departementRech = new ArrayList<String>();
+//		departementRech.add("91");
+//		departementRech.add("75");
+//		String[] anneeFormationRech = {"2000", "2007"};
+//		
+//		RechercheMulticritere recherche = new RechercheMulticritere(false, "OU", false, "ma", true, departementRech, false, "CD", false, anneeFormationRech);
+//		recherche.rechercheMulticriteres();
+//		sauvegarde.lireSauvegardeStagiaire(CHEMIN_RESULTATS_RECHERCHE_BIN);
 		
-
+		
+		
+		ArbreBin sauvegardeBin = new ArbreBin(CHEMIN_BIN_SAUVEGARDE_V02);
+		sauvegardeBin.importAnnuaireTexte();
+		sauvegardeBin.afficherFichierBin();
+		
+		List<String> departementRech = new ArrayList<String>();
+		departementRech.add("91");
+		departementRech.add("75");
+		String[] anneeFormationRech = {"2000", "2010"};
+		
+		RechercheMulticritere recherche = new RechercheMulticritere(false, "OU", false, "ma", false, departementRech, false, "CD", true, anneeFormationRech);
+		ArrayList<Integer> resultatRecherche = sauvegardeBin.rechercheMulticriteres(recherche);
+		 for (Integer i: resultatRecherche) {
+			 System.out.println("arraylist "+i.toString());
+		 }
+	 
+		 ArbreBin resultatRechercheBin = new ArbreBin(CHEMIN_RESULTATS_RECHERCHE_BIN);
+		 resultatRechercheBin.importArrayToArbreBin(resultatRecherche, sauvegardeBin);
+		 resultatRechercheBin.afficherFichierBin();
+//		 sauvegardeBin.importStagiaire(s1);
+//		 sauvegardeBin.afficherFichierBin();
+		 ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
+		 System.out.println(resultatRechercheBin.adresseFichierBin);
+		 resultatRechercheBin.exportToArrayList(listeNoeud);
+		 for (Noeud noeud : listeNoeud) {
+			 System.out.println(noeud.getCle().getNom());
+		 }
 	}
 }
