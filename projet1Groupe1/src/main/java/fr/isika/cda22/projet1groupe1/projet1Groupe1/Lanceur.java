@@ -67,31 +67,46 @@ public class Lanceur implements ParametreGestionnaire{
 		
 		
 		
-		ArbreBin sauvegardeBin = new ArbreBin(CHEMIN_BIN_SAUVEGARDE_V02);
+//		ArbreBin sauvegardeBin = new ArbreBin(CHEMIN_BIN_SAUVEGARDE_V02);
+//		sauvegardeBin.importAnnuaireTexte();
+//		sauvegardeBin.afficherFichierBin();
+		
+		ArbreBin sauvegardeBin = new ArbreBin(CHEMIN_BIN);
 		sauvegardeBin.importAnnuaireTexte();
 		sauvegardeBin.afficherFichierBin();
 		
-		List<String> departementRech = new ArrayList<String>();
-		departementRech.add("91");
-		departementRech.add("75");
-		String[] anneeFormationRech = {"2000", "2010"};
+//		List<String> departementRech = new ArrayList<String>();
+//		departementRech.add("91");
+//		departementRech.add("75");
+//		String[] anneeFormationRech = {"1900", "2100"};
+//		
+//		RechercheMulticritere recherche = new RechercheMulticritere(false, "OU", false, "ma", false, departementRech, false, "CD", true, anneeFormationRech);
+//		ArrayList<Integer> resultatRecherche = sauvegardeBin.rechercheMulticriteres(recherche);
+//		 for (Integer i: resultatRecherche) {
+//			 System.out.println("arraylist "+i.toString());
+//		 }
+//	 
+//		 ArbreBin resultatRechercheBin = new ArbreBin(CHEMIN_RESULTATS_RECHERCHE_BIN);
+//		 resultatRechercheBin.importArrayToArbreBin(resultatRecherche, sauvegardeBin);
+//		 resultatRechercheBin.afficherFichierBin();
+//		 //sauvegardeBin.importStagiaire(s1);
+//		 //sauvegardeBin.afficherFichierBin();
+//		 ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
+//		 System.out.println(resultatRechercheBin.adresseFichierBin);
+//		 resultatRechercheBin.exportToArrayList(listeNoeud);
+//		 for (Noeud noeud : listeNoeud) {
+//			 System.out.println(noeud.getCle().getNom()+" "+noeud.getCle().getPrenom());
+//		 }
 		
-		RechercheMulticritere recherche = new RechercheMulticritere(false, "OU", false, "ma", false, departementRech, false, "CD", true, anneeFormationRech);
-		ArrayList<Integer> resultatRecherche = sauvegardeBin.rechercheMulticriteres(recherche);
-		 for (Integer i: resultatRecherche) {
-			 System.out.println("arraylist "+i.toString());
-		 }
-	 
-		 ArbreBin resultatRechercheBin = new ArbreBin(CHEMIN_RESULTATS_RECHERCHE_BIN);
-		 resultatRechercheBin.importArrayToArbreBin(resultatRecherche, sauvegardeBin);
-		 resultatRechercheBin.afficherFichierBin();
-//		 sauvegardeBin.importStagiaire(s1);
-//		 sauvegardeBin.afficherFichierBin();
-		 ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
-		 System.out.println(resultatRechercheBin.adresseFichierBin);
-		 resultatRechercheBin.exportToArrayList(listeNoeud);
+		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
+		sauvegardeBin.exportToArrayList(listeNoeud);
 		 for (Noeud noeud : listeNoeud) {
-			 System.out.println(noeud.getCle().getNom());
+			 System.out.println(noeud.getCle().getNom()+" "+noeud.getCle().getPrenom());
 		 }
+		 
+		 System.out.println(sauvegardeBin.longueur());
+		 System.out.println(listeNoeud.size());
+		 //System.out.println(resultatRechercheBin.longueur());
+		
 	}
 }

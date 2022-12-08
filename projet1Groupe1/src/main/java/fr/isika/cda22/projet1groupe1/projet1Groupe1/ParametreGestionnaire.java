@@ -2,8 +2,8 @@ package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 
 public interface ParametreGestionnaire {
 	
-	public final static int TAILLE_MAX_NOM = 20;
-	public final static int TAILLE_MAX_PRENOM = 20;
+	public final static int TAILLE_MAX_NOM = 30;
+	public final static int TAILLE_MAX_PRENOM = 30;
 	public final static int TAILLE_MAX_DEPARTEMENT = 2;
 	public final static int TAILLE_MAX_FORMATION = 15;
 	public final static int TAILLE_MAX_ANNEEFORMATION = 4;
@@ -16,7 +16,7 @@ public interface ParametreGestionnaire {
 	public final static int INDEX_DOUBLON_OCTET = 4 + TAILLE_STAGIAIRE_OCTET + 4 + 4; 
 	
 	public final static String CHEMIN_BIN = "src/main/java/Fichier/sauvegardeAnnuaire.bin";
-	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRES10.DON";
+	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRES02.DON";
 	
 	
 	
