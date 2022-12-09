@@ -22,6 +22,27 @@ public class Noeud implements ParametreGestionnaire {
 		this.indexFilsDroit = indexFilsDroit;
 		this.indexDoublon = indexDoublon;
 	}
+	
+	// Constructeur
+	public Noeud(Stagiaire cle) {
+		super();
+		this.indexNoeud = -1;
+		this.cle = cle;
+		this.indexFilsGauche = -1;
+		this.indexFilsDroit = -1;
+		this.indexDoublon = -1;
+	}
+
+	// Constructeur
+	public Noeud() {
+		super();
+		this.indexNoeud = 0;
+		this.cle = null;
+		this.indexFilsGauche = -1;
+		this.indexFilsDroit = -1;
+		this.indexDoublon = -1;
+	}
+			
 
 	// getters & setters
 	public Stagiaire getCle() {
@@ -468,16 +489,9 @@ public class Noeud implements ParametreGestionnaire {
 
 	}
 	
-	// Constructeur
-		public Noeud(Stagiaire cle) {
-			super();
-			this.indexNoeud = -1;
-			this.cle = cle;
-			this.indexFilsGauche = -1;
-			this.indexFilsDroit = -1;
-			this.indexDoublon = -1;
-		}
-		
+	
+	
+	
 		
 	
 	

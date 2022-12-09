@@ -81,22 +81,22 @@ public class Lanceur implements ParametreGestionnaire{
 		sauvegardeBin.importAnnuaireTexte();
 		sauvegardeBin.afficherFichierBin();
 		
-//		List<String> departementRech = new ArrayList<String>();
-//		departementRech.add("91");
-//		departementRech.add("75");
-//		String[] anneeFormationRech = {"1900", "2100"};
-//		
-//		RechercheMulticritere recherche = new RechercheMulticritere(false, "OU", false, "ma", false, departementRech, false, "CD", true, anneeFormationRech);
+		List<String> departementRech = new ArrayList<String>();
+		departementRech.add("91");
+		departementRech.add("75");
+		String[] anneeFormationRech = {"2000", "2005"};
+		
+		RechercheMulticritere recherche = new RechercheMulticritere(true, "RAKOTOMALA", false, "ma", false, departementRech, false, "CD", false, anneeFormationRech);
 //		ArrayList<Integer> resultatRecherche = sauvegardeBin.rechercheMulticriteres(recherche);
 //		 for (Integer i: resultatRecherche) {
 //			 System.out.println("arraylist "+i.toString());
 //		 }
-//	 
+	 
 //		 ArbreBin resultatRechercheBin = new ArbreBin(CHEMIN_RESULTATS_RECHERCHE_BIN);
 //		 resultatRechercheBin.importArrayToArbreBin(resultatRecherche, sauvegardeBin);
 //		 resultatRechercheBin.afficherFichierBin();
-//		 //sauvegardeBin.importStagiaire(s1);
-//		 //sauvegardeBin.afficherFichierBin();
+		 //sauvegardeBin.importStagiaire(s1);
+		 //sauvegardeBin.afficherFichierBin();
 //		 ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
 //		 System.out.println(resultatRechercheBin.adresseFichierBin);
 //		 resultatRechercheBin.exportToArrayList(listeNoeud);
@@ -104,16 +104,23 @@ public class Lanceur implements ParametreGestionnaire{
 //			 System.out.println(noeud.getCle().getNom()+" "+noeud.getCle().getPrenom());
 //		 }
 		
-		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
-		sauvegardeBin.exportToArrayList(listeNoeud);
-		//sauvegardeBin.exportToArrayListDoublon(listeNoeud, 0);
-		 for (Noeud noeud : listeNoeud) {
-			 System.out.println("ArrayList :"+noeud.getCle().getNom()+" "+noeud.getCle().getPrenom()+" "+noeud.getCle().getFormation());
-		 }
-		 
-		 System.out.println(sauvegardeBin.longueur());
-		 System.out.println(listeNoeud.size());
-		 //System.out.println(resultatRechercheBin.longueur());
+		//sauvegardeBin.supprimerStagiaireNoeud("LEROUSSEAUD");
+		NoeudSuppression noeudSupp = new NoeudSuppression();
+
+		//noeudSupp.supprimerStagiaireNoeud("ROIGNANT");
+		//noeudSupp.supprimerStagiaireNoeud("GARIJO");
+		//noeudSupp.supprimerStagiaireNoeud("AUGEREAU");
+		//noeudSupp.supprimerStagiaireNoeud("POTIN");
+		//noeudSupp.supprimerStagiaireNoeud("GRIMM");
+		
+//		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
+//		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, recherche);
+//		 for (Noeud noeud : listeNoeud) {
+//			 System.out.println("ArrayList :"+noeud.getCle().getNom()+" "+noeud.getCle().getPrenom()+" "+noeud.getCle().getDepartement()+" "+noeud.getCle().getFormation()+" "+noeud.getCle().getAnneeFormation()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
+//		 }
+		 System.out.println("Nbr Stagiaires fichier BIN >> " + sauvegardeBin.longueur());
+//		 System.out.println("Nbr Stagiaires ArrayList >> " +listeNoeud.size());
+//		 //System.out.println(resultatRechercheBin.longueur());
 		 
 		
 	}
