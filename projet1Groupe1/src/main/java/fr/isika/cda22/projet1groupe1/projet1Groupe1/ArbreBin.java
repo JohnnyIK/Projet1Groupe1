@@ -259,8 +259,8 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	public String formationCheck(String formation) {
 		//formation = formation.toUpperCase();
-		//return formation.strip();
-		return "CDA22";
+		return formation.strip();
+		//return "CDA22";
 	}
 	
 	public String anneeFormationCheck(String anneeFormation) {
@@ -337,38 +337,37 @@ public class ArbreBin implements ParametreGestionnaire{
 
 		}
 		
+		/* TEST NOT OK
 		// Methode recursive d'ajout de stagiaire dans le fichier bin
 		public void ecritureNoeudBinRecursive(Noeud noeudAjout, int index) {
 			try {
 				int indexNoeud = (int) (this.raf.length() / TAILLE_NOEUD_OCTET);
-				int indexParent = index;
-				if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) < 0) { // on part a gauche
 
-					if (recupererIndexFilsGauche(indexParent) != -1) { // il y a un fils gauche
-						indexParent = recupererIndexFilsGauche(indexParent);
-						ecritureNoeudBinRecursive(noeudAjout, indexParent); // on passe la methode au fils gauche
+				if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(index)) < 0) { // on part a gauche
+
+					if (recupererIndexFilsGauche(index) != -1) { // il y a un fils gauche
+						index = recupererIndexFilsGauche(index);
+						ecritureNoeudBinRecursive(noeudAjout, index); // on passe la methode au fils gauche
 					} else { // il n'y a pas de fils gauche
-						ecrireFilsGauche(indexParent, indexNoeud);
+						ecrireFilsGauche(index, indexNoeud);
 						ecrireNoeudBin(noeudAjout, indexNoeud);
 					}
-				} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) > 0) { // on part a Droite
+				} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(index)) > 0) { // on part a Droite
 
-					if (recupererIndexFilsDroit(indexParent) != -1) { // il y a un fils Droit
-						indexParent = recupererIndexFilsDroit(indexParent);
-						ecritureNoeudBinRecursive(noeudAjout, indexParent); // on passe la methode au fils Droit
+					if (recupererIndexFilsDroit(index) != -1) { // il y a un fils Droit
+						index = recupererIndexFilsDroit(index);
+						ecritureNoeudBinRecursive(noeudAjout, index); // on passe la methode au fils Droit
 					} else { // il n'y a pas de fils Droit
-						ecrireFilsDroit(indexParent, indexNoeud);
+						ecrireFilsDroit(index, indexNoeud);
 						ecrireNoeudBin(noeudAjout, indexNoeud);
 					}
-				} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) == 0) {
-					if (recupererIndexDoublon(indexParent) != -1) {
-						indexParent = recupererIndexDoublon(indexParent);
-						ecritureNoeudBinRecursive(noeudAjout, indexParent);
+				} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(index)) == 0) {
+					if (recupererIndexDoublon(index) == -1) {
+						ecrireDoublon(index, indexNoeud);
+						ecrireNoeudBin(noeudAjout, indexNoeud);
 					} else {
-						ecrireDoublon(indexParent, indexNoeud);
-						ecrireNoeudBin(noeudAjout, indexNoeud);
+					    insererDoublonRecursive(noeudAjout, index, indexNoeud, index);
 					}
-
 				}
 
 			} catch (IOException e) {
@@ -376,6 +375,68 @@ public class ArbreBin implements ParametreGestionnaire{
 			}
 
 		}
+		
+		
+		public void insererDoublonRecursive(Noeud noeudAjout, int index, int indexNoeud, int indexParent) {
+			if (recupererIndexDoublon(index) != -1) {
+				if (noeudAjout.getCle().getPrenom().compareTo(recuperePrenomNoeudBin(index)) > 0) {
+					indexParent = index;
+					index = recupererIndexDoublon(index);
+					insererDoublonRecursive(noeudAjout, index, indexNoeud, indexParent);
+				} else if (noeudAjout.getCle().getPrenom().compareTo(recuperePrenomNoeudBin(index)) <= 0) {
+					ecrireNoeudBin(noeudAjout, indexNoeud);
+					ecrireDoublon(indexParent, indexNoeud);
+					ecrireDoublon(indexNoeud, index);	
+				}
+			} else {
+				
+				ecrireDoublon(index, indexNoeud);
+				ecrireNoeudBin(noeudAjout, indexNoeud);
+			}
+		}
+		*/
+		
+
+		// Methode recursive d'ajout de stagiaire dans le fichier bin
+				public void ecritureNoeudBinRecursive(Noeud noeudAjout, int index) {
+					try {
+						int indexNoeud = (int) (this.raf.length() / TAILLE_NOEUD_OCTET);
+						int indexParent = index;
+						if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) < 0) { // on part a gauche
+
+							if (recupererIndexFilsGauche(indexParent) != -1) { // il y a un fils gauche
+								indexParent = recupererIndexFilsGauche(indexParent);
+								ecritureNoeudBinRecursive(noeudAjout, indexParent); // on passe la methode au fils gauche
+							} else { // il n'y a pas de fils gauche
+								ecrireFilsGauche(indexParent, indexNoeud);
+								ecrireNoeudBin(noeudAjout, indexNoeud);
+							}
+						} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) > 0) { // on part a Droite
+
+							if (recupererIndexFilsDroit(indexParent) != -1) { // il y a un fils Droit
+								indexParent = recupererIndexFilsDroit(indexParent);
+								ecritureNoeudBinRecursive(noeudAjout, indexParent); // on passe la methode au fils Droit
+							} else { // il n'y a pas de fils Droit
+								ecrireFilsDroit(indexParent, indexNoeud);
+								ecrireNoeudBin(noeudAjout, indexNoeud);
+							}
+						} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) == 0) {
+							if (recupererIndexDoublon(indexParent) != -1) {
+								indexParent = recupererIndexDoublon(indexParent);
+								ecritureNoeudBinRecursive(noeudAjout, indexParent);
+							} else {
+								ecrireDoublon(indexParent, indexNoeud);
+								ecrireNoeudBin(noeudAjout, indexNoeud);
+							}
+
+						}
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				}
+
 		
 		/**
 		 * Recupere l'attribut "nom" (en version formate) du noeud dans le fichier Bin
@@ -699,7 +760,12 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 		
 		
-		// Methode de recherche
+		/**
+		 * RechercherMulticritere : Methode principale. 
+		 * Cree une ArrayList contenant les index de noeuds recherches (dont les criteres sont dans l'objet 
+		 * @param recherche Objet de classe RechercheMulticritere contenant les filtres de recherche
+		 * @return une ArrayList des index des noeuds recherches
+		 */
 		public ArrayList<Integer> rechercheMulticriteres(RechercheMulticritere recherche) {
 			ArrayList<Integer> resultatRecherche = new ArrayList<Integer>();
 			try {
@@ -720,7 +786,12 @@ public class ArbreBin implements ParametreGestionnaire{
 
 		}
 		
-		// Methode de recherche
+		/**
+		 * Methode secondaire pour la RechercherMulticritere : 
+		 * Methode recursive de recherche des index des noeuds et de leur écriture dans une ArrayList
+		 * @param recherche Objet de classe RechercheMulticritere contenant les filtres de recherche
+		 * @return une ArrayList des index des noeuds recherches
+		 */
 		public ArrayList<Integer> rechercheMulticriteresRecursive(RechercheMulticritere recherche) {
 			ArrayList<Integer> resultatRecherche = new ArrayList<Integer>();
 			try {
@@ -763,6 +834,12 @@ public class ArbreBin implements ParametreGestionnaire{
 			return noeud;
 		}
 		
+		/**
+		 * Methode complementaire de l'algorithme de RechercheMulticritere :
+		 * Transforme une Array list d'index de noeuds en Arbre binaire des noeud correspondants aux index
+		 * @param listeIndexNoeud L'array list recuperee en sortie de la RechercheMulticriteres
+		 * @param arbreBin L'arbre danns lequel transcrire l'ArrayList
+		 */
 		public void importArrayToArbreBin(ArrayList<Integer> listeIndexNoeud, ArbreBin arbreBin){
 			try {
 
@@ -782,7 +859,11 @@ public class ArbreBin implements ParametreGestionnaire{
 				e.printStackTrace();
 			}
 		}
-		
+		 /**
+		  * Methode principale de la transformation de l'ArbreBin en ArrayList
+		  * Exporte l'ArbreBin dans l'ArrayList passee en argument
+		  * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
+		  */
 		public void exportToArrayList(ArrayList<Noeud> listeNoeud){
 			try {
 				
@@ -799,92 +880,99 @@ public class ArbreBin implements ParametreGestionnaire{
 			}
 		}
 		
+		/**
+		 * Methode secondaire recursive pour la transformation de l'ArbreBin en ArrayList :
+		 * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
+		 * @param indexEnCours L'index du noeud sur lequel on se situe
+		 * @param indexParent L'index du noeud parent au noeud dans lequel on se trouve
+		 */
 		public void exportToArrayListRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent){
-//			System.out.println("ID FG "+this.recupererIndexFilsGauche(index));
-//			System.out.println("ID FD "+this.recupererIndexFilsDroit(index));
-//			System.out.println("index "+index);
-			// indexParent = 0;
 			int indexEnCoursLocal = indexEnCours;
-			
-
-			
+		
 			if (this.recupererIndexFilsGauche(indexEnCours) != -1) {
 				indexParent = indexEnCours;
 				indexEnCours = this.recupererIndexFilsGauche(indexEnCours);
-				//System.out.println("new index G"+indexEnCours);
+
 				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
 			}
 			
-			if (this.recupererIndexDoublon(indexEnCours) == -1) {
-				listeNoeud.add(this.recupereNoeudIndex(indexEnCoursLocal));
-				indexEnCours = indexEnCoursLocal;
-			} else {
-				this.exportToArrayListDoublonRecursive(listeNoeud,indexEnCours, indexParent);
+			listeNoeud.add(this.recupereNoeudIndex(indexEnCoursLocal));
+			indexEnCours = indexEnCoursLocal;
+			
+			if (this.recupererIndexDoublon(indexEnCoursLocal) != -1) {
+				this.exportToArrayListDoublon(listeNoeud, this.recupererIndexDoublon(indexEnCoursLocal));
 			}
-			
-			
-//			if (this.recupererIndexDoublon(indexEnCours) != -1) {
-//				indexParent = indexEnCours;
-//				indexEnCours = this.recupererIndexDoublon(indexEnCours);
-//				//System.out.println("new index D"+indexEnCours);
-//				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
-//			}
-			
-//			if (this.recupererIndexDoublon(indexEnCours) != -1) {
-//				this.exportToArrayListDoublonRecursive(listeNoeud,indexEnCours, indexParent);
-//			}
-//			
 			
 			if (this.recupererIndexFilsDroit(indexEnCours) != -1) {
 				indexParent = indexEnCours;
 				indexEnCours = this.recupererIndexFilsDroit(indexEnCours);
-				//System.out.println("new index D"+indexEnCours);
 				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
 			}
 			
 		}
 
-		
-		public void exportToArrayListDoublonRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent){
-			int indexEnCoursLocal = indexEnCours;
-			if (this.recupererIndexDoublon(indexParent) != -1) {
-				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexDoublon(indexEnCours);
-				this.exportToArrayListDoublonRecursive(listeNoeud,indexEnCours, indexParent);
-			} else {
-				listeNoeud.add(this.recupereNoeudIndex(indexEnCoursLocal));
-			}
-		}
-			
-			
-			
-			
-			
-//			if (this.recupererIndexDoublon(indexEnCours) != -1) {
-//				indexEnCours = this.recupererIndexDoublon(indexEnCours);
-//				this.exportToArrayListDoublonRecursive(listeNoeud,indexEnCours, indexParent);
-//			} else {
-//				listeNoeud.add(this.recupereNoeudIndex(indexEnCours));
-//			}
+		/** Troisieme méthode pour la transformation de l'ArbreBin en ArrayList : traitement des doublons
+		 * 
+		 * @param listeNoeud L'ArrayList à compléter par les doublons
+		 * @param indexPremierDoublon Index du premier doublon (= DEUXIEME de la chaine Doublons en comptant le noeud de départ)
+		 */
+		public void exportToArrayListDoublon(ArrayList<Noeud> listeNoeud, int indexPremierDoublon){
+			int indexParcours = indexPremierDoublon; 
+	    	while (this.recupererIndexDoublon(indexParcours) != -1) {
+	    		listeNoeud.add(this.recupereNoeudIndex(indexParcours));
+	    		indexParcours = this.recupererIndexDoublon(indexParcours);
+	    	}
+	    	listeNoeud.add(this.recupereNoeudIndex(indexParcours));
 		}
 		
-		/*
-		public ArrayList<Noeud> exportToArrayListRecursive(ArrayList<Noeud> listeNoeud, int index){
-			System.out.println("ID FG "+this.recupererIndexFilsGauche(index));
-			System.out.println("ID FD "+this.recupererIndexFilsDroit(index));
-			System.out.println("index "+index);
-			if (this.recupererIndexFilsGauche(index) != -1) {
-				index = this.recupererIndexFilsGauche(index);
-				listeNoeud = this.exportToArrayListRecursive(listeNoeud, index);
-			} else 
-			listeNoeud.add(this.recupereNoeudIndex(index));
-			if (this.recupererIndexFilsDroit(index) != -1) {
-				index = this.recupererIndexFilsDroit(index);
-				listeNoeud = this.exportToArrayListRecursive(listeNoeud, index);
-			}
-			return listeNoeud;
-		}
-		*/
+		// test pour exporter une array list dans l'ordre initial de ses elements WIP
+				public void exportToArrayListDoublonV02(ArrayList<Noeud> listeNoeud, int indexPremierDoublon){
+					int cptDoublon = 2; // car si on entre dans cette methode, c'est qu'il y a déjà un doublon
+					
+					try {
+						
+						this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+					    if (this.raf.length() == 0) {
+					    	listeNoeud = null;
+					    } else {
+					    	// on compte le nombre de doublons à partir de l'indexPremierDoublon
+					    	int indexB = indexPremierDoublon; 
+					    	while (this.recupererIndexDoublon(indexB) != -1) {
+					    		indexB = this.recupererIndexDoublon(indexB);
+					    		cptDoublon ++;
+					    	}
+//					    	int indexBuffer = indexPremierDoublon;
+//					    	int indexEncours = indexPremierDoublon;
+					    	int indexMin = indexPremierDoublon;
+					    	int indexATester = this.recupererIndexDoublon(indexMin);
+					    	for (int i = 0; i < cptDoublon; i ++) {
+					    		for (int k = i+1; k < cptDoublon; k++) {
+					    			if (this.recupereNoeudIndex(indexATester).getCle().getPrenomFormate().compareTo(recuperePrenomFormateNoeudBin(indexMin)) < 0) {
+					    				indexMin = indexATester;
+					    				indexATester = this.recupererIndexDoublon(indexATester);
+							    	}
+					    			listeNoeud.add(this.recupereNoeudIndex(indexMin));
+					    			indexATester = this.recupererIndexDoublon(indexATester);
+					    		}
+					    	}
+					    	
+					    	System.out.println("cptDoublon "+cptDoublon);
+
+					}
+					
+					this.raf.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				
+				
+				
+}
+				
+		
+	
 		
 		
 		

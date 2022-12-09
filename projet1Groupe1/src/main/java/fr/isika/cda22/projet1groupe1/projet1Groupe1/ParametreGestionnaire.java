@@ -16,7 +16,7 @@ public interface ParametreGestionnaire {
 	public final static int INDEX_DOUBLON_OCTET = 4 + TAILLE_STAGIAIRE_OCTET + 4 + 4; 
 	
 	public final static String CHEMIN_BIN = "src/main/java/Fichier/sauvegardeAnnuaire.bin";
-	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRES02.DON";
+	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRES.DON";
 	
 	
 	

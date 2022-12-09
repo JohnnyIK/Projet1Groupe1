@@ -21,6 +21,12 @@ public class Lanceur implements ParametreGestionnaire{
 //		Stagiaire s4 = new Stagiaire("Charli", "Jean", "63", "EFT 45 IK 256", "1980");
 //		Stagiaire s5 = new Stagiaire("Delta", "Jacques", "14", "EGT", "1976");
 		//Stagiaire s0 = new Stagiaire("AAAAAAA", "Mathieu Matt", "75", "CDA 22", "2002");
+		Stagiaire s10 = new Stagiaire("Alpha", "jghj Matt", "75", "CDA 22", "2002");
+		Stagiaire s11 = new Stagiaire("Alpha", "jhgj hgaaaaeo", "75", "CDA 22", "2002");
+		Stagiaire s12 = new Stagiaire("Alpha", "hhhh ", "75", "CDA 22", "2002");
+		Stagiaire s13 = new Stagiaire("Alpha", "kgdjh ", "75", "CDA 22", "2002");
+		Stagiaire s14 = new Stagiaire("Alpha", "kkk ", "75", "CDA 22", "2002");
+		Stagiaire s15 = new Stagiaire("Alpha", "fhfjhf ", "75", "CDA 22", "2002");
 //
 //		annuaire.ajouter(s1);
 //		annuaire.ajouter(s2);
@@ -100,13 +106,15 @@ public class Lanceur implements ParametreGestionnaire{
 		
 		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
 		sauvegardeBin.exportToArrayList(listeNoeud);
+		//sauvegardeBin.exportToArrayListDoublon(listeNoeud, 0);
 		 for (Noeud noeud : listeNoeud) {
-			 System.out.println(noeud.getCle().getNom()+" "+noeud.getCle().getPrenom());
+			 System.out.println("ArrayList :"+noeud.getCle().getNom()+" "+noeud.getCle().getPrenom()+" "+noeud.getCle().getFormation());
 		 }
 		 
 		 System.out.println(sauvegardeBin.longueur());
 		 System.out.println(listeNoeud.size());
 		 //System.out.println(resultatRechercheBin.longueur());
+		 
 		
 	}
 }
