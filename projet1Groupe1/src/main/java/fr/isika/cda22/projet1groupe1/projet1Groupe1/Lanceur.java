@@ -113,12 +113,12 @@ public class Lanceur implements ParametreGestionnaire{
 		//noeudSupp.supprimerStagiaireNoeud("POTIN");
 		//noeudSupp.supprimerStagiaireNoeud("GRIMM");
 		
-//		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
-//		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, recherche);
-//		 for (Noeud noeud : listeNoeud) {
-//			 System.out.println("ArrayList :"+noeud.getCle().getNom()+" "+noeud.getCle().getPrenom()+" "+noeud.getCle().getDepartement()+" "+noeud.getCle().getFormation()+" "+noeud.getCle().getAnneeFormation()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
-//		 }
-		 System.out.println("Nbr Stagiaires fichier BIN >> " + sauvegardeBin.longueur());
+		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
+		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, recherche);
+		 for (Noeud noeud : listeNoeud) {
+			 System.out.println("ArrayList :"+noeud.getCle().getNomFormate()+" "+noeud.getCle().getPrenomFormate()+" "+noeud.getCle().getDepartementFormate()+" "+noeud.getCle().getFormationFormate()+" "+noeud.getCle().getAnneeFormationFormate()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
+		 }
+		 System.out.println("Nbr Stagiaires fichier BIN >> " + sauvegardeBin.nbrStagiaires());
 //		 System.out.println("Nbr Stagiaires ArrayList >> " +listeNoeud.size());
 //		 //System.out.println(resultatRechercheBin.longueur());
 		 

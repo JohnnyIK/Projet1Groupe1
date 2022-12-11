@@ -49,6 +49,7 @@ public class App extends Application {
     	
     	stage.setTitle(" Patrick School - Acceuil ");
     	
+    	VueTableau tab = new VueTableau();
     	
     	vuePageAccueil = new VuePageAcceuil();
         
@@ -67,7 +68,7 @@ public class App extends Application {
             stage.setTitle(" Patrick School - ApplicationAdmin ");
         });
 
-        stage.setScene(vuePageAccueil);
+        stage.setScene(tab);
         
         stage.show();
     }
@@ -77,5 +78,6 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
+    
 
 }
