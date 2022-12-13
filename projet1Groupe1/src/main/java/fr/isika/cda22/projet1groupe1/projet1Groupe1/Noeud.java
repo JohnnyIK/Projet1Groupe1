@@ -1,11 +1,13 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.List;
 
 public class Noeud implements ParametreGestionnaire {
 
+
+	
 	// Attributs
 	private int indexNoeud = 0;
 	private Stagiaire cle;
@@ -22,7 +24,12 @@ public class Noeud implements ParametreGestionnaire {
 		this.indexFilsDroit = indexFilsDroit;
 		this.indexDoublon = indexDoublon;
 	}
-	
+
+	// Constructeur vide
+	public Noeud() {
+
+	}
+
 	// Constructeur
 	public Noeud(Stagiaire cle) {
 		super();
@@ -32,17 +39,6 @@ public class Noeud implements ParametreGestionnaire {
 		this.indexFilsDroit = -1;
 		this.indexDoublon = -1;
 	}
-
-	// Constructeur
-	public Noeud() {
-		super();
-		this.indexNoeud = 0;
-		this.cle = null;
-		this.indexFilsGauche = -1;
-		this.indexFilsDroit = -1;
-		this.indexDoublon = -1;
-	}
-			
 
 	// getters & setters
 	public Stagiaire getCle() {
@@ -76,7 +72,7 @@ public class Noeud implements ParametreGestionnaire {
 	public void setIndexDoublon(int indexDoublon) {
 		this.indexDoublon = indexDoublon;
 	}
-	
+
 	public int getIndexNoeud() {
 		return indexNoeud;
 	}
@@ -85,188 +81,16 @@ public class Noeud implements ParametreGestionnaire {
 		this.indexNoeud = indexNoeud;
 	}
 
-	// Méthode qui crée la racine si le fichier est vide, et sinon ajoute le stagiaire sur fichier bin
-	public void ajouterStagiaireBin(Noeud noeudAjout, RandomAccessFile raf) {
-		try {
-			int indexNoeudRacine = 0;
-			if (raf.length() == 0) { // si le fichier binaire est vide, on écrit le stagiaire
-				ecrireNoeudBin(noeudAjout, raf, indexNoeudRacine);
-			} else {
-				raf.seek(TAILLE_NOEUD_OCTET);
-				ecritureBinRecursive(noeudAjout, raf, indexNoeudRacine);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	@Override
+	public String toString() {
+		return "Noeud [indexNoeud=" + indexNoeud + ", cle=" + cle + ", indexFilsGauche=" + indexFilsGauche
+				+ ", indexFilsDroit=" + indexFilsDroit + ", indexDoublon=" + indexDoublon + "]";
 	}
 
-	// Methode recursive d'ajout de stagiaire dans le fichier bin
-	public void ecritureBinRecursive(Noeud noeudAjout, RandomAccessFile raf, int index) {
-		try {
-			int indexNoeud = (int) (raf.length() / TAILLE_NOEUD_OCTET);
-			int indexParent = index;
-			if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) < 0) { // on part a gauche
-
-				if (recupererIndexFilsGauche(indexParent, raf) != -1) { // il y a un fils gauche
-					indexParent = recupererIndexFilsGauche(indexParent, raf);
-					ecritureBinRecursive(noeudAjout, raf, indexParent); // on passe la methode au fils gauche
-				} else { // il n'y a pas de fils gauche
-					ecrireFilsGauche(indexParent, raf, indexNoeud);
-					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
-				}
-			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) > 0) { // on part a Droite
-
-				if (recupererIndexFilsDroit(indexParent, raf) != -1) { // il y a un fils Droit
-					indexParent = recupererIndexFilsDroit(indexParent, raf);
-					ecritureBinRecursive(noeudAjout, raf, indexParent); // on passe la methode au fils Droit
-				} else { // il n'y a pas de fils Droit
-					ecrireFilsDroit(indexParent, raf, indexNoeud);
-					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
-				}
-			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) == 0) {
-				if (recupererIndexDoublon(indexParent, raf) != -1) {
-					indexParent = recupererIndexDoublon(indexParent, raf);
-					ecritureBinRecursive(noeudAjout, raf, indexParent);
-				} else {
-					ecrireDoublon(indexParent, raf, indexNoeud);
-					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
-				}
-
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-	
-	
-	
-	// Methode pour écrire le noeud stagiaire dans le fichier binaire à la fin du fichier binaire
-	public void ecrireNoeudBin(Noeud noeudAjout, RandomAccessFile raf, int indexNoeud) {
-		try {
-			
-		raf.seek(raf.length());
-		raf.writeInt(indexNoeud);
-		recuperationAttributsStagiaireBin(noeudAjout.getCle(), raf);
-		raf.writeInt(noeudAjout.getIndexFilsGauche());
-		raf.writeInt(noeudAjout.getIndexFilsDroit());
-		raf.writeInt(noeudAjout.getIndexDoublon());
-		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-
-	// Methode qui modifie l'indexFilsGauche du noeud parent en lui attribuant la valeur indexNoeud
-	public void ecrireFilsGauche(int indexParent, RandomAccessFile raf, int indexNoeud) {
-		try {
-			raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
-			raf.writeInt(indexNoeud);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	// Methode qui modifie l'indexFilsDroit du noeud parent en lui attribuant la valeur indexNoeud
-	public void ecrireFilsDroit(int indexParent, RandomAccessFile raf, int indexNoeud) {
-		try {
-			raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
-			raf.writeInt(indexNoeud);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	// Methode qui modifie l'indexDoublon du noeud parent en lui attribuant la valeur indexNoeud
-	public void ecrireDoublon(int indexParent, RandomAccessFile raf, int indexNoeud) {
-		try {
-			raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
-			raf.writeInt(indexNoeud);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	// Methode qui récupère l'indexFilsGauche du noeud parent
-	public int recupererIndexFilsGauche(int indexNoeud, RandomAccessFile raf) {
-		int indexParent = 0;
-		try {
-			raf.seek((indexNoeud* TAILLE_NOEUD_OCTET)+INDEX_FILS_GAUCHE_OCTET);
-			indexParent += raf.readInt();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return indexParent;
-	}
-	
-	// Methode qui récupère l'indexFilsDroit du noeud parent
-	public int recupererIndexFilsDroit(int indexNoeud, RandomAccessFile raf) {
-		int indexParent = 0;
-		try {
-			raf.seek((indexNoeud* TAILLE_NOEUD_OCTET)+INDEX_FILS_DROIT_OCTET);
-			indexParent += raf.readInt();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return indexParent;
-	}
-	
-	// Methode qui récupère l'indexDoublon du noeud parent
-	public int recupererIndexDoublon(int indexNoeud, RandomAccessFile raf) {
-		int indexParent = 0;
-		try {
-			raf.seek((indexNoeud* TAILLE_NOEUD_OCTET)+INDEX_DOUBLON_OCTET);
-			indexParent += raf.readInt();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return indexParent;
-	}
-
-	// Methode qui récupère l'attribut "nom" du noeud parent
-	public String recupereNomIndex(int indexParent, RandomAccessFile raf) {
-		String nomRecup = "";
-		try {
-			raf.seek(indexParent*TAILLE_NOEUD_OCTET + INDEX_NOM_OCTET);
-			for (int k = 0; k < TAILLE_MAX_NOM; k++) {
-				nomRecup += raf.readChar();
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return nomRecup;
-	}
-
-	// methode qui ecrit les attributs du stagiaire dans le fichier binaire
-	public void recuperationAttributsStagiaireBin(Stagiaire stagiaire, RandomAccessFile raf) {
-		try {
-
-			String nomLong = stagiaire.getNomFormate();
-			String prenomLong = stagiaire.getPrenomFormate();
-			raf.writeChars(nomLong);
-			raf.writeChars(prenomLong);
-			raf.writeChars(stagiaire.getDepartement());
-			raf.writeChars(stagiaire.getFormationFormate());
-			raf.writeChars(stagiaire.getAnneeFormation());
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-	
-	
-	
-	// ******** AJOUT 20221207 *******************************************************************************
 	/**
-	 * Recupere l'attribut "nom" (en version non-formate) du noeud dans le fichier Bin
-	 * 
+	 * Recupere l'attribut "nom" (en version non-formate) du noeud dans le fichier
+	 * Bin
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String nom
@@ -276,10 +100,10 @@ public class Noeud implements ParametreGestionnaire {
 		return nomFormate.trim();
 	}
 
-	
 	/**
-	 * Recupere l'attribut "prenom" (en version formate) du noeud dans le fichier Bin
-	 * 
+	 * Recupere l'attribut "prenom" (en version formate) du noeud dans le fichier
+	 * Bin
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String prenomFormate
@@ -291,19 +115,16 @@ public class Noeud implements ParametreGestionnaire {
 			for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
 				prenomFormate += raf.readChar();
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return prenomFormate;
 	}
 
-		
 	/**
 	 * Recupere l'attribut "prenom" (en version non-formate) du noeud dans le
 	 * fichier Bin
-	 * 
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String prenom
@@ -312,12 +133,11 @@ public class Noeud implements ParametreGestionnaire {
 		String prenomFormate = recuperePrenomFormateNoeud(index, raf);
 		return prenomFormate.trim();
 	}
-		
 
 	/**
 	 * Recupere l'attribut "departement" (en version formate) du noeud dans le
 	 * fichier Bin
-	 * 
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String departementFormate
@@ -329,18 +149,16 @@ public class Noeud implements ParametreGestionnaire {
 			for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
 				departementFormate += raf.readChar();
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return departementFormate;
 	}
 
 	/**
 	 * Recupere l'attribut "departement" (en version non-formate) du noeud dans le
 	 * fichier Bin
-	 * 
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String departement
@@ -351,9 +169,9 @@ public class Noeud implements ParametreGestionnaire {
 	}
 
 	/**
-	 * Recupere l'attribut "formation" (en version formate) du noeud dans le
-	 * fichier Bin
-	 * 
+	 * Recupere l'attribut "formation" (en version formate) du noeud dans le fichier
+	 * Bin
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String formationFormate
@@ -365,18 +183,16 @@ public class Noeud implements ParametreGestionnaire {
 			for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
 				formationFormate += raf.readChar();
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return formationFormate;
 	}
 
 	/**
 	 * Recupere l'attribut "formation" (en version non-formate) du noeud dans le
 	 * fichier Bin
-	 * 
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String formation
@@ -385,11 +201,11 @@ public class Noeud implements ParametreGestionnaire {
 		String formationFormate = recupereFormationFormateNoeud(index, raf);
 		return formationFormate.trim();
 	}
-		
+
 	/**
 	 * Recupere l'attribut "anneeFormation" (en version formate) du noeud dans le
 	 * fichier Bin
-	 * 
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String anneeFormationFormate
@@ -401,18 +217,16 @@ public class Noeud implements ParametreGestionnaire {
 			for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
 				anneeFormationFormate += raf.readChar();
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return anneeFormationFormate;
 	}
 
 	/**
 	 * Recupere l'attribut "anneeFormation" (en version non-formate) du noeud dans
 	 * le fichier Bin
-	 * 
+	 *
 	 * @param index Index du noeud
 	 * @param raf   Le RandomAccessFile du fichier bin
 	 * @return String anneeFormation
@@ -421,10 +235,7 @@ public class Noeud implements ParametreGestionnaire {
 		String anneeFormationFormate = recupereAnneeFormationFormateNoeud(index, raf);
 		return anneeFormationFormate.trim();
 	}
-		
-		
-		
-		
+
 	// Méthode qui crée la racine si le fichier est vide, et sinon ajoute le
 	// stagiaire sur fichier bin
 	public void ajouterStagiaireBinIndexInitial(Noeud noeudAjout, RandomAccessFile raf, int indexInitial) {
@@ -436,7 +247,6 @@ public class Noeud implements ParametreGestionnaire {
 				// raf.seek(TAILLE_NOEUD_OCTET);
 				ecritureBinRecursiveIndexInitial(noeudAjout, raf, indexNoeudRacine, indexInitial);
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -447,7 +257,6 @@ public class Noeud implements ParametreGestionnaire {
 		try {
 			int indexNoeud = (int) (raf.length() / TAILLE_NOEUD_OCTET);
 			int indexParent = index;
-
 			if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) < 0) {
 				// on part a gauche
 				if (recupererIndexFilsGauche(indexParent, raf) != -1) {
@@ -480,6 +289,64 @@ public class Noeud implements ParametreGestionnaire {
 					ecrireDoublon(indexParent, raf, indexNoeud);
 					ecrireNoeudBin(noeudAjout, raf, indexInitial);
 				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Méthode qui crée la racine si le fichier est vide, et sinon ajoute le
+	// stagiaire sur fichier bin
+	public void ajouterStagiaireBin(Noeud noeudAjout, RandomAccessFile raf) {
+		try {
+			int indexNoeudRacine = 0;
+			if (raf.length() == 0) { // si le fichier binaire est vide, on écrit le stagiaire
+				ecrireNoeudBin(noeudAjout, raf, indexNoeudRacine);
+			} else {
+				raf.seek(TAILLE_NOEUD_OCTET);
+				ecritureBinRecursive(noeudAjout, raf, indexNoeudRacine);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Methode recursive d'ajout de stagiaire dans le fichier bin
+	public void ecritureBinRecursive(Noeud noeudAjout, RandomAccessFile raf, int index) {
+		try {
+			int indexNoeud = (int) (raf.length() / TAILLE_NOEUD_OCTET);
+			int indexParent = index;
+			if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) < 0) { // on part a
+																											// gauche
+
+				if (recupererIndexFilsGauche(indexParent, raf) != -1) { // il y a un fils gauche
+					indexParent = recupererIndexFilsGauche(indexParent, raf);
+					ecritureBinRecursive(noeudAjout, raf, indexParent); // on passe la methode au fils gauche
+				} else { // il n'y a pas de fils gauche
+					ecrireFilsGauche(indexParent, raf, indexNoeud);
+					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
+				}
+			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) > 0) { // on
+																												// part
+																												// à
+																												// droite
+
+				if (recupererIndexFilsDroit(indexParent, raf) != -1) { // il y a un fils Droit
+					indexParent = recupererIndexFilsDroit(indexParent, raf);
+					ecritureBinRecursive(noeudAjout, raf, indexParent); // on passe la methode au fils Droit
+				} else { // il n'y a pas de fils Droit
+					ecrireFilsDroit(indexParent, raf, indexNoeud);
+					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
+				}
+			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomIndex(indexParent, raf)) == 0) {
+				if (recupererIndexDoublon(indexParent, raf) != -1) {
+					indexParent = recupererIndexDoublon(indexParent, raf);
+					ecritureBinRecursive(noeudAjout, raf, indexParent);
+				} else {
+					ecrireDoublon(indexParent, raf, indexNoeud);
+					ecrireNoeudBin(noeudAjout, raf, indexNoeud);
+				}
 
 			}
 
@@ -488,13 +355,662 @@ public class Noeud implements ParametreGestionnaire {
 		}
 
 	}
-	
-	
-	
-	
+
+	// Methode pour écrire le noeud stagiaire dans le fichier binaire à la fin du
+	// fichier binaire
+	public void ecrireNoeudBin(Noeud noeudAjout, RandomAccessFile raf, int indexNoeud) {
+		try {
+
+			raf.seek(raf.length());
+			raf.writeInt(indexNoeud);
+			recuperationAttributsStagiaireBin(noeudAjout.getCle(), raf);
+			raf.writeInt(noeudAjout.getIndexFilsGauche());
+			raf.writeInt(noeudAjout.getIndexFilsDroit());
+			raf.writeInt(noeudAjout.getIndexDoublon());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void ecrireIndexNoeud(int indexParent, RandomAccessFile raf, int indexNoeud) {
+		try {
+			raf.seek((indexParent * TAILLE_NOEUD_OCTET));
+			raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Methode qui modifie l'indexFilsGauche du noeud parent en lui attribuant la
+	// valeur indexNoeud
+	public void ecrireFilsGauche(int indexParent, RandomAccessFile raf, int indexNoeud) {
+		try {
+			raf.seek((indexParent * TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
+			raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Methode qui modifie l'indexFilsDroit du noeud parent en lui attribuant la
+	// valeur indexNoeud
+	public void ecrireFilsDroit(int indexParent, RandomAccessFile raf, int indexNoeud) {
+		try {
+			raf.seek((indexParent * TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
+			raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Methode qui modifie l'indexDoublon du noeud parent en lui attribuant la
+	// valeur indexNoeud
+	public void ecrireDoublon(int indexParent, RandomAccessFile raf, int indexNoeud) {
+		try {
+			raf.seek((indexParent * TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
+			raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Methode qui récupère l'index du noeud
+	public int recupererIndexNoeud(int indexNoeud, RandomAccessFile raf) {
+		int indexParent = 0;
+		try {
+			raf.seek((indexNoeud * TAILLE_NOEUD_OCTET));
+			indexParent += raf.readInt();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return indexParent;
+	}
+
+	// Methode qui récupère l'indexFilsGauche du noeud parent
+	public int recupererIndexFilsGauche(int indexNoeud, RandomAccessFile raf) {
+		int indexParent = 0;
+		try {
+			raf.seek((indexNoeud * TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
+			indexParent += raf.readInt();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return indexParent;
+	}
+
+	// Methode qui récupère l'indexFilsDroit du noeud parent
+	public int recupererIndexFilsDroit(int indexNoeud, RandomAccessFile raf) {
+		int indexParent = 0;
+		try {
+			raf.seek((indexNoeud * TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
+			indexParent += raf.readInt();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return indexParent;
+	}
+
+	// Methode qui récupère l'indexDoublon du noeud parent
+	public int recupererIndexDoublon(int indexNoeud, RandomAccessFile raf) {
+		int indexParent = 0;
+		try {
+			raf.seek((indexNoeud * TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
+			indexParent += raf.readInt();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return indexParent;
+	}
+
+	// Methode qui récupère l'attribut "nom" du noeud parent
+	public String recupereNomIndex(int indexParent, RandomAccessFile raf) {
+		String nomRecup = "";
+		try {
+			raf.seek(indexParent * TAILLE_NOEUD_OCTET + INDEX_NOM_OCTET);
+			for (int k = 0; k < TAILLE_MAX_NOM; k++) {
+				nomRecup += raf.readChar();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return nomRecup;
+	}
+
+	// methode qui ecrit les attributs du stagiaire dans le fichier binaire
+	public void recuperationAttributsStagiaireBin(Stagiaire stagiaire, RandomAccessFile raf) {
+		try {
+
+			String nomLong = stagiaire.getNomFormate();
+			String prenomLong = stagiaire.getPrenomFormate();
+			raf.writeChars(nomLong);
+			raf.writeChars(prenomLong);
+			raf.writeChars(stagiaire.getDepartement());
+			raf.writeChars(stagiaire.getFormationFormate());
+			raf.writeChars(stagiaire.getAnneeFormation());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	// Méthode pour supprimer un stagiaire
+	public void supprimerStagiaireNoeud(int indexStagiaireSupp) {
+		try {
+
+			int indexRacine = 0;
+			int indexSansFils = -1;
+			
+			RandomAccessFile raf = new RandomAccessFile(CHEMIN_BIN, "rw");
+			
+			Noeud noeudSupp = new Noeud();
+			noeudSupp = noeudSupp.recupererNoeudSupp(noeudSupp, indexStagiaireSupp, raf);
+			System.out.println(noeudSupp);
+
+			//Si c'est la racine
+			if(noeudSupp.getIndexNoeud()==indexRacine) { 
+				supprimerRacine(noeudSupp, raf);
+			}else {
+				//Si le noeud à un doublon
+				if(noeudSupp.getIndexDoublon()!=-1) {
+					modifierNoeudAvecDoublon(noeudSupp, raf);
+				}else {
+					
+			//Si le noeud à supprimer n'a pas de fils 
+			if(noeudSupp.getIndexFilsGauche()==indexSansFils && noeudSupp.getIndexFilsDroit()==indexSansFils) {
+				modifierNoeudParentSansFils(noeudSupp, raf);
+			//Si le noeud à supprimer à 2 fils	
+			}else if (noeudSupp.getIndexFilsGauche()!=indexSansFils && noeudSupp.getIndexFilsDroit()!=indexSansFils) {
+				modifierNoeudAvecFilsDroit(noeudSupp, raf);
+			//Si le noeud à supprimer a un fils droit
+			}else if (noeudSupp.getIndexFilsGauche()==indexSansFils) {
+				modifierNoeudAvecFilsDroit(noeudSupp, raf);
+			//Si le noeud à supprimer a un fils gauche
+			}else if (noeudSupp.getIndexFilsDroit()==indexSansFils) {
+				modifierNoeudAvecFilsGauche(noeudSupp, raf);
+			}
+				}	
+			}
 		
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+	private void modifierNoeudAvecDoublon(Noeud noeudSupp, RandomAccessFile raf) {
+		int indexNoeudSansFils = -1;
+		int indexPourNoeudSupp = -5;
+		
+		int indexNoeudSupp = noeudSupp.getIndexNoeud();//23
+		int indexNoeudParent = 0;
+
+		int indexFGnoeudSupp = noeudSupp.getIndexFilsGauche();//58
+		int indexFDnoeudSupp = noeudSupp.getIndexFilsDroit();//-1
+		int indexDbNoeudSupp = noeudSupp.getIndexDoublon();//28
+		int indexNoeudRemplancant = indexDbNoeudSupp;
+
+		// Chercher le parents
+		indexNoeudParent = recupererIndexParent(indexNoeudSupp, raf, indexNoeudParent);//21
+
+		Noeud noeudParent = new Noeud();
+		noeudParent = noeudParent.recupererNoeud(noeudParent, indexNoeudParent, raf);
+
+		System.out.println("\nnoeud recup : " + noeudParent);
+		
+		indexNoeudParent = getIndexNoeud();
+		
+		System.out.println("\n" + indexNoeudSupp);
+		System.out.println("\n" + indexNoeudParent);
+		
+		// Modifier le parent du noeud Supp
+		if (noeudParent.getIndexFilsDroit()==indexNoeudSupp) {
+			ecrireFilsDroit(indexNoeudParent, raf, indexDbNoeudSupp);
+		}else if (noeudParent.getIndexFilsGauche()==indexNoeudSupp) {
+			ecrireFilsGauche(indexNoeudParent, raf, indexDbNoeudSupp);
+		}	
+		
+		//Modifier le noeud remplacant le noeud Supp
+		ecrireFilsGauche(indexNoeudRemplancant, raf, indexFGnoeudSupp);											
+		ecrireFilsDroit(indexNoeudRemplancant, raf, indexFDnoeudSupp);
+		
+		//Modifier noeud supp
+		ecrireFilsGauche(indexNoeudSupp, raf, indexPourNoeudSupp);
+		ecrireFilsDroit(indexNoeudSupp, raf, indexPourNoeudSupp);
+		ecrireDoublon(indexNoeudSupp, raf, indexPourNoeudSupp);
+		
+	}
 	
-	
+	private void supprimerRacine(Noeud noeudSupp, RandomAccessFile raf) {
+		int indexNoeudSansFils = -1;
+		int indexPourNoeudSupp = -5;
+		int indexRacine = 0;
+		
+		int indexNoeudParentRemplacant = 0;
+		int indexNoeudRemplacant = 0;
+		int indexFilsNoeudRemplacant = 0;
+		
+		int indexNoeudSupp = noeudSupp.getIndexNoeud();
+		int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
+
+		int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
+		int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+
+		Noeud noeudRecup = new Noeud();
+		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf); 
+
+		// chercher le fils du noeud supp
+		if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
+			indexNoeudSuppRecursif = chercherFilsPlusPetit(noeudRecup, raf, indexNoeudSuppRecursif);
+		}
+		indexNoeudRemplacant = getIndexNoeud();
+		
+		//Récupérer le noeud remplacant
+		Noeud noeudRemplacant = new Noeud();
+		noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
+		//Récupérer l'index du noeud parent du noeud Remplacant
+		indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
+		
+		if(noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
+			indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
+		}else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
+			indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
+		}else {
+			indexFilsNoeudRemplacant = indexNoeudSansFils;
+		}
+		
+		//Modifier le noeud remplacant le noeud Supp
+		ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
+		ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
+		
+		//Modifier le parent du noeud remplacant pour pas perdre le fils du noeud remplacant
+		ecrireFilsGauche(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
+		
+		
+		//Modifier noeud supp
+		ecrireFilsGauche(indexNoeudSupp, raf, indexPourNoeudSupp);
+		ecrireFilsDroit(indexNoeudSupp, raf, indexPourNoeudSupp);
+		ecrireDoublon(indexNoeudSupp, raf, indexPourNoeudSupp);
+		
+		
+		
+		//Modifier l'index de l'ancienne racine
+		ecrireIndexNoeud(indexRacine, raf, indexPourNoeudSupp);
+		
+		//Modificer l'index de la nouvelle racine
+		ecrireIndexNoeud(indexNoeudRemplacant, raf, indexRacine);
+		
+		
+
+	}
+
+
+	private void modifierNoeudAvecFilsGauche(Noeud noeudSupp, RandomAccessFile raf) {
+			int indexNoeudSansFils = -1;
+			int indexPourNoeudSupp = -5;
+			
+			int indexNoeudParentRemplacant = 0;
+			int indexNoeudParent = 0;
+			int indexNoeudRemplacant = 0;
+			int indexFilsNoeudRemplacant = 0;
+			
+			int indexNoeudSupp = noeudSupp.getIndexNoeud();
+			int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
+			//Récupérer l'index du noeud parent du noeud Supp
+			indexNoeudParent = recupererIndexParent(indexNoeudSuppRecursif, raf, indexNoeudParent);
+
+			int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
+			int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+
+			Noeud noeudRecup = new Noeud();
+			noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf); 
+
+			// chercher le fils du noeud supp
+			if (noeudRecup.getIndexFilsDroit() != indexNoeudSansFils) {
+				indexNoeudSuppRecursif = chercherFilsPlusGrand(noeudRecup, raf, indexNoeudSuppRecursif);
+			}
+			indexNoeudRemplacant = getIndexNoeud();
+			
+			//Récupérer le noeud remplacant
+			Noeud noeudRemplacant = new Noeud();
+			noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
+			//Récupérer l'index du noeud parent du noeud Remplacant
+			indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
+			
+			if(noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
+				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
+			}else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
+				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
+			}else {
+				indexFilsNoeudRemplacant = indexNoeudSansFils;
+			}
+			
+			// Modifier le parent du noeud Supp
+			ecrireFilsGauche(indexNoeudParent, raf, indexNoeudRemplacant);
+			
+			//Modifier le noeud remplacant le noeud Supp
+			ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
+			ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
+			
+			//Modifier le parent du noeud remplacant pour pas perdre le fils du noeud remplacant
+			ecrireFilsDroit(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
+			
+			//Modifier noeud supp
+			ecrireFilsGauche(indexNoeudSupp, raf, indexPourNoeudSupp);
+			ecrireFilsDroit(indexNoeudSupp, raf, indexPourNoeudSupp);
+			ecrireDoublon(indexNoeudSupp, raf, indexPourNoeudSupp);
+		}
 	
 
+
+	private int chercherFilsPlusGrand(Noeud noeudFils, RandomAccessFile raf, int indexNoeudNouveauFils) {
+		int indexNoeudSansFils = -1;
+		indexNoeud = 0;
+
+		int indexFilsNoeud = noeudFils.getIndexFilsDroit();
+
+		while (indexFilsNoeud != recupererIndexNoeud(indexNoeud, raf)) {
+			indexNoeud++;
+		}
+
+		Noeud noeudRecup = new Noeud();
+		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexNoeud, raf);
+		System.out.println(noeudRecup);
+
+		// Si pas de fils gauche
+		if (noeudRecup.getIndexFilsDroit() != indexNoeudSansFils) {
+			chercherFilsPlusGrand(noeudRecup, raf, indexNoeudNouveauFils);
+		}
+		indexNoeudNouveauFils = noeudRecup.getIndexNoeud();
+
+		return indexNoeudNouveauFils;
+
+	}
+
+	// Méthode pour donner au Noeud Parents l'index du fils le plus petit à la place
+		// de l'index du noeud supp
+		private void modifierNoeudAvecFilsDroit(Noeud noeudSupp, RandomAccessFile raf) {
+			int indexNoeudSansFils = -1;
+			int indexPourNoeudSupp = -5;
+			
+			int indexNoeudParentRemplacant = 0;
+			int indexNoeudParent = 0;
+			int indexNoeudRemplacant = 0;
+			int indexFilsNoeudRemplacant = 0;
+			
+			int indexNoeudSupp = noeudSupp.getIndexNoeud();
+			int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
+			//Récupérer l'index du noeud parent du noeud Supp
+			indexNoeudParent = recupererIndexParent(indexNoeudSuppRecursif, raf, indexNoeudParent);
+
+			int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
+			int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+
+			Noeud noeudRecup = new Noeud();
+			noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf); 
+
+			// chercher le fils du noeud supp
+			if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
+				indexNoeudSuppRecursif = chercherFilsPlusPetit(noeudRecup, raf, indexNoeudSuppRecursif);
+			}
+			indexNoeudRemplacant = getIndexNoeud();
+			
+			//Récupérer le noeud remplacant
+			Noeud noeudRemplacant = new Noeud();
+			noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
+			//Récupérer l'index du noeud parent du noeud Remplacant
+			indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
+			
+			if(noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
+				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
+			}else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
+				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
+			}else {
+				indexFilsNoeudRemplacant = indexNoeudSansFils;
+			}
+			
+			// Modifier le parent du noeud Supp
+			ecrireFilsDroit(indexNoeudParent, raf, indexNoeudRemplacant);
+			
+			//Modifier le noeud remplacant le noeud Supp
+			ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
+			ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
+			
+			//Modifier le parent du noeud remplacant pour pas perdre le fils du noeud remplacant
+			ecrireFilsGauche(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
+			
+			//Modifier noeud supp
+			ecrireFilsGauche(indexNoeudSupp, raf, indexPourNoeudSupp);
+			ecrireFilsDroit(indexNoeudSupp, raf, indexPourNoeudSupp);
+			ecrireDoublon(indexNoeudSupp, raf, indexPourNoeudSupp);
+
+		}
+
+
+	private int recupererIndexParent(int indexNoeudFils, RandomAccessFile raf, int indexNoeudParent) {
+		indexNoeud = 0;
+		int indexNoeudSansFils = -1;
+
+		while ((indexNoeudFils != recupererIndexFilsGauche(indexNoeud, raf)
+				&& (indexNoeudFils != recupererIndexFilsDroit(indexNoeud, raf))
+				&& (indexNoeudFils != recupererIndexDoublon(indexNoeud, raf)))) {
+			indexNoeud++;
+		}
+
+		return indexNoeudParent = indexNoeud;
+
+	}
+	
+	private int chercherFilsPlusPetit(Noeud noeudFils, RandomAccessFile raf, int indexNoeudNouveauFils) {
+		int indexNoeudSansFils = -1;
+		indexNoeud = 0;
+
+		int indexFilsNoeud = noeudFils.getIndexFilsGauche();
+
+		while (indexFilsNoeud != recupererIndexNoeud(indexNoeud, raf)) {
+			indexNoeud++;
+		}
+
+		Noeud noeudRecup = new Noeud();
+		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexNoeud, raf);
+		System.out.println(noeudRecup);
+
+		// Si pas de fils gauche
+		if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
+			chercherFilsPlusPetit(noeudRecup, raf, indexNoeudNouveauFils);
+		}
+		indexNoeudNouveauFils = noeudRecup.getIndexNoeud();
+
+		return indexNoeudNouveauFils;
+
+	}
+
+//	private Noeud chercherFilsPlusPetit(Noeud noeudRemplacant, RandomAccessFile raf) {
+//		int indexNoeudSansFils = -1;
+//
+//		int indexFilsNoeud = noeudRemplacant.getIndexFilsGauche();//9 NOUAR
+//		
+//		noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexFilsNoeud, raf);
+//		
+////		Noeud noeudRecup = new Noeud();
+////		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFilsNoeud, raf);
+////		System.out.println("\nNoeud Recup dans +petit : " + noeudRecup);
+//
+//		// Si pas de fils gauche
+//		if (noeudRemplacant.getIndexFilsGauche() == indexNoeudSansFils) {
+//			chercherFilsPlusPetit(noeudRemplacant, raf);
+//		}
+//		
+//		
+//		System.out.println("Nremplacant dans cherche+petit : " + noeudRemplacant);
+//
+//		return noeudRemplacant;
+//
+//	}
+
+	private Noeud recupererNoeud(Noeud noeudRecup, int indexNoeud, RandomAccessFile raf) {
+
+		try {
+			raf.seek(indexNoeud * TAILLE_NOEUD_OCTET);
+
+			int indexNoeudSupp = 0;
+			String nomRecup = "";
+			String prenomRecup = "";
+			String departementRecup = "";
+			String formationRecup = "";
+			String anneeFormationRecup = "";
+			int indexFilsGauche = 0;
+			int indexFilsDroit = 0;
+			int indexDoublon = 0;
+
+			indexNoeudSupp = raf.readInt();
+
+			for (int k = 0; k < TAILLE_MAX_NOM; k++) {
+				nomRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
+				prenomRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
+				departementRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
+				formationRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
+				anneeFormationRecup += raf.readChar();
+			}
+
+			indexFilsGauche += raf.readInt();
+			indexFilsDroit += raf.readInt();
+			indexDoublon += raf.readInt();
+
+			// Création noeud
+			noeudRecup = new Noeud(indexNoeudSupp, null, indexFilsGauche, indexFilsDroit, indexDoublon);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return noeudRecup;
+	}
+
+	private void modifierNoeudParentSansFils(Noeud noeudSupp, RandomAccessFile raf) {
+
+		int indexNoeudSansFils = -1;
+		int indexPourNoeudSupp = -5;
+
+		// Chercher le noeud parent du noeud à supprimer
+		int indexNoeudSupp = noeudSupp.getIndexNoeud();
+		int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
+		int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+		int indexDbNoeudSupp = noeudSupp.getIndexDoublon();
+
+		int indexParent = 0;
+
+		while ((indexNoeudSupp != recupererIndexFilsGauche(indexParent, raf)
+				&& (indexNoeudSupp != recupererIndexFilsDroit(indexParent, raf))
+				&& (indexNoeudSupp != recupererIndexDoublon(indexParent, raf)))) {
+			indexParent++;
+		}
+		
+		// Modif des index fils du parent 
+		if (indexNoeudSupp == recupererIndexFilsGauche(indexParent, raf)) {
+			ecrireFilsGauche(indexParent, raf, indexNoeudSansFils);
+		} else if (indexNoeudSupp == recupererIndexFilsDroit(indexParent, raf)) {
+			ecrireFilsDroit(indexParent, raf, indexNoeudSansFils);
+		} else {
+			ecrireDoublon(indexParent, raf, indexNoeudSansFils);
+		}
+		
+		// Modif des index fils du noeud Supp
+		ecrireFilsGauche(indexNoeudSupp, raf, indexPourNoeudSupp);
+		ecrireFilsDroit(indexNoeudSupp, raf, indexPourNoeudSupp);
+		ecrireDoublon(indexNoeudSupp, raf, indexPourNoeudSupp);
+
+	}
+
+	// Méthode pour chercher le noeud qui à le nom à supprimer et recupérer ce noeud
+	private Noeud recupererNoeudSupp(Noeud noeudSupp, int indexStagiaireSupp, RandomAccessFile raf) {
+
+		int indexNoeud = 0;
+		
+		// rehcerhce du noeud à supprimer
+		while (indexStagiaireSupp != recupererIndexNoeud(indexNoeud, raf))  {
+			indexNoeud++;
+		}
+
+		// Création noeud avec lecture .Bin
+		try {
+			raf.seek(indexNoeud * TAILLE_NOEUD_OCTET);
+
+			int indexNoeudSupp = 0;
+			String nomRecupSupp = "";
+			String prenomRecupSupp = "";
+			String departementRecupSupp = "";
+			String formationRecupSupp = "";
+			String anneeFormationRecupSupp = "";
+			int indexFilsGaucheSupp = 0;
+			int indexFilsDroitSupp = 0;
+			int indexDoublonSupp = 0;
+
+			indexNoeudSupp = raf.readInt();
+
+			for (int k = 0; k < TAILLE_MAX_NOM; k++) {
+				nomRecupSupp += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
+				prenomRecupSupp += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
+				departementRecupSupp += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
+				formationRecupSupp += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
+				anneeFormationRecupSupp += raf.readChar();
+			}
+
+			indexFilsGaucheSupp += raf.readInt();
+			indexFilsDroitSupp += raf.readInt();
+			indexDoublonSupp += raf.readInt();
+
+			// Création noeud
+			noeudSupp = new Noeud(indexNoeudSupp, null, indexFilsGaucheSupp, indexFilsDroitSupp, indexDoublonSupp);
+
+			// POUR VERIF DE RECUPERATION DU BON NOEUD
+
+			System.out.println("IndexRecupSupp = " + indexNoeudSupp);
+			System.out.println("nomRecupSupp = " + nomRecupSupp.trim());
+			System.out.println("prenomRecupSupp = " + prenomRecupSupp.trim());
+			System.out.println("departementRecupSupp = " + departementRecupSupp.trim());
+			System.out.println("formationRecupSupp = " + formationRecupSupp.trim());
+			System.out.println("anneeFormationRecupSupp = " + anneeFormationRecupSupp.trim());
+			System.out.println("indexFilsGauchSuppe = " + indexFilsGaucheSupp);
+			System.out.println("indexFilsDroit = " + indexFilsDroitSupp);
+			System.out.println("doublonSupp = " + indexDoublonSupp + "\n");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return noeudSupp;
+	}
+
+	
 }
+

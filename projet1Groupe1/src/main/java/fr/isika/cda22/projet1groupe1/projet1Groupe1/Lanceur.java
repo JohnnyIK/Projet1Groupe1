@@ -80,7 +80,35 @@ public class Lanceur implements ParametreGestionnaire{
 		ArbreBin sauvegardeBin = new ArbreBin(CHEMIN_BIN);
 		sauvegardeBin.importAnnuaireTexte();
 		sauvegardeBin.afficherFichierBin();
+		System.out.println("Nbr Stagiaires fichier BIN >> " + sauvegardeBin.nbrStagiaires());
 		
+		
+		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
+		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, null);
+		for (Noeud noeud : listeNoeud) {
+			 System.out.println("ArrayList : nbrTotalStag = "+listeNoeud.size()+" //// "+noeud.getCle().getNomFormate()+" "+noeud.getCle().getPrenomFormate()+" "+noeud.getCle().getDepartementFormate()+" "+noeud.getCle().getFormationFormate()+" "+noeud.getCle().getAnneeFormationFormate()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
+		}
+		
+		sauvegardeBin.ajouterStagiaireBin(s15);
+		sauvegardeBin.ajouterStagiaireBin(s11);
+		
+		 System.out.println("\n SUPPRESSION");
+		 Noeud noeudVide = new Noeud();
+		 //noeudVide.supprimerStagiaireNoeud(0);
+		 System.out.println("************\n");
+		
+		 
+		listeNoeud.clear();
+		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, null);
+		for (Noeud noeud : listeNoeud) {
+			 System.out.println("ArrayList : nbrTotalStag = "+listeNoeud.size()+" //// "+noeud.getCle().getNomFormate()+" "+noeud.getCle().getPrenomFormate()+" "+noeud.getCle().getDepartementFormate()+" "+noeud.getCle().getFormationFormate()+" "+noeud.getCle().getAnneeFormationFormate()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
+		}
+		
+		
+		
+		
+		
+		/*
 		List<String> departementRech = new ArrayList<String>();
 		departementRech.add("91");
 		departementRech.add("75");
@@ -104,24 +132,22 @@ public class Lanceur implements ParametreGestionnaire{
 //			 System.out.println(noeud.getCle().getNom()+" "+noeud.getCle().getPrenom());
 //		 }
 		
-		//sauvegardeBin.supprimerStagiaireNoeud("LEROUSSEAUD");
-		NoeudSuppression noeudSupp = new NoeudSuppression();
-
-		//noeudSupp.supprimerStagiaireNoeud("ROIGNANT");
-		//noeudSupp.supprimerStagiaireNoeud("GARIJO");
-		//noeudSupp.supprimerStagiaireNoeud("AUGEREAU");
-		//noeudSupp.supprimerStagiaireNoeud("POTIN");
-		//noeudSupp.supprimerStagiaireNoeud("GRIMM");
-		
+		System.out.println("Nbr Stagiaires fichier BIN >> " + sauvegardeBin.nbrStagiaires());
 		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
 		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, recherche);
 		 for (Noeud noeud : listeNoeud) {
-			 System.out.println("ArrayList :"+noeud.getCle().getNomFormate()+" "+noeud.getCle().getPrenomFormate()+" "+noeud.getCle().getDepartementFormate()+" "+noeud.getCle().getFormationFormate()+" "+noeud.getCle().getAnneeFormationFormate()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
+			 System.out.println("ArrayList :"+listeNoeud.size()+noeud.getCle().getNomFormate()+" "+noeud.getCle().getPrenomFormate()+" "+noeud.getCle().getDepartementFormate()+" "+noeud.getCle().getFormationFormate()+" "+noeud.getCle().getAnneeFormationFormate()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
+		 }
+		
+		listeNoeud.clear();
+		sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, false, recherche);
+		 for (Noeud noeud : listeNoeud) {
+			 System.out.println("ArrayList :"+listeNoeud.size()+noeud.getCle().getNomFormate()+" "+noeud.getCle().getPrenomFormate()+" "+noeud.getCle().getDepartementFormate()+" "+noeud.getCle().getFormationFormate()+" "+noeud.getCle().getAnneeFormationFormate()+" ["+noeud.getIndexNoeud()+"] "+" "+noeud.getIndexFilsGauche()+" "+noeud.getIndexFilsDroit()+" "+noeud.getIndexDoublon());
 		 }
 		 System.out.println("Nbr Stagiaires fichier BIN >> " + sauvegardeBin.nbrStagiaires());
 //		 System.out.println("Nbr Stagiaires ArrayList >> " +listeNoeud.size());
 //		 //System.out.println(resultatRechercheBin.longueur());
 		 
-		
+		*/
 	}
 }

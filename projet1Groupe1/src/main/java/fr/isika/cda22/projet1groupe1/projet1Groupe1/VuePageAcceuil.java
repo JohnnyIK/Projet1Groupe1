@@ -41,7 +41,6 @@ public class VuePageAcceuil extends Scene {
 		//définition gripane et espaces
 		super(new GridPane(), 600, 300);
 		GridPane rootAcceuil = (GridPane)this.getRoot();
-		//rootPane = rootAcceuil;
 		rootAcceuil.setPadding(new Insets (50));
 		rootAcceuil.setHgap(15);
 		rootAcceuil.setVgap(15);

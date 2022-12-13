@@ -41,36 +41,43 @@ public class App extends Application {
 		public VuePageAcceuil vuePageAccueil;
 		public VueLoginAdmin vueLoginAdmin;
 		public VueAppAdmin vueAppAdmin;
+	
 
     public void start(Stage stage) {
     	
-    	
-    	
-    	
     	stage.setTitle(" Patrick School - Acceuil ");
-    	
-    	VueTableau tab = new VueTableau();
     	
     	vuePageAccueil = new VuePageAcceuil();
         
         vueLoginAdmin = new VueLoginAdmin();
-        
-        vueAppAdmin = new VueAppAdmin();
-        
-     
-        vuePageAccueil.getBtnAdmin().setOnAction(event -> {
+    	
+    	vuePageAccueil.getBtnAdmin().setOnAction(event -> {
         	stage.setScene(vueLoginAdmin);
         	stage.setTitle(" Patrick School - Login ");
-       
+        	
         });	
         vueLoginAdmin.getBtnLogin().setOnAction(event -> {
+        	vueAppAdmin = new VueAppAdmin("admin");
             stage.setScene(vueAppAdmin);
             stage.setTitle(" Patrick School - ApplicationAdmin ");
+            
         });
+        
+        vuePageAccueil.getBtnUser().setOnAction(event -> {
+        	vueAppAdmin = new VueAppAdmin("user");
+            stage.setScene(vueAppAdmin);
+            stage.setTitle(" Patrick School - ApplicationUtilisateur ");
+        	
+        });	
 
-        stage.setScene(tab);
+        
+        //stage.setScene(vuePageAccueil);
+        vueAppAdmin = new VueAppAdmin("admin");
+        stage.setScene(vueAppAdmin);
         
         stage.show();
+    	
+    	
     }
 
  

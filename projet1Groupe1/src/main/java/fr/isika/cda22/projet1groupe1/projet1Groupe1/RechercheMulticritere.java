@@ -4,20 +4,36 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
 
+/**
+ * Classe permettant de stocker dans un objet (de classe RechercheMulticritere donc) les critères de recherche et leur statut d'activation
+ * 
+ */
 public class RechercheMulticritere implements ParametreGestionnaire {
 	
 	// Attributs
-	public boolean nomRechSelect = false;
-	public boolean prenomRechSelect = false;
-	public boolean departementRechSelect = false;
-	public boolean formationRechSelect = false;
-	public boolean anneeFormationRechSelect = false;
+	/**
+	 * Booleans pour chaque critere, pour determiner si un critere de recherche est activé ou pas
+	 */
+	private boolean nomRechSelect = false;
+	private boolean prenomRechSelect = false;
+	private boolean departementRechSelect = false;
+	private boolean formationRechSelect = false;
+	private boolean anneeFormationRechSelect = false;
 	
-	public String nomRech = "";
-	public String prenomRech = "";
-	public List<String> departementRech = null;
-	public String formationRech = "";
-	public String[] anneeFormationRech = {"",""};
+	/**
+	 * Les valeurs entres pour chaque critere lors d'une recherche
+	 * 
+	 * @nomRech Le nom qui est recherche
+	 * @prenomRech Le prenom qui est recherche
+	 * @departementRech La liste des departements recherches
+	 * @formationRech La formation qui est recherche
+	 * @anneeFormationRech L'intervale de recherche pour l'annee de formation 
+	 */
+	private String nomRech = "";
+	private String prenomRech = "";
+	private List<String> departementRech = null;
+	private String formationRech = "";
+	private String[] anneeFormationRech = {"",""};
 	
 	// Constructeur
 	public RechercheMulticritere(
@@ -39,7 +55,7 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 		this.anneeFormationRech = anneeFormationRech;
 	}
 	
-	
+	// Getters and setters
 	 public boolean isNomRechSelect() {
 		return nomRechSelect;
 	}
@@ -138,10 +154,170 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 	public void setAnneeFormationRech(String[] anneeFormationRech) {
 		this.anneeFormationRech = anneeFormationRech;
 	}
+	
+	
+	
+	
+	
+	/**
+	 * Compare les valeurs du noeud en argument avec les criteres de recherche et
+	 * retourne "true" si l'un des criteres est valide, "false" sinon
+	 * 
+	 * @param noeud Le noeud sur lequel on va faire la recherche
+	 * @return "true" si une des valeurs du noeud correspond à l'une des valeurs
+	 *         recherchees
+	 */
+	public Boolean rechercheMulticritereNoeud(Noeud noeud) {
+		// on recupere les attributs du noeud a l'index "index" : nom / prenom /
+		// departement / formation / anneeFormation
+		String nomNoeud = noeud.getCle().getNom();
+		String prenomNoeud = noeud.getCle().getPrenom();
+		String departementNoeud = noeud.getCle().getDepartement();
+		String formationNoeud = noeud.getCle().getFormation();
+		String anneeFormationNoeud = noeud.getCle().getAnneeFormation();
+
+		// on lance les comparaisons :
+		Boolean nomPresent = true;
+		Boolean prenomPresent = true;
+		Boolean departementPresent = true;
+		Boolean formationPresent = true;
+		Boolean anneeFormationPresent = true;
+
+		if (this.nomRechSelect) {
+			nomPresent = nomNoeud.contains(this.nomRech);
+		}
+		if (this.prenomRechSelect) {
+			prenomPresent = prenomNoeud.contains(this.prenomRech);
+		}
+		if (this.departementRechSelect) {
+			departementPresent = departementIsContained(departementNoeud, this.departementRech);
+		}
+		if (this.formationRechSelect) {
+			formationPresent = formationNoeud.contains(this.formationRech);
+		}
+		if (this.anneeFormationRechSelect) {
+			anneeFormationPresent = anneeFormationIsContained(anneeFormationNoeud, this.anneeFormationRech);
+		}
+
+		/*
+		// si une des comparaisons est vraie, on valide le test de recherche
+		if (nomPresent || prenomPresent || departementPresent || formationPresent || anneeFormationPresent) {
+			return true;
+		} else { // si toutes les comparaisons sont fausses, on invalide le test de rechercher
+			return false;
+		}
+		*/
+		
+		// si une des comparaisons est vraie, on valide le test de recherche
+		if (nomPresent && prenomPresent && departementPresent && formationPresent && anneeFormationPresent) {
+				return true;
+		} else { // si toutes les comparaisons sont fausses, on invalide le test de rechercher
+				return false;
+		}
+	}
+
+	/**
+	 * Determine si un département fait partie d'une liste de departements donnee
+	 * 
+	 * @param departementNoeud Le departement a tester
+	 * @param departementRech  La liste des départements dans lequel on recherche
+	 * @return Boolean true si le département a tester est présent dans la liste des
+	 *         departements / False sinon
+	 */
+	private Boolean departementIsContained(String departement, List<String> departementRech) {
+		for (String departementRecherche : departementRech) {
+			if (departement.equals(departementRecherche)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Determine si une annee est incluse dans un intervale [annee X, annee Y]
+	 * 
+	 * @param anneeFormation     L'annee a tester
+	 * @param anneeFormationRech Le tableau [annee X, annee Y] contenant les bornes
+	 *                           de l'intervale dans lequel on recherche
+	 * @return Boolean true si l'annee a tester est presente dans l'intervale donné
+	 *         / False sinon
+	 */
+	private Boolean anneeFormationIsContained(String anneeFormation, String[] anneeFormationRech) {
+		int yearlowerRange = Integer.parseInt(anneeFormationRech[0]);
+		int yearUpperRange = Integer.parseInt(anneeFormationRech[1]);
+		int anneeFormationInt = Integer.parseInt(anneeFormation);
+		if ((anneeFormationInt >= yearlowerRange) && (anneeFormationInt <= yearUpperRange)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * (Methode optionnelle) Compare les valeurs du noeud en argument avec les criteres de recherche entres en argument et
+	 * retourne "true" si l'un des criteres est valide, "false" sinon
+	 * 
+	 * @param noeud Le noeud sur lequel on va faire la recherche
+	 * @param nomRechSelect "true" si la recherche par nom est activee
+	 * @param nomRech Le nom qui est recherche
+	 * @param prenomRechSelect "true" si la recherche par prenom est activee
+	 * @param prenomRech Le prenom qui est recherche
+	 * @param departementRechSelect "true" si la recherche par departement est activee
+	 * @param departementRech Le departement qui est recherche
+	 * @param formationRechSelect "true" si la recherche par formation est activee
+	 * @param formationRech La formation qui est recherchee
+	 * @param anneeFormationRechSelect "true" si la recherche par annee de formation est activee
+	 * @param anneeFormationRech L'annee de formation qui est recherchee
+	 * @return "true" si une des valeurs du noeud correspond à l'une des valeurs
+	 *         recherchees
+	 */
+	public Boolean rechercheMulticritereNoeudCriteres(Noeud noeud, boolean nomRechSelect, String nomRech,
+			boolean prenomRechSelect, String prenomRech, boolean departementRechSelect, List<String> departementRech,
+			boolean formationRechSelect, String formationRech, boolean anneeFormationRechSelect,
+			String[] anneeFormationRech) {
+		// on recupere les attributs du noeud a l'index "index" : nom / prenom /
+		// departement / formation / anneeFormation
+		String nomNoeud = noeud.getCle().getNom();
+		String prenomNoeud = noeud.getCle().getPrenom();
+		String departementNoeud = noeud.getCle().getDepartement();
+		String formationNoeud = noeud.getCle().getFormation();
+		String anneeFormationNoeud = noeud.getCle().getAnneeFormation();
+
+		// on lance les comparaisons :
+		Boolean nomPresent = false;
+		Boolean prenomPresent = false;
+		Boolean departementPresent = false;
+		Boolean formationPresent = false;
+		Boolean anneeFormationPresent = false;
+
+		if (nomRechSelect) {
+			nomPresent = nomNoeud.contains(nomRech);
+		}
+		if (prenomRechSelect) {
+			prenomPresent = prenomNoeud.contains(prenomRech);
+		}
+		if (departementRechSelect) {
+			departementPresent = departementIsContained(departementNoeud, departementRech);
+		}
+		if (formationRechSelect) {
+			formationPresent = formationNoeud.contains(formationRech);
+		}
+		if (anneeFormationRechSelect) {
+			anneeFormationPresent = anneeFormationIsContained(anneeFormationNoeud, anneeFormationRech);
+		}
+
+		// si une des comparaisons est vraie, on valide le test de recherche
+		if (nomPresent || prenomPresent || departementPresent || formationPresent || anneeFormationPresent) {
+			return true;
+		} else { // si toutes les comparaisons sont fausses, on invalide le test de rechercher
+			return false;
+		}
+	}
 
 
+	/* WIPS ----------------------------------------------------------------------------------------------------
 	// retourne l'objet Noeud à la position index;
-	public Noeud recupereNoeudIndex (int index, RandomAccessFile raf) {
+	private Noeud recupereNoeudIndex (int index, RandomAccessFile raf) {
 		Noeud noeud = new Noeud(-1, null, -1,-1,-1);
 		String nom = noeud.recupereNomIndex(index, raf);
 		String prenom = noeud.recuperePrenomNoeud(index, raf);
@@ -153,12 +329,12 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 	}
 	
 	// Methode de recherche
-	public void rechercheMulticriteresRecursive(RandomAccessFile raf, RandomAccessFile rafResultats) {
+	public void rechercheMulticriteresLineaire(RandomAccessFile raf, RandomAccessFile rafResultats) {
 		try {
 			int nombreStagiairesBin = (int) (raf.length() / TAILLE_NOEUD_OCTET);
 			for (int index = 0; index < nombreStagiairesBin; index++) {
 				raf.seek(index);
-				Noeud noeud = recupereNoeudIndex (index, raf);
+				Noeud noeud = noeud.recupereNoeudIndex(index, raf);
 				if (rechercheMulticritereNoeud (noeud, this.nomRechSelect, this.nomRech, this.prenomRechSelect, this.prenomRech,
 						this.departementRechSelect, this.departementRech,
 						this.formationRechSelect, this.formationRech, this.anneeFormationRechSelect, this.anneeFormationRech) ==  true) {
@@ -173,7 +349,7 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 
 	}
 	
-	/*
+	
 	// methode qui retourne true si l'un des criteres de recherche est valide pour le noeud situé à l'index "index"
 			public Boolean rechercheMulticritereNoeud (RandomAccessFile raf, int index, boolean nomRechSelect, String nomRech, boolean prenomRechSelect, String prenomRech,
 					boolean departementRechSelect, List<String> departementRech,
@@ -202,122 +378,9 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 			*/
 			
 	
-	// methode qui retourne true si l'un des criteres de recherche est valide pour le noeud situé à l'index "index"
-	public Boolean rechercheMulticritereNoeud (Noeud noeud,
-			boolean nomRechSelect, String nomRech,
-			boolean prenomRechSelect, String prenomRech,
-			boolean departementRechSelect, List<String> departementRech,
-			boolean formationRechSelect, String formationRech,
-			boolean anneeFormationRechSelect, String[] anneeFormationRech) {
-					// on recupere les attributs du noeud a l'index "index" : nom / prenom / departement / formation / anneeFormation
-					String nomNoeud = noeud.getCle().getNom();
-					String prenomNoeud = noeud.getCle().getPrenom();
-					String departementNoeud = noeud.getCle().getDepartement();
-					String formationNoeud = noeud.getCle().getFormation();
-					String anneeFormationNoeud = noeud.getCle().getAnneeFormation();
-					
-					// on lance les comparaisons :
-					Boolean nomPresent = false;
-					Boolean prenomPresent = false;
-					Boolean departementPresent = false;
-					Boolean formationPresent = false;
-					Boolean anneeFormationPresent = false;
-					
-					if (nomRechSelect) {
-						nomPresent = nomNoeud.contains(nomRech);
-					}
-					if (prenomRechSelect) {
-						prenomPresent = prenomNoeud.contains(prenomRech);
-					}
-					if (departementRechSelect) {
-						departementPresent = departementIsContained(departementNoeud, departementRech);
-					} 
-					if (formationRechSelect) {
-						formationPresent = formationNoeud.contains(formationRech);
-					}
-					if (anneeFormationRechSelect) {
-						anneeFormationPresent = anneeFormationIsContained(anneeFormationNoeud, anneeFormationRech);
-					}
-					
-					// si une des comparaisons est vraie, on valide le test de recherche
-					if (nomPresent || prenomPresent || departementPresent || formationPresent || anneeFormationPresent) {
-						return true; 
-					} else { // si toutes les comparaisons sont fausses, on invalide le test de rechercher
-						return false;
-					}
-		}
 	
-	// methode qui retourne true si l'un des criteres de recherche est valide pour le noeud situé à l'index "index"
-		public Boolean rechercheMulticritereNoeud (Noeud noeud) {
-						// on recupere les attributs du noeud a l'index "index" : nom / prenom / departement / formation / anneeFormation
-						String nomNoeud = noeud.getCle().getNom();
-						String prenomNoeud = noeud.getCle().getPrenom();
-						String departementNoeud = noeud.getCle().getDepartement();
-						String formationNoeud = noeud.getCle().getFormation();
-						String anneeFormationNoeud = noeud.getCle().getAnneeFormation();
-						
-						// on lance les comparaisons :
-						Boolean nomPresent = false;
-						Boolean prenomPresent = false;
-						Boolean departementPresent = false;
-						Boolean formationPresent = false;
-						Boolean anneeFormationPresent = false;
-						
-						if (this.nomRechSelect) {
-							nomPresent = nomNoeud.contains(this.nomRech);
-						}
-						if (this.prenomRechSelect) {
-							prenomPresent = prenomNoeud.contains(this.prenomRech);
-						}
-						if (this.departementRechSelect) {
-							departementPresent = departementIsContained(departementNoeud, this.departementRech);
-						} 
-						if (this.formationRechSelect) {
-							formationPresent = formationNoeud.contains(this.formationRech);
-						}
-						if (this.anneeFormationRechSelect) {
-							anneeFormationPresent = anneeFormationIsContained(anneeFormationNoeud, this.anneeFormationRech);
-						}
-						
-						// si une des comparaisons est vraie, on valide le test de recherche
-						if (nomPresent || prenomPresent || departementPresent || formationPresent || anneeFormationPresent) {
-							return true; 
-						} else { // si toutes les comparaisons sont fausses, on invalide le test de rechercher
-							return false;
-						}
-			}
-		
-		/**
-		 * Determine si un département fait partie d'une liste de departements donnee
-		 * @param departementNoeud Le departement a tester
-		 * @param departementRech La liste des départements dans lequel on recherche
-		 * @return Boolean true si le département a tester est présent dans la liste des departements / False sinon
-		 */
-		public Boolean departementIsContained(String departement, List<String> departementRech) {
-			for (String departementRecherche : departementRech) {
-				if (departement.equals(departementRecherche)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/**
-		 * Determine si une annee est incluse dans un intervalle [annee X, annee Y]
-		 * @param anneeFormation L'annee a tester
-		 * @param anneeFormationRech Le tableau [annee X, annee Y] contenant les bornes de l'intervalle dans lequel on recherche
-		 * @return Boolean true si l'annee a tester est présente dans l'intervalle donné / False sinon
-		 */
-		public Boolean anneeFormationIsContained(String anneeFormation, String[] anneeFormationRech) {
-			int yearlowerRange = Integer.parseInt(anneeFormationRech[0]);
-			int yearUpperRange = Integer.parseInt(anneeFormationRech[1]);
-			int anneeFormationInt = Integer.parseInt(anneeFormation);
-			if ((anneeFormationInt >= yearlowerRange) && (anneeFormationInt <= yearUpperRange)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+	
+	
 	
 	
 

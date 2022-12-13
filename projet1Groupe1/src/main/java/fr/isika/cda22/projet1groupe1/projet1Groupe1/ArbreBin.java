@@ -6,20 +6,28 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.*;
 
 public class ArbreBin implements ParametreGestionnaire{
 	
 	// Attributs
 	public String adresseFichierBin = "";
 	public RandomAccessFile raf;
+	private ArrayList<String> anneeListe;
 
 	
 	// Constructeur
 	public ArbreBin(String adresseFichierBin) {
 		super();
 		this.adresseFichierBin = adresseFichierBin;
+		this.anneeListe = new ArrayList<String>();
+	}
+	
+	public ArrayList<String> getAnneeArrayListe(){
+		return this.anneeListe;
 	}
 	
 	
@@ -127,7 +135,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	 * @param indexNoeud l'index du noeud a affecter
 	 * @param index l'index a ecrire
 	 */
-	private void ecrireNoeudBin(int indexNoeud, int index) {
+	private void ecrireIndexNoeudBin(int indexNoeud, int index) {
 		try {
 			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud));
@@ -156,7 +164,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	}
 	
 	public void ecrireNomBinaire(int indexNoeud, String nom) {
-		nom = this.nomCheck(nom);
+		nom = this.nomCheckAndUpdate(nom);
 		String nomFormate = this.getNomFormate(nom);
 		try {
 			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
@@ -273,7 +281,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	}
 	
 	public void ecrireAnneeFormationBinaire(int indexNoeud, String anneeFormation) {
-		anneeFormation = this.anneeFormationCheck(anneeFormation);
+		anneeFormation = this.anneeFormationCheckAndUpdate(anneeFormation);
 		String anneeFormationFormate = this.getAnneeFormationFormate(anneeFormation);
 		try {
 			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
@@ -363,6 +371,18 @@ public class ArbreBin implements ParametreGestionnaire{
         return true;
     }
 	
+	public Boolean isAlpha(String s) {
+        for (int i = 0; i < s.length(); i++)
+        {
+            char c = s.charAt(i);
+            if (!(c >= 'à' && c <= 'û') && !(c == ' ') && !(c == '-') && !(c >= 'A' && c <= 'Z') &&
+                    !(c >= 'a' && c <= 'z')) {
+                return false;
+            }
+        }
+        return true;
+    }
+	
 	public Boolean isNumeric(String s) {
         for (int i = 0; i < s.length(); i++)
         {
@@ -390,7 +410,7 @@ public class ArbreBin implements ParametreGestionnaire{
         for (int i = 0; i < s.length(); i++)
         {
             char c = s.charAt(i);
-            if (!(c >= 'A' && c <= 'Z') &&
+            if ((c != 'A' && c != 'B') &&
                     !(c >= '0' && c <= '9')) {
                 return false;
             }
@@ -399,7 +419,9 @@ public class ArbreBin implements ParametreGestionnaire{
     }
 	
 	
-	public String nomCheck(String nom) {
+	
+	
+	public String nomCheckAndUpdate(String nom) {
 		if (nom.isBlank() || nom.isEmpty() || !textIsCorrect(nom)) {
 			nom = "XXXXXXXXX";
 		}
@@ -426,7 +448,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	}
 	
 	
-	public String prenomCheck(String prenom) {
+	public String prenomCheckAndUpdate(String prenom) {
 		if (prenom.isBlank() || prenom.isEmpty() || !textIsCorrect(prenom)) {
 			prenom = "XXXXXX";
 		}
@@ -439,7 +461,7 @@ public class ArbreBin implements ParametreGestionnaire{
 		return prenomFormate.strip();
 	}
 	
-	public String departementCheck(String departement) {
+	public String departementCheckAndUpdate(String departement) {
 		String departementFormate = "";
 		if (departement.isBlank() || departement.isEmpty() || departement.contains(" ")  ){
 			for (int i = 0; i < TAILLE_MAX_DEPARTEMENT; i++) {
@@ -458,14 +480,49 @@ public class ArbreBin implements ParametreGestionnaire{
 		return departementFormate;
 	}
 	
-	public String formationCheck(String formation) {
+	public Boolean departementCheck(String departement) {
+		if (!this.departementIsCorrect(departement)) {
+			return false;
+		} else if (departement.isBlank() || departement.isEmpty() || departement.contains(" ")){
+			return false;
+		} else if (departement.length() > TAILLE_MAX_DEPARTEMENT) {
+			return false;
+		} else if (departement.equals("2A") || departement.equals("2B")){
+			return true;
+		} else if (Integer.parseInt(departement) < 0) {
+			return false;
+		} else if (Integer.parseInt(departement) == 971 || Integer.parseInt(departement) == 972 || Integer.parseInt(departement) == 973 || Integer.parseInt(departement) == 974 || Integer.parseInt(departement) == 976) {
+			return true;
+		} else if (Integer.parseInt(departement) > 95) {
+			return false;	
+		} else {
+			return true;
+		}
+	}
+	
+	public String formationCheckAndUpdate(String formation) {
+		if (!formationCheck(formation)) {
+			return "XXX";
+		}
 		if (formation.length()>TAILLE_MAX_FORMATION) {
 			formation = formation.substring(0, TAILLE_MAX_FORMATION );
 		}
 		return formation.strip();
 	}
 	
-	public String anneeFormationCheck(String anneeFormation) {
+	public Boolean formationCheck(String s) {
+        for (int i = 0; i < s.length(); i++)
+        {
+            char c = s.charAt(i);
+            if (!(c >= 'A' && c <= 'Z') && !(c == ' ') && !(c == '-') &&
+                    !(c >= '0' && c <= '9')) {
+                return false;
+            }
+        }
+        return true;
+    }
+	
+	public String anneeFormationCheckAndUpdate(String anneeFormation) {
 		if (anneeFormation.length() != TAILLE_MAX_ANNEEFORMATION) {
 			return "0000";
 		}
@@ -474,6 +531,51 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 		return anneeFormation.strip();
 	}
+	
+	public Boolean anneeFormationCheck(String anneeFormation) {
+		Date date = new Date();
+		int year = 2022;
+		System.out.println("YEAR : "+year);
+		if (!isNumeric(anneeFormation)) {
+			return false;
+		} else if (anneeFormation.length() != TAILLE_MAX_ANNEEFORMATION) {
+			return false;
+		} else if (Integer.parseInt(anneeFormation) < year-100 || Integer.parseInt(anneeFormation) > year){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	private void anneeAddListe(String annee){
+		Boolean anneePresente = false;
+		if (this.anneeListe.size() != 0) {
+			for (String anneeEnregistrees : this.anneeListe) {
+				if (anneeEnregistrees.equals(annee)) {
+					anneePresente = true;
+				}
+			}
+			if (anneePresente == false) {
+				this.anneeListe.add(annee);
+				Collections.sort(anneeListe);
+			}
+		} else {
+			this.anneeListe.add(annee);
+			//System.out.println("AJOUT ANNEE");
+		}
+	}
+	
+	public void afficheAnneeListeConsole(){
+		if (this.anneeListe != null) {
+			System.out.println("LISTE");
+			for (String anneeEnregistrees : this.anneeListe) {
+				System.out.println("Annee liste : "+anneeEnregistrees);
+			}
+		} else {
+			System.out.println("Annee liste vide");
+		}
+	}
+	
 	
 	/**
 	 * Importe un fichier texte dans le fichier Bin sous la forme d'un arbre binaire
@@ -493,28 +595,30 @@ public class ArbreBin implements ParametreGestionnaire{
 			while (br.ready()) {
 
 				String nom = br.readLine();
-				nom = this.nomCheck(nom);
+				nom = this.nomCheckAndUpdate(nom);
 				String prenom = br.readLine();
-				prenom = this.prenomCheck(prenom);
+				prenom = this.prenomCheckAndUpdate(prenom);
 				String departement = br.readLine();
-				departement = this.departementCheck(departement);
+				departement = this.departementCheckAndUpdate(departement);
 				String formation = br.readLine();
-				formation = this.formationCheck(formation);
+				formation = this.formationCheckAndUpdate(formation);
 				String anneeFormation = br.readLine();
-				anneeFormation = this.anneeFormationCheck(anneeFormation);
+				anneeFormation = this.anneeFormationCheckAndUpdate(anneeFormation);
 				br.readLine();
 
 				Stagiaire stagiaire = new Stagiaire(nom, prenom, departement, formation, anneeFormation);
 
 				Noeud noeud = new Noeud(-1, stagiaire, -1, -1, -1);
 
-				System.out.println("cpt " + cpt);
+				//System.out.println("cpt " + cpt);
 				cpt++;
 
 				this.ajouterStagiaireBin(noeud);
+				
 
 			}
 
+			//this.afficheAnneeListeConsole();
 			fichier.close();
 			this.raf.close();
 
@@ -540,7 +644,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	}
 
 	/**
-	 * Methode interne pour ajouter un noeud dans l'arbre binaire
+	 * Methode interne pour ajouter un noeud dans l'arbre binaire (le raf est deja ouvert dans la methode parente)
 	 * >> cree la racine si le fichier est vide, et sinon ajoute le stagiaire sur fichier bin
 	 * @param noeudAjout le noeud a ajouter dans l'arbre binaire
 	 */
@@ -553,6 +657,33 @@ public class ArbreBin implements ParametreGestionnaire{
 				// this.raf.seek(TAILLE_NOEUD_OCTET);
 				this.ecritureNoeudBinRecursive(noeudAjout, indexNoeudRacine);
 			}
+			this.anneeAddListe(noeudAjout.getCle().getAnneeFormation());
+			
+
+		} catch (IOException e) {
+			System.out.println("EXCEPTION");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Methode externe pour ajouter un noeud dans l'arbre binaire (ouvre et ferme un RAF)
+	 * >> cree la racine si le fichier est vide, et sinon ajoute le stagiaire sur fichier bin
+	 * @param noeudAjout le noeud a ajouter dans l'arbre binaire
+	 */
+	public void ajouterStagiaireBin(Stagiaire stagiaire) {
+		try {
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+			int indexNoeudRacine = 0;
+			Noeud noeudAjout = new Noeud(stagiaire);
+			if (this.raf.length() == 0) { // si le fichier binaire est vide, on écrit le stagiaire
+				this.ecrireNoeudBin(noeudAjout, indexNoeudRacine);
+			} else {
+				// this.raf.seek(TAILLE_NOEUD_OCTET);
+				this.ecritureNoeudBinRecursive(noeudAjout, indexNoeudRacine);
+			}
+			this.anneeAddListe(noeudAjout.getCle().getAnneeFormation());
+			raf.close();
 
 		} catch (IOException e) {
 			System.out.println("EXCEPTION");
@@ -567,7 +698,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	 */
 	private void ecrireNoeudBin(Noeud noeudAjout, int indexNoeud) {
 		
-		this.ecrireNoeudBin(indexNoeud,indexNoeud);
+		this.ecrireIndexNoeudBin(indexNoeud,indexNoeud);
 		this.ecrireNomBin(indexNoeud,noeudAjout.getCle().getNom());
 		this.ecrirePrenomBin(indexNoeud,noeudAjout.getCle().getPrenom());
 		this.ecrireDepartementBin(indexNoeud,noeudAjout.getCle().getDepartement());
@@ -601,13 +732,28 @@ public class ArbreBin implements ParametreGestionnaire{
 		
 
 	}
+	
+	/**
+	 * Methode pour ecrire le stagiaire dans le fichier binaire à un index donne
+	 * @param noeudAjout le noeud à ajouter
+	 * @param indexNoeud l'index ou ajouter le noeud
+	 */
+	private void ecrireStagiaireBin(Noeud noeudAjout, int indexNoeud) {
+		
+		this.ecrireIndexNoeudBin(indexNoeud,indexNoeud);
+		this.ecrireNomBin(indexNoeud,noeudAjout.getCle().getNom());
+		this.ecrirePrenomBin(indexNoeud,noeudAjout.getCle().getPrenom());
+		this.ecrireDepartementBin(indexNoeud,noeudAjout.getCle().getDepartement());
+		this.ecrireFormationBin(indexNoeud,noeudAjout.getCle().getFormation());
+		this.ecrireAnneeFormationBin(indexNoeud,noeudAjout.getCle().getAnneeFormation());
+	}
 		
 	/**
 	 * (Methode optionnelle)
 	 * Ecrit les attributs du stagiaire dans le fichier binaire
 	 * @param stagiaire
 	 */
-	private void recuperationAttributsStagiaireBin(Stagiaire stagiaire) {
+	private void ecrireAttributsStagiaireBin(Stagiaire stagiaire) {
 		try {
 
 			String nomLong = stagiaire.getNomFormate();
@@ -696,34 +842,34 @@ public class ArbreBin implements ParametreGestionnaire{
 			int indexParent = index;
 			if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) < 0) {
 				// on part a gauche
-				if (recupererIndexFilsGauche(indexParent) != -1) {
+				if (recupererIndexFilsGaucheBin(indexParent) != -1) {
 					// il y a un fils gauche
-					indexParent = recupererIndexFilsGauche(indexParent);
+					indexParent = recupererIndexFilsGaucheBin(indexParent);
 					// on passe la methode au fils gauche
 					ecritureNoeudBinRecursive(noeudAjout, indexParent);
 				} else { // il n'y a pas de fils gauche
-					ecrireFilsGauche(indexParent, indexNoeudFinFichierBin);
+					ecrireFilsGaucheBin(indexParent, indexNoeudFinFichierBin);
 					ecrireNoeudBin(noeudAjout, indexNoeudFinFichierBin);
 				}
 			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) > 0) {
 				// on part a Droite
 
-				if (recupererIndexFilsDroit(indexParent) != -1) {
+				if (recupererIndexFilsDroitBin(indexParent) != -1) {
 					// il y a un fils Droit
-					indexParent = recupererIndexFilsDroit(indexParent);
+					indexParent = recupererIndexFilsDroitBin(indexParent);
 					// on passe la methode au fils Droit
 					ecritureNoeudBinRecursive(noeudAjout, indexParent);
 				} else {
 					// il n'y a pas de fils Droit
-					ecrireFilsDroit(indexParent, indexNoeudFinFichierBin);
+					ecrireFilsDroitBin(indexParent, indexNoeudFinFichierBin);
 					ecrireNoeudBin(noeudAjout, indexNoeudFinFichierBin);
 				}
 			} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(indexParent)) == 0) {
-				if (recupererIndexDoublon(indexParent) != -1) {
-					indexParent = recupererIndexDoublon(indexParent);
+				if (recupererIndexDoublonBin(indexParent) != -1) {
+					indexParent = recupererIndexDoublonBin(indexParent);
 					ecritureNoeudBinRecursive(noeudAjout, indexParent);
 				} else {
-					ecrireDoublon(indexParent, indexNoeudFinFichierBin);
+					ecrireDoublonBin(indexParent, indexNoeudFinFichierBin);
 					ecrireNoeudBin(noeudAjout, indexNoeudFinFichierBin);
 				}
 
@@ -919,7 +1065,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	 * @param index Index du noeud
 	 * @return int indexFilsGauche
 	 */
-	public int recupererIndexFilsGauche(int indexNoeud) {
+	public int recupererIndexFilsGaucheBin(int indexNoeud) {
 		int indexFilsGauche = 0;
 		try {
 			this.raf.seek((indexNoeud * TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
@@ -935,7 +1081,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	 * @param index Index du noeud
 	 * @return int indexFilsDroit
 	 */
-	public int recupererIndexFilsDroit(int indexNoeud) {
+	public int recupererIndexFilsDroitBin(int indexNoeud) {
 		int indexFilsDroit = 0;
 		try {
 			this.raf.seek((indexNoeud * TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
@@ -951,7 +1097,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	 * @param index Index du noeud
 	 * @return int indexDoublon
 	 */
-	public int recupererIndexDoublon(int indexNoeud) {
+	public int recupererIndexDoublonBin(int indexNoeud) {
 		int indexDoublon = 0;
 		try {
 			this.raf.seek((indexNoeud * TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
@@ -961,9 +1107,46 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 		return indexDoublon;
 	}
+	
+	/**
+	 * Retourne un noeud de l'index "indexNoeud" du fichier Bin
+	 * @param indexNoeud Index du noeud
+	 * @return Le noeud avec les valeurs (index, stagiaire, indexFilsGauche, indexFilsDroit, indexDoublon)
+	 */
+	private Noeud recupereNoeudBin (int indexNoeud) {
+		Noeud noeud = new Noeud();
+		noeud.setIndexNoeud(indexNoeud);
+		String nom = this.recupereNomNoeudBin(indexNoeud);
+		String prenom = this.recuperePrenomNoeudBin(indexNoeud);
+		String departement = this.recupereDepartementNoeudBin(indexNoeud);
+		String formation = this.recupereFormationNoeudBin(indexNoeud);
+		String anneeFormation = this.recupereAnneeFormationNoeudBin(indexNoeud);
+		noeud.setCle(new Stagiaire(nom, prenom, departement, formation, anneeFormation));
+		noeud.setIndexFilsGauche(this.recupererIndexFilsGaucheBin(indexNoeud));
+		noeud.setIndexFilsDroit(this.recupererIndexFilsDroitBin(indexNoeud));
+		noeud.setIndexDoublon(this.recupererIndexDoublonBin(indexNoeud));
+		return noeud;
+	}
+	
+	/**
+	 * (Obsolete) Retourne un noeud de l'index "indexNoeud" du fichier Bin du RandomAccessFile
+	 * @param indexNoeud Index du noeud
+	 * @raf le flux RandomAccessFile raf
+	 * @return Le noeud avec les valeurs (index, stagiaire, indexFilsGauche, indexFilsDroit, indexDoublon)
+	 */
+	private Noeud recupereNoeudIndex (int indexNoeud, RandomAccessFile raf) {
+		Noeud noeud = new Noeud(-1, null, -1,-1,-1);
+		String nom = noeud.recupereNomIndex(indexNoeud, raf);
+		String prenom = noeud.recuperePrenomNoeud(indexNoeud, raf);
+		String departement = noeud.recupereDepartementNoeud(indexNoeud, raf);
+		String formation = noeud.recupereFormationNoeud(indexNoeud, raf);
+		String anneeFormation = noeud.recupereAnneeFormationNoeud(indexNoeud, raf);
+		noeud.setCle(new Stagiaire(nom, prenom, departement, formation, anneeFormation));
+		return noeud;
+	}
 		
 		// Methode qui modifie l'indexFilsGauche du noeud parent en lui attribuant la valeur indexNoeud
-		public void ecrireFilsGauche(int indexParent, int indexNoeud) {
+		public void ecrireFilsGaucheBin(int indexParent, int indexNoeud) {
 			try {
 				this.raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
 				this.raf.writeInt(indexNoeud);
@@ -973,7 +1156,7 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 		
 		// Methode qui modifie l'indexFilsDroit du noeud parent en lui attribuant la valeur indexNoeud
-		public void ecrireFilsDroit(int indexParent, int indexNoeud) {
+		public void ecrireFilsDroitBin(int indexParent, int indexNoeud) {
 			try {
 				this.raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
 				this.raf.writeInt(indexNoeud);
@@ -983,7 +1166,7 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 		
 		// Methode qui modifie l'indexDoublon du noeud parent en lui attribuant la valeur indexNoeud
-		public void ecrireDoublon(int indexParent, int indexNoeud) {
+		public void ecrireDoublonBin(int indexParent, int indexNoeud) {
 			try {
 				this.raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
 				this.raf.writeInt(indexNoeud);
@@ -1119,7 +1302,7 @@ public class ArbreBin implements ParametreGestionnaire{
 				int nombreStagiairesBin = (int) (this.raf.length() / TAILLE_NOEUD_OCTET);
 				for (int index = 0; index < nombreStagiairesBin; index++) {
 					this.raf.seek(index);
-					Noeud noeud = this.recupereNoeudIndex(index);
+					Noeud noeud = this.recupereNoeudBin(index);
 					if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
 						resultatRecherche.add(index);
 					}
@@ -1131,32 +1314,6 @@ public class ArbreBin implements ParametreGestionnaire{
 			}
 			return resultatRecherche;
 
-		}
-		
-		private Noeud recupereNoeudIndex (int index) {
-			Noeud noeud = new Noeud();
-			noeud.setIndexNoeud(index);
-			String nom = this.recupereNomNoeudBin(index);
-			String prenom = this.recuperePrenomNoeudBin(index);
-			String departement = this.recupereDepartementNoeudBin(index);
-			String formation = this.recupereFormationNoeudBin(index);
-			String anneeFormation = this.recupereAnneeFormationNoeudBin(index);
-			noeud.setCle(new Stagiaire(nom, prenom, departement, formation, anneeFormation));
-			noeud.setIndexFilsGauche(this.recupererIndexFilsGauche(index));
-			noeud.setIndexFilsDroit(this.recupererIndexFilsDroit(index));
-			noeud.setIndexDoublon(this.recupererIndexDoublon(index));
-			return noeud;
-		}
-		
-		private Noeud recupereNoeudIndex (int index, RandomAccessFile raf) {
-			Noeud noeud = new Noeud(-1, null, -1,-1,-1);
-			String nom = noeud.recupereNomIndex(index, raf);
-			String prenom = noeud.recuperePrenomNoeud(index, raf);
-			String departement = noeud.recupereDepartementNoeud(index, raf);
-			String formation = noeud.recupereFormationNoeud(index, raf);
-			String anneeFormation = noeud.recupereAnneeFormationNoeud(index, raf);
-			noeud.setCle(new Stagiaire(nom, prenom, departement, formation, anneeFormation));
-			return noeud;
 		}
 		
 		/**
@@ -1218,25 +1375,25 @@ public class ArbreBin implements ParametreGestionnaire{
 		private void exportToArrayListOptionRechercheRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent, RechercheMulticritere recherche){
 			int indexEnCoursLocal = indexEnCours;
 		
-			if (this.recupererIndexFilsGauche(indexEnCours) != -1) {
+			if (this.recupererIndexFilsGaucheBin(indexEnCours) != -1) {
 				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsGauche(indexEnCours);
+				indexEnCours = this.recupererIndexFilsGaucheBin(indexEnCours);
 				this.exportToArrayListOptionRechercheRecursive(listeNoeud,indexEnCours, indexParent, recherche);
 			}
 			
-			Noeud noeud = this.recupereNoeudIndex(indexEnCoursLocal);
+			Noeud noeud = this.recupereNoeudBin(indexEnCoursLocal);
 			if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
 				listeNoeud.add(noeud);
 			}
 			indexEnCours = indexEnCoursLocal;
 			
-			if (this.recupererIndexDoublon(indexEnCoursLocal) != -1) {
-				this.exportToArrayListDoublonOptionRecherche(listeNoeud, this.recupererIndexDoublon(indexEnCoursLocal), recherche);
+			if (this.recupererIndexDoublonBin(indexEnCoursLocal) != -1) {
+				this.exportToArrayListDoublonOptionRecherche(listeNoeud, this.recupererIndexDoublonBin(indexEnCoursLocal), recherche);
 			}
 			
-			if (this.recupererIndexFilsDroit(indexEnCours) != -1) {
+			if (this.recupererIndexFilsDroitBin(indexEnCours) != -1) {
 				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsDroit(indexEnCours);
+				indexEnCours = this.recupererIndexFilsDroitBin(indexEnCours);
 				this.exportToArrayListOptionRechercheRecursive(listeNoeud,indexEnCours, indexParent, recherche);
 			}
 			
@@ -1249,14 +1406,14 @@ public class ArbreBin implements ParametreGestionnaire{
 		 */
 		private void exportToArrayListDoublonOptionRecherche(ArrayList<Noeud> listeNoeud, int indexPremierDoublon, RechercheMulticritere recherche){
 			int indexParcours = indexPremierDoublon; 
-	    	while (this.recupererIndexDoublon(indexParcours) != -1) {
-	    		Noeud noeud = this.recupereNoeudIndex(indexParcours);
+	    	while (this.recupererIndexDoublonBin(indexParcours) != -1) {
+	    		Noeud noeud = this.recupereNoeudBin(indexParcours);
 				if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
 					listeNoeud.add(noeud);
 				}
-	    		indexParcours = this.recupererIndexDoublon(indexParcours);
+	    		indexParcours = this.recupererIndexDoublonBin(indexParcours);
 	    	}
-	    	Noeud noeud = this.recupereNoeudIndex(indexParcours);
+	    	Noeud noeud = this.recupereNoeudBin(indexParcours);
 	    	if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
 	    		listeNoeud.add(noeud);
 	    	}
@@ -1293,23 +1450,23 @@ public class ArbreBin implements ParametreGestionnaire{
 		private void exportToArrayListRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent){
 			int indexEnCoursLocal = indexEnCours;
 		
-			if (this.recupererIndexFilsGauche(indexEnCours) != -1) {
+			if (this.recupererIndexFilsGaucheBin(indexEnCours) != -1) {
 				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsGauche(indexEnCours);
+				indexEnCours = this.recupererIndexFilsGaucheBin(indexEnCours);
 
 				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
 			}
 			
-			listeNoeud.add(this.recupereNoeudIndex(indexEnCoursLocal));
+			listeNoeud.add(this.recupereNoeudBin(indexEnCoursLocal));
 			indexEnCours = indexEnCoursLocal;
 			
-			if (this.recupererIndexDoublon(indexEnCoursLocal) != -1) {
-				this.exportToArrayListDoublon(listeNoeud, this.recupererIndexDoublon(indexEnCoursLocal));
+			if (this.recupererIndexDoublonBin(indexEnCoursLocal) != -1) {
+				this.exportToArrayListDoublon(listeNoeud, this.recupererIndexDoublonBin(indexEnCoursLocal));
 			}
 			
-			if (this.recupererIndexFilsDroit(indexEnCours) != -1) {
+			if (this.recupererIndexFilsDroitBin(indexEnCours) != -1) {
 				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsDroit(indexEnCours);
+				indexEnCours = this.recupererIndexFilsDroitBin(indexEnCours);
 				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
 			}
 			
@@ -1322,11 +1479,11 @@ public class ArbreBin implements ParametreGestionnaire{
 		 */
 		private void exportToArrayListDoublon(ArrayList<Noeud> listeNoeud, int indexPremierDoublon){
 			int indexParcours = indexPremierDoublon; 
-	    	while (this.recupererIndexDoublon(indexParcours) != -1) {
-	    		listeNoeud.add(this.recupereNoeudIndex(indexParcours));
-	    		indexParcours = this.recupererIndexDoublon(indexParcours);
+	    	while (this.recupererIndexDoublonBin(indexParcours) != -1) {
+	    		listeNoeud.add(this.recupereNoeudBin(indexParcours));
+	    		indexParcours = this.recupererIndexDoublonBin(indexParcours);
 	    	}
-	    	listeNoeud.add(this.recupereNoeudIndex(indexParcours));
+	    	listeNoeud.add(this.recupereNoeudBin(indexParcours));
 		}
 		
 		//public void modifierAttribut()
@@ -1344,22 +1501,22 @@ public class ArbreBin implements ParametreGestionnaire{
 					    } else {
 					    	// on compte le nombre de doublons à partir de l'indexPremierDoublon
 					    	int indexB = indexPremierDoublon; 
-					    	while (this.recupererIndexDoublon(indexB) != -1) {
-					    		indexB = this.recupererIndexDoublon(indexB);
+					    	while (this.recupererIndexDoublonBin(indexB) != -1) {
+					    		indexB = this.recupererIndexDoublonBin(indexB);
 					    		cptDoublon ++;
 					    	}
 //					    	int indexBuffer = indexPremierDoublon;
 //					    	int indexEncours = indexPremierDoublon;
 					    	int indexMin = indexPremierDoublon;
-					    	int indexATester = this.recupererIndexDoublon(indexMin);
+					    	int indexATester = this.recupererIndexDoublonBin(indexMin);
 					    	for (int i = 0; i < cptDoublon; i ++) {
 					    		for (int k = i+1; k < cptDoublon; k++) {
-					    			if (this.recupereNoeudIndex(indexATester).getCle().getPrenomFormate().compareTo(recuperePrenomFormateNoeudBin(indexMin)) < 0) {
+					    			if (this.recupereNoeudBin(indexATester).getCle().getPrenomFormate().compareTo(recuperePrenomFormateNoeudBin(indexMin)) < 0) {
 					    				indexMin = indexATester;
-					    				indexATester = this.recupererIndexDoublon(indexATester);
+					    				indexATester = this.recupererIndexDoublonBin(indexATester);
 							    	}
-					    			listeNoeud.add(this.recupereNoeudIndex(indexMin));
-					    			indexATester = this.recupererIndexDoublon(indexATester);
+					    			listeNoeud.add(this.recupereNoeudBin(indexMin));
+					    			indexATester = this.recupererIndexDoublonBin(indexATester);
 					    		}
 					    	}
 					    	
@@ -1372,6 +1529,10 @@ public class ArbreBin implements ParametreGestionnaire{
 						e.printStackTrace();
 					}
 				}
+				
+				
+				
+				
 				
 				// ABIGAEL ----------------------------------- 20201209 --------------------------------
 				// Méthode pour supprimer un stagiaire
@@ -1451,9 +1612,9 @@ public class ArbreBin implements ParametreGestionnaire{
 					System.out.println(indexNoeudFils);
 					System.out.println(indexNoeudParent);
 					// Modifier le parent
-					ecrireFilsGauche(indexNoeudParent, indexNoeudFils);// écrire Doublon au parent du noeud supprimé
-					ecrireFilsDroit(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa place, ie au doublon											
-					ecrireFilsGauche(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa place, ie au doublon
+					ecrireFilsGaucheBin(indexNoeudParent, indexNoeudFils);// écrire Doublon au parent du noeud supprimé
+					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa place, ie au doublon											
+					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa place, ie au doublon
 
 				}
 
@@ -1485,9 +1646,9 @@ public class ArbreBin implements ParametreGestionnaire{
 
 					System.out.println(indexNoeudFils);
 					// Modifier le parent
-					ecrireFilsDroit(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
+					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
 																			// place
-					ecrireFilsGauche(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
+					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
 																			// place
 
 				}
@@ -1525,10 +1686,10 @@ public class ArbreBin implements ParametreGestionnaire{
 					System.out.println(indexNoeudFils);
 					System.out.println(indexNoeudParent);
 					// Modifier le parent
-					ecrireFilsDroit(indexNoeudParent, indexNoeudFils);// écrire FG au parent du noeud supprimé
-					ecrireFilsDroit(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
+					ecrireFilsDroitBin(indexNoeudParent, indexNoeudFils);// écrire FG au parent du noeud supprimé
+					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
 																			// place
-					ecrireFilsGauche(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
+					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
 																			// place
 
 				}
@@ -1592,10 +1753,10 @@ public class ArbreBin implements ParametreGestionnaire{
 					System.out.println(indexNoeudFils);
 					System.out.println(indexNoeudParent);
 					// Modifier le parent
-					ecrireFilsDroit(indexNoeudParent, indexNoeudFils);// écrire FG au parent du noeud supprimé
-					ecrireFilsDroit(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
+					ecrireFilsDroitBin(indexNoeudParent, indexNoeudFils);// écrire FG au parent du noeud supprimé
+					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
 																			// place
-					ecrireFilsGauche(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
+					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
 																			// place
 
 				}
@@ -1604,9 +1765,9 @@ public class ArbreBin implements ParametreGestionnaire{
 					int indexNoeud = 0;
 					int indexNoeudSansFils = -1;
 
-					while ((indexNoeudFils != recupererIndexFilsGauche(indexNoeud)
-							&& (indexNoeudFils != recupererIndexFilsDroit(indexNoeud))
-							&& (indexNoeudFils != recupererIndexDoublon(indexNoeud)))) {
+					while ((indexNoeudFils != recupererIndexFilsGaucheBin(indexNoeud)
+							&& (indexNoeudFils != recupererIndexFilsDroitBin(indexNoeud))
+							&& (indexNoeudFils != recupererIndexDoublonBin(indexNoeud)))) {
 						indexNoeud++;
 					}
 
@@ -1698,17 +1859,17 @@ public class ArbreBin implements ParametreGestionnaire{
 
 					int indexNoeud = 0;
 
-					while ((indexNoeudFils != recupererIndexFilsGauche(indexNoeud)
-							&& (indexNoeudFils != recupererIndexFilsDroit(indexNoeud))
-							&& (indexNoeudFils != recupererIndexDoublon(indexNoeud)))) {
+					while ((indexNoeudFils != recupererIndexFilsGaucheBin(indexNoeud)
+							&& (indexNoeudFils != recupererIndexFilsDroitBin(indexNoeud))
+							&& (indexNoeudFils != recupererIndexDoublonBin(indexNoeud)))) {
 						indexNoeud++;
 					}
-					if (indexNoeudFils == recupererIndexFilsGauche(indexNoeud)) {
-						ecrireFilsGauche(indexNoeud, indexNoeudSansFils);
-					} else if (indexNoeudFils == recupererIndexFilsDroit(indexNoeud)) {
-						ecrireFilsDroit(indexNoeud, indexNoeudSansFils);
+					if (indexNoeudFils == recupererIndexFilsGaucheBin(indexNoeud)) {
+						ecrireFilsGaucheBin(indexNoeud, indexNoeudSansFils);
+					} else if (indexNoeudFils == recupererIndexFilsDroitBin(indexNoeud)) {
+						ecrireFilsDroitBin(indexNoeud, indexNoeudSansFils);
 					} else {
-						ecrireDoublon(indexNoeud, indexNoeudSansFils);
+						ecrireDoublonBin(indexNoeud, indexNoeudSansFils);
 					}
 
 					System.out.println(indexNoeud);
