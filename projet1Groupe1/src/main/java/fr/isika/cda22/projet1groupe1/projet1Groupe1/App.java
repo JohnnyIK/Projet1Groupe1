@@ -32,7 +32,7 @@ import javafx.scene.layout.HBox;
 /**
  * JavaFX App
  */
-public class App extends Application {
+public class App extends Application implements ParametreGestionnaire {
 	//attributs
 		public VuePageAcceuil vuePageAccueil;
 		public VueLoginAdmin vueLoginAdmin;
@@ -48,6 +48,7 @@ public class App extends Application {
     	utilisateur.recupereLoginUtilisateur();
     	
     	stage.setTitle(" Patrick School - Acceuil ");
+    	
     	
     	vuePageAccueil = new VuePageAcceuil();
         vueLoginAdmin = new VueLoginAdmin();
@@ -66,7 +67,7 @@ public class App extends Application {
 			for (int i = 0; i < admin.getListeAdmin().size(); i++) {
 				if (vueLoginAdmin.getFieldId().getText().equals(admin.getListeAdmin().get(i).getLogin())
 						&& vueLoginAdmin.getFieldMdp().getText().equals(admin.getListeAdmin().get(i).getMdp())) {
-					vueAppAdmin = new VueAppAdmin("admin");
+					vueAppAdmin = new VueAppAdmin("admin", admin.getListeAdmin().get(i).getNom(), admin.getListeAdmin().get(i).getPrenom());
 					stage.setScene(vueAppAdmin);
 					stage.setTitle(" Patrick School - Administrateur : " + admin.getListeAdmin().get(i).getPrenom()
 							+ " " + admin.getListeAdmin().get(i).getNom());
@@ -77,7 +78,7 @@ public class App extends Application {
 							.equals(utilisateur.getListeUtilisateur().get(i1).getLogin())
 							&& vueLoginAdmin.getFieldMdp().getText()
 									.equals(utilisateur.getListeUtilisateur().get(i1).getMdp())) {
-						vueAppAdminUser = new VueAppAdmin("user");
+						vueAppAdminUser = new VueAppAdmin("user", utilisateur.getListeUtilisateur().get(i1).getNom(), utilisateur.getListeUtilisateur().get(i1).getPrenom());
 						stage.setScene(vueAppAdminUser);
 						stage.setTitle(" Patrick School - Utilisateur : "
 								+ utilisateur.getListeUtilisateur().get(i1).getPrenom() + " "
@@ -91,7 +92,7 @@ public class App extends Application {
 		});
 		
         vuePageAccueil.getBtnUser().setOnAction(event -> {
-        	vueAppAdminUser = new VueAppAdmin("user");
+        	vueAppAdminUser = new VueAppAdmin("user", "", "");
             stage.setScene(vueAppAdminUser);
             stage.setTitle(" Patrick School - ApplicationUtilisateur ");
         	

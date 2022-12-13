@@ -53,7 +53,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 		Button btnDoc;
 		Button btnFile;
 		
-		HBox topHbox;
+		VBox topVbox;
 		Button btnNom;
 		Button btnPrenom;
 		Button btnDepartement;
@@ -69,12 +69,13 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 		
 		
 		
-		public VueAppAdmin (String modeUtilisateur) {
+		public VueAppAdmin (String modeUtilisateur, String nomUser, String prenomUser) {
 			
 			
-			super(new BorderPane(), 1300, 1000);
+			super(new BorderPane(), 1400, 800);
+			//super(new BorderPane(), 1300, 800);
 			this.modeUtilisateur = modeUtilisateur;
-			this.tableViewStagiaire = new TableViewStagiaire(CHEMIN_TXT);
+			this.tableViewStagiaire = new TableViewStagiaire(CHEMIN_TXT, modeUtilisateur);
 			BorderPane rootVueAppAdmin = (BorderPane)this.getRoot();
 			rootVueAppAdmin.setPadding(new Insets(10, 10, 20, 20));//(hauteur, droite, bas, largeur
 			this.setRoot(rootVueAppAdmin);
@@ -249,9 +250,19 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 				VueAjouterStagiaire vueAjouterStagiaire = new VueAjouterStagiaire();
 				dialog.initModality(Modality.APPLICATION_MODAL);
 				dialog.setResizable(false);
+				dialog.setTitle("Ajouter un stagiaire");
 				
 				vueAjouterStagiaire.getBtnvaliderAj().setOnAction(e -> {
+					Boolean nomOK = false;
+					Boolean prenomOK = false;
+					Boolean departementOK = false;
+					Boolean formationOK = false;
+					Boolean anneeFormationOK = false;
 					String nom = vueAjouterStagiaire.getFieldNom().getText();
+					String prenom = vueAjouterStagiaire.getFieldPrenom().getText();
+					String departement = vueAjouterStagiaire.getFieldDep().getText();
+					String formation = vueAjouterStagiaire.getFieldFormation().getText();
+					String anneeFormation = vueAjouterStagiaire.getFieldAnneeAj().getText();
 					System.out.println("test bouton");
 					System.out.println(this.sauvegardeHelper.textIsCorrect(nom));
 					if (nom.equals("")) {
@@ -259,8 +270,47 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 					} else if (!this.sauvegardeHelper.textIsCorrect(nom) || nom.equals("Entrez le nom") || nom.equals("Nom invalide")) {
 						vueAjouterStagiaire.getFieldNom().setText("Nom invalide");
 					} else {
+						this.sauvegardeHelper.nomCheckAndUpdate(nom);
 						vueAjouterStagiaire.getStagiaire().setNom(nom);
-						
+						nomOK = true;
+					}
+					if (prenom.equals("")) {
+						vueAjouterStagiaire.getFieldPrenom().setText("Champ requis");
+					} else if (!this.sauvegardeHelper.textIsCorrect(prenom) || prenom.equals("Entrez le prénom") || prenom.equals("Prénom invalide")) {
+						vueAjouterStagiaire.getFieldPrenom().setText("Prenom invalide");
+					} else {
+						this.sauvegardeHelper.prenomCheckAndUpdate(prenom);
+						vueAjouterStagiaire.getStagiaire().setPrenom(prenom);
+						prenomOK = true;
+					}
+					if (departement.equals("")) {
+						vueAjouterStagiaire.getFieldDep().setText("Champ requis");
+					} else if (!this.sauvegardeHelper.departementCheck(departement) || departement.equals("Entrez le département") || departement.equals("Département invalide")) {
+						vueAjouterStagiaire.getFieldDep().setText("Département invalide");
+					} else {
+						departement = this.sauvegardeHelper.departementCheckAndUpdate(departement);
+						vueAjouterStagiaire.getStagiaire().setDepartement(departement);
+						departementOK = true;
+					}
+					if (formation.equals("")) {
+						vueAjouterStagiaire.getFieldFormation().setText("Champ requis");
+					} else if (!this.sauvegardeHelper.formationCheck(formation) || formation.equals("Entrez la formation") || formation.equals("Formation invalide")) {
+						vueAjouterStagiaire.getFieldFormation().setText("Formation invalide");
+					} else {
+						this.sauvegardeHelper.formationCheckAndUpdate(formation);
+						vueAjouterStagiaire.getStagiaire().setFormation(formation);
+						formationOK = true;
+					}
+					if (anneeFormation.equals("")) {
+						vueAjouterStagiaire.getFieldAnneeAj().setText("Champ requis");
+					} else if (!this.sauvegardeHelper.anneeFormationCheck(anneeFormation) || anneeFormation.equals("Entrez l'année") || anneeFormation.equals("Année invalide")) {
+						vueAjouterStagiaire.getFieldAnneeAj().setText("Année invalide");
+					} else {
+						this.sauvegardeHelper.anneeFormationCheckAndUpdate(anneeFormation);
+						vueAjouterStagiaire.getStagiaire().setAnneeFormation(anneeFormation);
+						anneeFormationOK = true;
+					}
+					if (nomOK == true && prenomOK == true && departementOK == true && formationOK == true && anneeFormationOK == true) {
 						// VueAppAdmin vueAppAdmin = new VueAppAdmin(Stagiaire);
 						// stage.setScene(vueAjouterStagiaire);
 						// stage.setTitle(" Patrick School - Ajouter Stagiaire ");
@@ -269,6 +319,9 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 						tableViewStagiaire.updateTableView(false, null);
 						dialog.close();
 					}
+						
+						
+					
 				});
 				
 				vueAjouterStagiaire.getBtnRetour().setOnAction(e -> {
@@ -285,6 +338,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 				VueAjouterFichier vueAjouterFichier = new VueAjouterFichier();
 				dialog.initModality(Modality.APPLICATION_MODAL);
 				dialog.setResizable(false);
+				dialog.setTitle("Importer un fichier texte");
 				
 				/*
 				vueAjouterStagiaire.getBtnvaliderAj().setOnAction(e -> {
@@ -301,9 +355,10 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 					System.out.println("fichier TXT " + fichierTXT);
 					
 					
-					this.tableViewStagiaire = new TableViewStagiaire(fichierTXT);
+					this.tableViewStagiaire = new TableViewStagiaire(fichierTXT, modeUtilisateur);
 					this.stackpane = new StackPane();
 					this.stackpane.getChildren().add(tableViewStagiaire);
+					this.stackpane.setPadding(new Insets(16,0,0,0));
 					rootVueAppAdmin.setCenter(stackpane);
 					/*
 					TableViewStagiaire tableViewStagiaire2 = new TableViewStagiaire(fichierTXT);
@@ -336,13 +391,30 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 			rootVueAppAdmin.setLeft(leftVbox);
 			
 			//Hbox dans LE TOP
-			HBox topHbox = new HBox(30);
-			ObservableList<Node>topHboxControls = topHbox.getChildren();
+			VBox topVbox = new VBox(30);
+			//ObservableList<Node>topVboxControls = topVbox.getChildren();
 			Insets border2 = new Insets(40, 40, 40, 40);
-			topHbox.setPadding(border2);
-			topHbox.setSpacing(30);
-			BackgroundFill bgrFill2 = new BackgroundFill(Color.LIGHTBLUE, null, null);
-			topHbox.setBackground(new Background(bgrFill2));
+			topVbox.setPadding(border2);
+			topVbox.setSpacing(30);
+			topVbox.setAlignment(Pos.CENTER);
+			topVbox.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/backgroundAcceuil.jpeg')");
+			//BackgroundFill bgrFill2 = new BackgroundFill(Color.LIGHTBLUE, null, null);
+			//topVbox.setBackground(new Background(bgrFill2));
+			GridPane infoUser = new GridPane();
+			Label espaceNom;
+			if (this.modeUtilisateur.equals("admin")) {
+				espaceNom = new Label ("Espace Administrateur");
+			} else {
+				espaceNom = new Label ("Espace Utilisateur");
+			}
+			
+			Label welcome = new Label ("Bienvenue, "+prenomUser+" "+nomUser+" !");
+			infoUser.add(espaceNom, 0, 0);
+			infoUser.add(welcome, 0, 1);
+			topVbox.getChildren().add(infoUser);
+			
+			
+			
 			
 			/*
 			//boutons dans le TOP 
@@ -372,7 +444,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 			topHboxControls.add(taperAnnee);
 			*/
 		
-			rootVueAppAdmin.setTop(topHbox);
+			rootVueAppAdmin.setTop(topVbox);
 			
 			//stackpane dans center 
 			stackpane = new StackPane();
@@ -392,14 +464,15 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 			rootVueAppAdmin.setCenter(stackpane);
 			//stackpane.setPrefWidth(200);
 			stackpane.getChildren().add(tableViewStagiaire);
+			stackpane.setPadding(new Insets(16,0,0,0));
 			//rootVueAppAdmin.setCenter(testTable);
 			//rootVueAppAdmin.setCenter(tableViewStagiaire2);
-			
+			//stackpane.setMinHeight(800);
 			
 			
 			
 			String topaffichee = "";
-			topHbox.setId("boxRecherche");
+			topVbox.setId("boxRecherche");
 			/*
 			btnRechAv.setOnAction(new EventHandler<ActionEvent>() {
 				
@@ -436,7 +509,80 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 //					//On affiche notre stage
 //					stage.show();
 //				}
-			}
+			
+			if (os.equals("PC")) {
+				welcome.setFont(FONTTITRE);
+				espaceNom.setFont(FONTTEXTE);
+				//labelmdp.setFont(FONTTEXTE);
+				btnAjoutSta.setFont(FONTBUTTON);
+				btnImpress.setFont(FONTBUTTON);
+				btnFile.setFont(FONTBUTTON);
+				btnDoc.setFont(FONTBUTTON);
+				//fieldId.setFont(FONTTEXTE);
+				//fieldMdp.setFont(FONTTEXTE);
+		    	
+		    }
+		    
+			//labelTitreAdm.setTextFill(Color.rgb(60, 60, 60));
+			//labelId.setTextFill(Color.rgb(60, 60, 60));
+			//labelmdp.setTextFill(Color.rgb(60, 60, 60));
+		    
+			btnAjoutSta.setTextFill(Color.rgb(61, 110, 139));
+			btnAjoutSta.setStyle(BUTTONCOLOR);
+			btnAjoutSta.setOnMouseEntered((event) -> {
+				btnAjoutSta.setStyle(BUTTONCOLOROVER);
+				btnAjoutSta.setTextFill(Color.rgb(240, 240, 240));
+			});
+			btnAjoutSta.setOnMouseExited((event) -> {
+				btnAjoutSta.setStyle(BUTTONCOLOR);
+				btnAjoutSta.setTextFill(Color.rgb(61, 110, 139));
+			});
+			
+			btnImpress.setTextFill(Color.rgb(61, 110, 139));
+			btnImpress.setStyle(BUTTONCOLOR);
+			btnImpress.setOnMouseEntered((event) -> {
+				btnImpress.setStyle(BUTTONCOLOROVER);
+				btnImpress.setTextFill(Color.rgb(240, 240, 240));
+			});
+			btnImpress.setOnMouseExited((event) -> {
+				btnImpress.setStyle(BUTTONCOLOR);
+				btnImpress.setTextFill(Color.rgb(61, 110, 139));
+			});
+			
+			btnFile.setTextFill(Color.rgb(61, 110, 139));
+			btnFile.setStyle(BUTTONCOLOR);
+			btnFile.setOnMouseEntered((event) -> {
+				btnFile.setStyle(BUTTONCOLOROVER);
+				btnFile.setTextFill(Color.rgb(240, 240, 240));
+			});
+			btnFile.setOnMouseExited((event) -> {
+				btnFile.setStyle(BUTTONCOLOR);
+				btnFile.setTextFill(Color.rgb(61, 110, 139));
+			});
+			
+			btnDoc.setTextFill(Color.rgb(61, 110, 139));
+			btnDoc.setStyle(BUTTONCOLOR);
+			btnDoc.setOnMouseEntered((event) -> {
+				btnDoc.setStyle(BUTTONCOLOROVER);
+				btnDoc.setTextFill(Color.rgb(240, 240, 240));
+			});
+			btnDoc.setOnMouseExited((event) -> {
+				btnDoc.setStyle(BUTTONCOLOR);
+				btnDoc.setTextFill(Color.rgb(61, 110, 139));
+			});
+			
+			btnAjoutSta.setMaxWidth(Double.MAX_VALUE);
+			btnImpress.setMaxWidth(Double.MAX_VALUE);
+			btnDoc.setMaxWidth(Double.MAX_VALUE);
+			btnFile.setMaxWidth(Double.MAX_VALUE);
+			
+			
+			
+			
+			
+			
+			
+		}
 		
 		
 		public Button getBtnFile() {

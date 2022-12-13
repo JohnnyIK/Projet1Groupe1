@@ -14,6 +14,7 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 
 import java.util.Currency;
 
@@ -26,7 +27,7 @@ import javafx.stage.Stage;
 
 
 
-public class VueLoginAdmin extends Scene{
+public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 	
 	//attributs 
 	Button btnLogin;
@@ -55,19 +56,17 @@ public class VueLoginAdmin extends Scene{
 
 
 	public VueLoginAdmin () {
-		super(new GridPane(), 600, 300);
+		super(new GridPane(), 800, 320);
 		GridPane rootLoginAdmin = (GridPane)this.getRoot();
 		rootLoginAdmin.setPadding(new Insets (50));
 		rootLoginAdmin.setHgap(15);
 		rootLoginAdmin.setVgap(15);
 		
 		this.setRoot(rootLoginAdmin);
-		this.getRoot().setStyle("-fx-font-family: 'serif'");
 		
-		rootLoginAdmin.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/backgroundAcceuil.jpeg')");
 		
-		Label labelTitreAdm = new Label("Bienvenu cher Administrateur, veuillez entrer vos identifiants :");
-		rootLoginAdmin.add(labelTitreAdm, 2,2,3,1);
+		Label labelTitreAdm = new Label("Bienvenue cher Administrateur,\nveuillez entrer vos identifiants :");
+		rootLoginAdmin.add(labelTitreAdm, 1,0,3,3);
 		
 		Label labelId = new Label("Identifiant");
 		fieldId = new TextField("entrez identifiants");
@@ -77,13 +76,46 @@ public class VueLoginAdmin extends Scene{
 		
 		btnLogin = new Button ("Valider");
 		
-		rootLoginAdmin.add(labelId, 2,3);
-		rootLoginAdmin.add(fieldId, 3, 3);
+		rootLoginAdmin.add(labelId, 1,3);
+		rootLoginAdmin.add(fieldId, 2, 3);
 		
-		rootLoginAdmin.add(labelmdp, 2, 4);
-		rootLoginAdmin.add(fieldMdp, 3, 4);
+		rootLoginAdmin.add(labelmdp, 1, 4);
+		rootLoginAdmin.add(fieldMdp, 2, 4);
 		
-		rootLoginAdmin.add(btnLogin, 3, 5);
+		rootLoginAdmin.add(btnLogin, 2, 5);
+		
+		
+		
+		if (os.equals("PC")) {
+			labelTitreAdm.setFont(FONTTITRE);
+			labelId.setFont(FONTTEXTE);
+			labelmdp.setFont(FONTTEXTE);
+			btnLogin.setFont(FONTBUTTON);
+			fieldId.setFont(FONTTEXTE);
+			fieldMdp.setFont(FONTTEXTE);
+	    	
+	    }
+	    
+		labelTitreAdm.setTextFill(Color.rgb(60, 60, 60));
+		labelId.setTextFill(Color.rgb(60, 60, 60));
+		labelmdp.setTextFill(Color.rgb(60, 60, 60));
+	    
+		btnLogin.setPrefWidth(120);
+		btnLogin.setTextFill(Color.rgb(61, 110, 139));
+		btnLogin.setStyle(BUTTONCOLOR);
+		btnLogin.setOnMouseEntered((event) -> {
+			btnLogin.setStyle(BUTTONCOLOROVER);
+	    	btnLogin.setTextFill(Color.rgb(240, 240, 240));
+		});
+		btnLogin.setOnMouseExited((event) -> {
+			btnLogin.setStyle(BUTTONCOLOR);
+			btnLogin.setTextFill(Color.rgb(61, 110, 139));
+		});
+	   
+	    
+	    this.getRoot().setStyle("-fx-font-family: 'serif'");
+		
+		rootLoginAdmin.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/backgroundAcceuil.jpeg')");
 		
 	}
 

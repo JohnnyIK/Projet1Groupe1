@@ -1,5 +1,10 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+
 /**
  * 
  * Ensemble des parametres de l'application "Stagiaires"
@@ -62,6 +67,23 @@ public interface ParametreGestionnaire {
 	
 	public final static String CHEMIN_TXT_LOGIN_ADMIN = "src/main/java/Fichier/loginAdmin.txt";
 	public final static String CHEMIN_TXT_LOGIN_UTILISATEUR = "src/main/java/Fichier/loginUtilisateur.txt";
+	
+	//public final static String FONTGENERAL = "Verdana";
+	public final static Font FONTTITRE = Font.font("Roboto", FontWeight.SEMI_BOLD, 25);
+	//public final static Font FONTTITRE = new Font("Roboto", 22);
+	public final static Font FONTTEXTE = Font.font("Roboto", FontWeight.SEMI_BOLD, 14);
+	public final static Font FONTTEXTEBOLD = Font.font("Roboto", FontWeight.BOLD, 14);
+	public final static Font FONTTEXTERECH = Font.font("Roboto", FontWeight.SEMI_BOLD, 13);
+	public final static Font FONTBUTTON = Font.font("Roboto", FontWeight.SEMI_BOLD, 14);;
+	public final static String BUTTONCOLOR = "-fx-background-color: #FFFFFF";
+	public final static String BUTTONGREY = "-fx-background-color: #d0d0d0";
+	public final static String BUTTONCOLOROVER = "-fx-background-color: #6bb7d6";
+	public final static String BUTTONALERTCOLOROVER = "-fx-background-color: #B7410E";
+	public final static String ALERT = "-fx-text-color: #a40000";
+	
+	public final static String os = "PC";
+	
+	
 	
 	
 	

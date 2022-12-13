@@ -38,7 +38,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 
 
-public class VueAjouterStagiaire extends Scene {
+public class VueAjouterStagiaire extends Scene implements ParametreGestionnaire {
 	
 	//attributs
 	private Button btnValiderAjoutStagiaire;
@@ -52,10 +52,47 @@ public class VueAjouterStagiaire extends Scene {
 	private TextField fieldFormation ;
 	private TextField fieldAnneeAj ;
 	
+	public TextField getFieldPrenom() {
+		return fieldPrenom;
+	}
+
+	public void setFieldPrenom(TextField fieldPrenom) {
+		this.fieldPrenom = fieldPrenom;
+	}
+
+	public TextField getFieldDep() {
+		return fieldDep;
+	}
+
+	public void setFieldDep(TextField fieldDep) {
+		this.fieldDep = fieldDep;
+	}
+
+	public TextField getFieldFormation() {
+		return fieldFormation;
+	}
+
+	public void setFieldFormation(TextField fieldFormation) {
+		this.fieldFormation = fieldFormation;
+	}
+
+	public TextField getFieldAnneeAj() {
+		return fieldAnneeAj;
+	}
+
+	public void setFieldAnneeAj(TextField fieldAnneeAj) {
+		this.fieldAnneeAj = fieldAnneeAj;
+	}
+
+	public void setFieldNom(TextField fieldNom) {
+		this.fieldNom = fieldNom;
+	}
+
 	private ArbreBin sauvegardeHelper = new ArbreBin("");
 	
 	public VueAjouterStagiaire () {
-		super(new GridPane(), 600, 370);
+		super(new GridPane(), 700, 460);
+		//super(new GridPane(), 600, 370);
 		GridPane rootAddIntern = (GridPane)this.getRoot();
 		rootAddIntern.setPadding(new Insets (50));
 		rootAddIntern.setHgap(16);
@@ -67,7 +104,7 @@ public class VueAjouterStagiaire extends Scene {
 		rootAddIntern.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/backgroundAcceuil.jpeg')");
 		
 		Label labelTitreAj = new Label("Enregistrez vos nouveaux stagiaires :");
-		rootAddIntern.add(labelTitreAj, 1,0,3,1);
+		rootAddIntern.add(labelTitreAj, 1,0,4,1);
 		
 		Label labelnomAj = new Label("Nom  ");
 		fieldNom = new TextField("Entrez le nom");
@@ -147,6 +184,54 @@ public class VueAjouterStagiaire extends Scene {
 		});
 		*/
 		
+		if (os.equals("PC")) {
+
+			asterisque.setFont(FONTTEXTE);
+			asterisque.setStyle(ALERT);
+			obligatoire.setFont(FONTTEXTE);
+			obligatoire.setStyle(ALERT);
+			labelTitreAj.setFont(FONTTITRE);
+			labelnomAj.setFont(FONTTEXTE);
+			labelPrenomAj.setFont(FONTTEXTE);
+			labelDepAj.setFont(FONTTEXTE);
+			labelFormationAj.setFont(FONTTEXTE);
+			labelAnneeAj.setFont(FONTTEXTE);
+			fieldNom.setFont(FONTTEXTE);
+			fieldPrenom.setFont(FONTTEXTE);
+			fieldDep.setFont(FONTTEXTE);
+			fieldFormation.setFont(FONTTEXTE);
+			fieldAnneeAj.setFont(FONTTEXTE);
+			btnValiderAjoutStagiaire.setFont(FONTBUTTON);
+			btnRetour.setFont(FONTBUTTON);
+
+
+			btnValiderAjoutStagiaire.setPrefWidth(120);
+			btnValiderAjoutStagiaire.setTextFill(Color.rgb(61, 110, 139));
+			btnValiderAjoutStagiaire.setStyle(BUTTONCOLOR);
+			btnValiderAjoutStagiaire.setOnMouseEntered((event) -> {
+				btnValiderAjoutStagiaire.setStyle(BUTTONCOLOROVER);
+				btnValiderAjoutStagiaire.setTextFill(Color.rgb(240, 240, 240));
+
+			});
+			btnValiderAjoutStagiaire.setOnMouseExited((event) -> {
+				btnValiderAjoutStagiaire.setStyle(BUTTONCOLOR);
+				btnValiderAjoutStagiaire.setTextFill(Color.rgb(61, 110, 139));
+			});
+			
+			btnRetour.setPrefWidth(120);
+			btnRetour.setTextFill(Color.rgb(183, 65, 14));
+			btnRetour.setStyle(BUTTONCOLOR);
+			btnRetour.setOnMouseEntered((event) -> {
+				btnRetour.setStyle(BUTTONALERTCOLOROVER);
+				btnRetour.setTextFill(Color.rgb(240, 240, 240));
+
+			});
+			btnRetour.setOnMouseExited((event) -> {
+				btnRetour.setStyle(BUTTONCOLOR);
+				btnRetour.setTextFill(Color.rgb(183, 65, 14));
+			});
+			
+		}
 		
 		
 	}

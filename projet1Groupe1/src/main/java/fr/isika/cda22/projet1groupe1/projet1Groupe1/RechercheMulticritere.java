@@ -184,10 +184,12 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 		Boolean anneeFormationPresent = true;
 
 		if (this.nomRechSelect) {
-			nomPresent = nomNoeud.contains(this.nomRech);
+			//nomPresent = nomNoeud.contains(this.nomRech);
+			nomPresent = nomNoeud.startsWith(this.nomRech);
 		}
 		if (this.prenomRechSelect) {
-			prenomPresent = prenomNoeud.contains(this.prenomRech);
+			//prenomPresent = prenomNoeud.contains(this.prenomRech);
+			prenomPresent = prenomNoeud.startsWith(this.prenomRech);
 		}
 		if (this.departementRechSelect) {
 			//if (this.departementRech.get(0).length() == 1) {
@@ -197,7 +199,8 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 			//departementPresent = departementIsContained(departementNoeud, this.departementRech);
 		}
 		if (this.formationRechSelect) {
-			formationPresent = formationNoeud.contains(this.formationRech);
+			//formationPresent = formationNoeud.contains(this.formationRech);
+			formationPresent = formationNoeud.startsWith(this.formationRech);
 		}
 		if (this.anneeFormationRechSelect) {
 			anneeFormationPresent = anneeFormationIsContained(anneeFormationNoeud, this.anneeFormationRech);

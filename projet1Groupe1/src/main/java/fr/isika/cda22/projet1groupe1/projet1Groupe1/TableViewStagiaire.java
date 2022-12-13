@@ -73,16 +73,19 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 	ComboBox anneeMincomboBox;
 	ComboBox anneeMaxcomboBox;
 	
+	private String userMode;
+	
 
-	public TableViewStagiaire(String cheminTXT) {
+	public TableViewStagiaire(String cheminTXT, String userMode) {
 
 		super(new HBox());
 		tableViewStagiaireCont = new HBox();
+		this.userMode = userMode;
 		this.importerTxtToTableView(cheminTXT);
 //		this.sauvegardeBin = new ArbreBin(CHEMIN_BIN);
 //		this.sauvegardeBin.importAnnuaireTexte();
 //		this.sauvegardeBin.afficherFichierBin();
-		Stagiaire s15 = new Stagiaire("ZZZZZZZZZZ", "fhfjhf ", "75", "CDA 22", "2022");
+		//Stagiaire s15 = new Stagiaire("ZZZZZZZZZZ", "fhfjhf ", "75", "CDA 22", "2022");
 		//this.sauvegardeBin.ajouterStagiaireBin(s15);
 		this.sauvegardeBin.afficheAnneeListeConsole();
 		GridPane grille = new GridPane();
@@ -104,12 +107,17 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 
 		// TableView<StagiaireTableView> table = new TableView<StagiaireTableView>();
 
-		table.setEditable(true);
+		if (userMode.equals("admin")) {
+			table.setEditable(true);
+		} else {
+			table.setEditable(false);
+		}
 		
 		//table.minHeight(2000);
 		table.setMinWidth(500);
 		//table.setMaxWidth(1000);
 		table.setPrefWidth(2000);
+		table.setPrefHeight(600);
 		
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -204,7 +212,7 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		        a.show();
 		        this.updateTableView(false, rechercheCritere);
 			} else {
-				this.sauvegardeBin.ecrireNomBinaire(stagiaire.getIndex(), this.sauvegardeBin.prenomCheckAndUpdate(nom));
+				this.sauvegardeBin.ecrireNomBinaire(stagiaire.getIndex(), this.sauvegardeBin.nomCheckAndUpdate(nom));
 				this.updateTableView(false, null);
 			}
 			
@@ -672,6 +680,48 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		//grille.getColumnConstraints().addAll(colFirst, colTextField, colVide, colTextField, colVide, colTextField, colVide, colTextField, colVide, colSmall, colTextField, colSmall, colTextField, colVide, colButton, colVide);
 		//grilleRecherche.getColumnConstraints().addAll(colFirst, colTextField, colVide, colTextField, colVide, colTextField, colVide, colTextField, colVide, colSmall, colTextField, colSmall, colTextField, colVide, colButton, colVide);
 		
+		
+		if (os.equals("PC")) {
+			
+			//labelTitreAdm.setFont(FONTTITRE);
+			labelRecherche.setFont(FONTTEXTERECH);
+			nomRechLabel.setFont(FONTTEXTERECH);
+			prenomRechLabel.setFont(FONTTEXTERECH);
+			departementRechLabel.setFont(FONTTEXTERECH);
+			formationRechLabel.setFont(FONTTEXTERECH);
+			anneeFormationRechLabel.setFont(FONTTEXTERECH);
+			anneeFormationRechLabelA.setFont(FONTTEXTERECH);
+			anneeFormationRechLabelDe.setFont(FONTTEXTERECH);
+			nomRechTextField.setFont(FONTTEXTERECH);
+			prenomRechTextField.setFont(FONTTEXTERECH);
+			departementRechTextField.setFont(FONTTEXTERECH);
+			formationRechTextField.setFont(FONTTEXTERECH);
+			anneeMinRechTextField.setFont(FONTTEXTERECH);
+			anneeMaxRechTextField.setFont(FONTTEXTERECH);
+			btnEffacerRecherche.setFont(FONTBUTTON);
+			//btnImpress.setFont(FONTBUTTON);
+			//btnFile.setFont(FONTBUTTON);
+			//btnDoc.setFont(FONTBUTTON);
+			//fieldId.setFont(FONTTEXTE);
+			//fieldMdp.setFont(FONTTEXTE);
+			
+			btnEffacerRecherche.setTextFill(Color.rgb(61, 110, 139));
+			btnEffacerRecherche.setStyle(BUTTONCOLOR);
+			btnEffacerRecherche.setOnMouseEntered((event) -> {
+				btnEffacerRecherche.setStyle(BUTTONCOLOROVER);
+				btnEffacerRecherche.setTextFill(Color.rgb(240, 240, 240));
+		    	
+			});
+			btnEffacerRecherche.setOnMouseExited((event) -> {
+				btnEffacerRecherche.setStyle(BUTTONCOLOR);
+				btnEffacerRecherche.setTextFill(Color.rgb(61, 110, 139));
+			});
+	    	
+	    }
+		
+		
+		
+		
 	}
 
 //    private void handleSupprimer() {
@@ -782,7 +832,9 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							GridPane grilleDialog = new GridPane();
 							grilleDialog.setHgap(10);
 							grilleDialog.setVgap(10);
-							grilleDialog.setPadding(new Insets(20, 50, 30, 50));
+							grilleDialog.setPadding(new Insets(30, 30, 30, 30));
+							
+							GridPane grilleRecap = new GridPane();
 							
 							// Setting the title
 							dialog.setTitle("Suppression");
@@ -802,6 +854,29 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							Button supprimer = new Button("Supprimer");
 							
 							grilleDialog.add(texteLabel, 1, 1, 3, 1);
+							
+							grilleRecap.add(nomLabel, 0, 0, 1, 1);
+							grilleRecap.add(nom, 0, 1, 1, 1);
+							grilleRecap.add(prenomLabel, 1, 0, 1, 1);
+							grilleRecap.add(prenom, 1, 1, 1, 1);
+							grilleRecap.add(departementLabel, 2, 3, 1, 1);
+							grilleRecap.add(departement, 2, 4, 1, 1);
+							grilleRecap.add(formationLabel, 0, 3, 1, 1);
+							grilleRecap.add(formation, 0, 4, 1, 1);
+							grilleRecap.add(anneeFormationLabel, 1, 3, 1, 1);
+							grilleRecap.add(anneeFormation, 1, 4, 1, 1);
+							
+							grilleRecap.setHgap(25);
+							grilleRecap.setVgap(5);
+							grilleRecap.setPadding(new Insets(25));
+							
+							grilleRecap.setBackground(new Background(new BackgroundFill(Color.rgb(237, 237, 237), null, null)));
+							grilleRecap.setStyle("-fx-border: 2; -fx-border-color:rgb(212, 212, 212);");
+							
+							grilleDialog.add(grilleRecap, 1, 2, 3, 5);
+	
+							
+							/*
 							grilleDialog.add(nomLabel, 1, 3, 1, 1);
 							grilleDialog.add(nom, 1, 4, 1, 1);
 							grilleDialog.add(prenomLabel, 2, 3, 1, 1);
@@ -812,6 +887,8 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							grilleDialog.add(formation, 1, 7, 1, 1);
 							grilleDialog.add(anneeFormationLabel, 2, 6, 1, 1);
 							grilleDialog.add(anneeFormation, 2, 7, 1, 1);
+							*/
+							
 							grilleDialog.add(annuler, 2, 9, 1, 1);
 							grilleDialog.add(supprimer, 3, 9, 1, 1);
 							
@@ -838,6 +915,55 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 								
 							    dialog.close();
 							});
+							
+							if (os.equals("PC")) {
+								
+								//labelTitreAdm.setFont(FONTTITRE);
+								texteLabel.setFont(FONTTEXTE);
+								nomLabel.setFont(FONTTEXTE);
+								prenomLabel.setFont(FONTTEXTE);
+								departementLabel.setFont(FONTTEXTE);
+								formationLabel.setFont(FONTTEXTE);
+								anneeFormationLabel.setFont(FONTTEXTE);
+							    nom.setFont(FONTTEXTEBOLD);
+							    prenom.setFont(FONTTEXTEBOLD);
+							    departement.setFont(FONTTEXTEBOLD);
+							    formation.setFont(FONTTEXTEBOLD);
+							    anneeFormation.setFont(FONTTEXTEBOLD);
+					
+								annuler.setFont(FONTBUTTON);
+								supprimer.setFont(FONTBUTTON);
+								//btnImpress.setFont(FONTBUTTON);
+								//btnFile.setFont(FONTBUTTON);
+								//btnDoc.setFont(FONTBUTTON);
+								//fieldId.setFont(FONTTEXTE);
+								//fieldMdp.setFont(FONTTEXTE);
+								
+								annuler.setTextFill(Color.rgb(183, 65, 14));
+								annuler.setStyle(BUTTONCOLOR);
+								annuler.setOnMouseEntered(e -> {
+									annuler.setStyle(BUTTONALERTCOLOROVER);
+									annuler.setTextFill(Color.rgb(240, 240, 240));
+							    	
+								});
+								annuler.setOnMouseExited(e -> {
+									annuler.setStyle(BUTTONCOLOR);
+									annuler.setTextFill(Color.rgb(183, 65, 14));
+								});
+								
+								supprimer.setTextFill(Color.rgb(61, 110, 139));
+								supprimer.setStyle(BUTTONCOLOR);
+								supprimer.setOnMouseEntered(e -> {
+									supprimer.setStyle(BUTTONCOLOROVER);
+									supprimer.setTextFill(Color.rgb(240, 240, 240));
+							    	
+								});
+								supprimer.setOnMouseExited(e -> {
+									supprimer.setStyle(BUTTONCOLOR);
+									supprimer.setTextFill(Color.rgb(61, 110, 139));
+								});
+						    	
+						    }
 
 							dialog.setScene(dialogScene);
 							dialog.showAndWait();
@@ -1002,8 +1128,8 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 	}
 	
 	private TextField createTextFieldRechercheInput() {
-		TextField textFieldRechercheInput = new TextField();
 		
+		TextField textFieldRechercheInput = new TextField();
 		textFieldRechercheInput.setOnKeyReleased((KeyEvent event) -> {
 			this.rechercheRealTime();
 		});
@@ -1072,15 +1198,24 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		} else {
 			rechercheActivee = false;
 		}
-		this.rechercheCritere.setNomRech(nom);
+		if (!nom.equals("")) {
+			this.rechercheCritere.setNomRech(nom.toUpperCase());
+		}
 		// rechercheCritere.setPrenomRechSelect(prenomSelect.isSelected());
-		this.rechercheCritere.setPrenomRech(prenom);
+		if (!prenom.equals("")) {
+			String prenomFormate ="";
+			prenomFormate += prenom.substring(0,1).toUpperCase();
+			prenomFormate += prenom.substring(1).toLowerCase();
+			this.rechercheCritere.setPrenomRech(prenomFormate);
+		}
 		//this.rechercheCritere.setDepartementRechSelect(false);
 		departementRech.clear();
 		this.departementRech.add(departementRechTextField.getText());
 		this.rechercheCritere.setDepartementRech(departementRech);
 		// this.rechercheCritere.setFormationRechSelect(formationSelect.isSelected());
-		this.rechercheCritere.setFormationRech(formation);
+		if (!formation.equals("")) {
+			this.rechercheCritere.setFormationRech(formation.toUpperCase());
+		}
 		// this.rechercheCritere.setAnneeFormationRechSelect(false);
 		if (anneeMin == null) {
 			this.anneeFormationRech[0] = "1000";
@@ -1120,6 +1255,7 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		nomRechTextField.setText("");
 		prenomRechTextField.setText("");
 		formationRechTextField.setText("");
+		departementRechTextField.setText("");
 		//anneeMinRechTextField.setText("");
 		//anneeMaxRechTextField.setText("");
 		anneeMincomboBox.setValue(null);

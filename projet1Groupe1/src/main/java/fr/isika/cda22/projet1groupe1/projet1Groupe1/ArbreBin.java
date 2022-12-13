@@ -518,6 +518,7 @@ public class ArbreBin implements ParametreGestionnaire{
 		if (formation.length()>TAILLE_MAX_FORMATION) {
 			formation = formation.substring(0, TAILLE_MAX_FORMATION );
 		}
+		formation = formation.toUpperCase();
 		return formation.strip();
 	}
 	
@@ -526,7 +527,7 @@ public class ArbreBin implements ParametreGestionnaire{
         {
             char c = s.charAt(i);
             if (!(c >= 'A' && c <= 'Z') && !(c == ' ') && !(c == '-') &&
-                    !(c >= '0' && c <= '9')) {
+                    !(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z')) {
                 return false;
             }
         }
