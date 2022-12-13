@@ -1,5 +1,4 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
-
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -30,61 +29,80 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-
-
 /**
  * JavaFX App
  */
 public class App extends Application {
-
-	//attributs 
+	//attributs
 		public VuePageAcceuil vuePageAccueil;
 		public VueLoginAdmin vueLoginAdmin;
 		public VueAppAdmin vueAppAdmin;
-	
-
+		public VueAppAdmin vueAppAdminUser;
+		public VueAjouterFichier vueAjouterFichier;
+		public VueAjouterStagiaire vueAjouterStagiaire;
+		
     public void start(Stage stage) {
+    	Administrateur admin = new Administrateur();
+    	admin.recupereLoginAdmin();
+    	Utilisateur utilisateur = new Utilisateur();
+    	utilisateur.recupereLoginUtilisateur();
     	
     	stage.setTitle(" Patrick School - Acceuil ");
     	
     	vuePageAccueil = new VuePageAcceuil();
-        
         vueLoginAdmin = new VueLoginAdmin();
-    	
+ 
+        //vueAppAdmin = new VueAppAdmin("admin");
+        //vueAppAdminUser = new VueAppAdmin("user");
+
     	vuePageAccueil.getBtnAdmin().setOnAction(event -> {
         	stage.setScene(vueLoginAdmin);
         	stage.setTitle(" Patrick School - Login ");
         	
-        });	
-        vueLoginAdmin.getBtnLogin().setOnAction(event -> {
-        	vueAppAdmin = new VueAppAdmin("admin");
-            stage.setScene(vueAppAdmin);
-            stage.setTitle(" Patrick School - ApplicationAdmin ");
-            
         });
-        
+    	
+		vueLoginAdmin.getBtnLogin().setOnAction(event -> {
+
+			for (int i = 0; i < admin.getListeAdmin().size(); i++) {
+				if (vueLoginAdmin.getFieldId().getText().equals(admin.getListeAdmin().get(i).getLogin())
+						&& vueLoginAdmin.getFieldMdp().getText().equals(admin.getListeAdmin().get(i).getMdp())) {
+					vueAppAdmin = new VueAppAdmin("admin");
+					stage.setScene(vueAppAdmin);
+					stage.setTitle(" Patrick School - Administrateur : " + admin.getListeAdmin().get(i).getPrenom()
+							+ " " + admin.getListeAdmin().get(i).getNom());
+
+				}
+				for (int i1 = 0; i1 < utilisateur.getListeUtilisateur().size(); i1++) {
+					if (vueLoginAdmin.getFieldId().getText()
+							.equals(utilisateur.getListeUtilisateur().get(i1).getLogin())
+							&& vueLoginAdmin.getFieldMdp().getText()
+									.equals(utilisateur.getListeUtilisateur().get(i1).getMdp())) {
+						vueAppAdminUser = new VueAppAdmin("user");
+						stage.setScene(vueAppAdminUser);
+						stage.setTitle(" Patrick School - Utilisateur : "
+								+ utilisateur.getListeUtilisateur().get(i1).getPrenom() + " "
+								+ utilisateur.getListeUtilisateur().get(i1).getNom());
+					}
+
+				}
+
+			}
+
+		});
+		
         vuePageAccueil.getBtnUser().setOnAction(event -> {
-        	vueAppAdmin = new VueAppAdmin("user");
-            stage.setScene(vueAppAdmin);
+        	vueAppAdminUser = new VueAppAdmin("user");
+            stage.setScene(vueAppAdminUser);
             stage.setTitle(" Patrick School - ApplicationUtilisateur ");
         	
         });	
-
-        
-        //stage.setScene(vuePageAccueil);
-        vueAppAdmin = new VueAppAdmin("admin");
-        stage.setScene(vueAppAdmin);
-        
+    
+        stage.setScene(vuePageAccueil); //quand remplacer vuePageAcceuil par vueAppAdmin = ok on a le boutton file
         stage.show();
     	
     	
     }
-
- 
-    
     public static void main(String[] args) {
         launch();
     }
-    
-
 }

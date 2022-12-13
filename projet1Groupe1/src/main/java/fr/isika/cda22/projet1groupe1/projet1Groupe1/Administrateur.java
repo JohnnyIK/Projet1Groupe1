@@ -1,22 +1,55 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
-
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+//import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+//import java.util.Scanner;
 
-public class Administrateur extends User {
+
+
+public class Administrateur extends User implements ParametreGestionnaire {
+	ArrayList<Administrateur> listeAdmin;
+	
 	// Constructeur de la class mère
-	public Administrateur(String login, String mdp) {
-		super(login, mdp);
-		
+	public Administrateur(String nom, String prenom, String login, String mdp) {
+		super(nom, prenom, login, mdp);
+		// TODO Auto-generated constructor stub
 	}
 	
-	// Méthode spécifique à l'administrateur
-	public void ModifStagiaire() {
+	//Constructeur vide
+	public Administrateur() {
+		
 	}
-	public void supprimerStagiaire() {
+	public void recupereLoginAdmin() {
+		
+		listeAdmin = new ArrayList<>();
+		
+		try {
+			FileReader fr = new FileReader(CHEMIN_TXT_LOGIN_ADMIN);
+			BufferedReader br = new BufferedReader(fr);
+			while (br.ready()) {
+				String nomAdmin = br.readLine();
+				String prenomAdmin = br.readLine();
+				String loginAdmin = br.readLine();
+				String mdpAdmin = br.readLine();
+				br.readLine();
+				Administrateur admin = new Administrateur(nomAdmin, prenomAdmin, loginAdmin, mdpAdmin);
+				listeAdmin.add(admin);
+			}
+			br.close();
+			fr.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
 	}
-	public void ajouterStagiaire() {
+	public ArrayList<Administrateur> getListeAdmin() {
+		return listeAdmin;
 	}
+	public void setListeAdmin(ArrayList<Administrateur> listeAdmin) {
+		this.listeAdmin = listeAdmin;
+	}
+	
 }

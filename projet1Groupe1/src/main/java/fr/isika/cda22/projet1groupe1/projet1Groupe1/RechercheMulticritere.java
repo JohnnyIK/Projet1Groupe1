@@ -190,7 +190,11 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 			prenomPresent = prenomNoeud.contains(this.prenomRech);
 		}
 		if (this.departementRechSelect) {
-			departementPresent = departementIsContained(departementNoeud, this.departementRech);
+			//if (this.departementRech.get(0).length() == 1) {
+				departementPresent = departementNoeud.contains(this.departementRech.get(0));
+				System.out.println("departement entré "+this.departementRech.get(0));
+			//}
+			//departementPresent = departementIsContained(departementNoeud, this.departementRech);
 		}
 		if (this.formationRechSelect) {
 			formationPresent = formationNoeud.contains(this.formationRech);
@@ -226,7 +230,7 @@ public class RechercheMulticritere implements ParametreGestionnaire {
 	 */
 	private Boolean departementIsContained(String departement, List<String> departementRech) {
 		for (String departementRecherche : departementRech) {
-			if (departement.equals(departementRecherche)) {
+			if (departement.contains(departementRecherche)) {
 				return true;
 			}
 		}

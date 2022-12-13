@@ -30,8 +30,30 @@ public class VueLoginAdmin extends Scene{
 	
 	//attributs 
 	Button btnLogin;
+	TextField fieldId;
+	TextField fieldMdp;
 	
 	
+	public TextField getFieldId() {
+		return fieldId;
+	}
+
+
+	public void setFieldId(TextField fieldId) {
+		this.fieldId = fieldId;
+	}
+
+
+	public TextField getFieldMdp() {
+		return fieldMdp;
+	}
+
+
+	public void setFieldMdp(TextField fieldMdp) {
+		this.fieldMdp = fieldMdp;
+	}
+
+
 	public VueLoginAdmin () {
 		super(new GridPane(), 600, 300);
 		GridPane rootLoginAdmin = (GridPane)this.getRoot();
@@ -48,10 +70,10 @@ public class VueLoginAdmin extends Scene{
 		rootLoginAdmin.add(labelTitreAdm, 2,2,3,1);
 		
 		Label labelId = new Label("Identifiant");
-		TextField fieldId = new TextField("entrez identifiants");
+		fieldId = new TextField("entrez identifiants");
 		
 		Label labelmdp = new Label("Mot de passe");
-		TextField fieldMdp = new TextField("entrez votre mot de passe");
+		fieldMdp = new TextField("entrez votre mot de passe");
 		
 		btnLogin = new Button ("Valider");
 		

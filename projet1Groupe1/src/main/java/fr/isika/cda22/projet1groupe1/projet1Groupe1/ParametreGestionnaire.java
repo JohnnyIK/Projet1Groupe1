@@ -52,11 +52,16 @@ public interface ParametreGestionnaire {
 	public final static int INDEX_FILS_DROIT_OCTET = 4 + TAILLE_STAGIAIRE_OCTET + 4;
 	public final static int INDEX_DOUBLON_OCTET = 4 + TAILLE_STAGIAIRE_OCTET + 4 + 4;
 
-	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRES10.DON";
+	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRESTOTAL.DON";
 	
 	public final static String CHEMIN_BIN = "src/main/java/Fichier/sauvegardeAnnuaire.bin";
 	public final static String CHEMIN_RESULTATS_RECHERCHE_BIN = "src/main/java/Fichier/resultatsRecherche.bin";
 	public final static String CHEMIN_BIN_SAUVEGARDE_V02 = "src/main/java/Fichier/sauvegardeAnnuaireV02.bin";
+	
+	public final static String CHEMIN_TXT_IMPRESSION = "src/main/java/Fichier/AnnuaireImpression.txt";
+	
+	public final static String CHEMIN_TXT_LOGIN_ADMIN = "src/main/java/Fichier/loginAdmin.txt";
+	public final static String CHEMIN_TXT_LOGIN_UTILISATEUR = "src/main/java/Fichier/loginUtilisateur.txt";
 	
 	
 	

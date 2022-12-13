@@ -23,6 +23,11 @@ public class Stagiaire implements ParametreGestionnaire {
 		this.formation = formation;
 		this.anneeFormation = anneeFormation;
 	}
+	
+	//Constructeur vide
+		public Stagiaire() {
+			// TODO Auto-generated constructor stub
+		}
 
 	// Getters and Setters
 	public String getNom() {

@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.*;
 
+/**
+ * Classe pour instancier des Objets Arbres Bnaires ecrits dans un fichier Bin
+ *
+ */
 public class ArbreBin implements ParametreGestionnaire{
 	
 	// Attributs
@@ -19,13 +23,20 @@ public class ArbreBin implements ParametreGestionnaire{
 	private ArrayList<String> anneeListe;
 
 	
-	// Constructeur
+	/**
+	 * Constructeur permettant d'initialiser un arbre binaire avec une adresse pointant vers un fichier Bin
+	 * @adresseFichierBin
+	 */
 	public ArbreBin(String adresseFichierBin) {
 		super();
 		this.adresseFichierBin = adresseFichierBin;
 		this.anneeListe = new ArrayList<String>();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<String> getAnneeArrayListe(){
 		return this.anneeListe;
 	}
@@ -576,6 +587,55 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 	}
 	
+	/**
+	 * Importe un fichier texte dans le fichier Bin sous la forme d'un arbre binaire
+	 */
+	public void importAnnuaireTexte(String cheminTXT) {
+
+		try {
+
+			FileReader fichier = new FileReader(cheminTXT);
+			BufferedReader br = new BufferedReader(fichier);
+
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+			this.raf.setLength(0);
+
+			int cpt = 0;
+
+			while (br.ready()) {
+
+				String nom = br.readLine();
+				nom = this.nomCheckAndUpdate(nom);
+				String prenom = br.readLine();
+				prenom = this.prenomCheckAndUpdate(prenom);
+				String departement = br.readLine();
+				departement = this.departementCheckAndUpdate(departement);
+				String formation = br.readLine();
+				formation = this.formationCheckAndUpdate(formation);
+				String anneeFormation = br.readLine();
+				anneeFormation = this.anneeFormationCheckAndUpdate(anneeFormation);
+				br.readLine();
+
+				Stagiaire stagiaire = new Stagiaire(nom, prenom, departement, formation, anneeFormation);
+
+				Noeud noeud = new Noeud(-1, stagiaire, -1, -1, -1);
+
+				//System.out.println("cpt " + cpt);
+				cpt++;
+
+				this.ajouterStagiaireBin(noeud);
+				
+
+			}
+
+			//this.afficheAnneeListeConsole();
+			fichier.close();
+			this.raf.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Importe un fichier texte dans le fichier Bin sous la forme d'un arbre binaire
