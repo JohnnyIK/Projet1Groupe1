@@ -181,7 +181,12 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		this.updateTableView(false, null);
 
 		//addButtonToTable("MOD", "modifier");
-		addButtonToTable("", "Supprimer");
+		if (userMode.equals("admin")) {
+			addButtonToTable("", "Supprimer");
+		} else {
+			
+		}
+		
 		//addCheckBoxToTable("CHECK", "ccc");
 
 		/*

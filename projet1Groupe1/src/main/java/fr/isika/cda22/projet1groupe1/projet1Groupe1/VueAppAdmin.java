@@ -270,7 +270,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 					} else if (!this.sauvegardeHelper.textIsCorrect(nom) || nom.equals("Entrez le nom") || nom.equals("Nom invalide")) {
 						vueAjouterStagiaire.getFieldNom().setText("Nom invalide");
 					} else {
-						this.sauvegardeHelper.nomCheckAndUpdate(nom);
+						nom = this.sauvegardeHelper.nomCheckAndUpdate(nom);
 						vueAjouterStagiaire.getStagiaire().setNom(nom);
 						nomOK = true;
 					}
@@ -279,7 +279,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 					} else if (!this.sauvegardeHelper.textIsCorrect(prenom) || prenom.equals("Entrez le prénom") || prenom.equals("Prénom invalide")) {
 						vueAjouterStagiaire.getFieldPrenom().setText("Prenom invalide");
 					} else {
-						this.sauvegardeHelper.prenomCheckAndUpdate(prenom);
+						prenom = this.sauvegardeHelper.prenomCheckAndUpdate(prenom);
 						vueAjouterStagiaire.getStagiaire().setPrenom(prenom);
 						prenomOK = true;
 					}
@@ -297,7 +297,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 					} else if (!this.sauvegardeHelper.formationCheck(formation) || formation.equals("Entrez la formation") || formation.equals("Formation invalide")) {
 						vueAjouterStagiaire.getFieldFormation().setText("Formation invalide");
 					} else {
-						this.sauvegardeHelper.formationCheckAndUpdate(formation);
+						formation = this.sauvegardeHelper.formationCheckAndUpdate(formation);
 						vueAjouterStagiaire.getStagiaire().setFormation(formation);
 						formationOK = true;
 					}
@@ -306,7 +306,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 					} else if (!this.sauvegardeHelper.anneeFormationCheck(anneeFormation) || anneeFormation.equals("Entrez l'année") || anneeFormation.equals("Année invalide")) {
 						vueAjouterStagiaire.getFieldAnneeAj().setText("Année invalide");
 					} else {
-						this.sauvegardeHelper.anneeFormationCheckAndUpdate(anneeFormation);
+						anneeFormation = this.sauvegardeHelper.anneeFormationCheckAndUpdate(anneeFormation);
 						vueAjouterStagiaire.getStagiaire().setAnneeFormation(anneeFormation);
 						anneeFormationOK = true;
 					}
@@ -403,12 +403,12 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 			GridPane infoUser = new GridPane();
 			Label espaceNom;
 			if (this.modeUtilisateur.equals("admin")) {
-				espaceNom = new Label ("Espace Administrateur");
+				espaceNom = new Label ("Espace Administrateur: "+prenomUser+" "+nomUser);
 			} else {
 				espaceNom = new Label ("Espace Utilisateur");
 			}
 			
-			Label welcome = new Label ("Bienvenue, "+prenomUser+" "+nomUser+" !");
+			Label welcome = new Label ("Bienvenue, "+prenomUser+" !");
 			infoUser.add(espaceNom, 0, 0);
 			infoUser.add(welcome, 0, 1);
 			topVbox.getChildren().add(infoUser);

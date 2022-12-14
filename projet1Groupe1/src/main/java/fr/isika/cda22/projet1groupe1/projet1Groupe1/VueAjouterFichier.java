@@ -45,14 +45,11 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 	public VueAjouterFichier() {
 		super(new VBox(15), 630, 130 );
 			
-		
 		VBox vboxfichier = (VBox)this.getRoot();
 		this.setRoot(vboxfichier);
 		this.getRoot().setStyle("-fx-font-family: 'serif'");
 		BackgroundFill bgrFill = new BackgroundFill(Color.LIGHTBLUE, null, null);
 		vboxfichier.setBackground(new Background(bgrFill));
-		
-		
 		
 		ObservableList<Node> hRows = vboxfichier.getChildren();
 		Insets border11 = new Insets(8,8,8,8);
@@ -62,17 +59,17 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 		ObservableList<Node> hCols1 = hbox1.getChildren();
 		//hbox1.setPadding(border11);
 		
-			//Bouttons dans fenetre selectionner fichier
+		//Bouttons dans fenetre selectionner fichier
 		Button btnfileChooserSingle = new Button("Selectionner un fichier à importer");
 		//Button btnfileChooserMultiple = new Button("Selectionner plusieurs fichiers (5 max)");
 		
 		hCols1.addAll(btnfileChooserSingle);//,btnfileChooserMultiple);
 		
-			//TextField pour afficher le nom du/des fichiers
+		//TextField pour afficher le nom du/des fichiers
 		HBox hBox2 = new HBox(15);
 		ObservableList<Node> hCols2 = hBox2.getChildren();
 		//hBox2.setPadding(border11);
-			//ajout textfield
+		//ajout textfield
 		txtSelected = new TextField("le chemin du fichier texte selectionné sera affiché ici");
 		txtSelected.setMinWidth(400);
 		hBox2.getChildren().add(txtSelected);
@@ -80,11 +77,9 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 		BtnRetour1 = new Button("Annuler");
 		hCols2.addAll(BtnRetour1, BtnValider1);
 		
-			//On assemble les bouttons de control dans la Vbox vboxfichiers
+		//On assemble les bouttons de control dans la Vbox vboxfichiers
 		hRows.add(hbox1);
 		hRows.add(hBox2);
-		
-		
 		
 		//action sur boutton btnfileChooserSingle
 		btnfileChooserSingle.setOnAction(new EventHandler<ActionEvent>() {
@@ -101,10 +96,7 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 			}
 		});
 		
-		
-		
 		if (os.equals("PC")) {
-
 			// labelTitreAdm.setFont(FONTTITRE);
 			txtSelected.setFont(FONTTEXTERECH);
 			btnfileChooserSingle.setFont(FONTBUTTON);
@@ -133,6 +125,7 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 				BtnValider1.setTextFill(Color.rgb(240, 240, 240));
 
 			});
+			
 			BtnValider1.setOnMouseExited((event) -> {
 				BtnValider1.setStyle(BUTTONCOLOR);
 				BtnValider1.setTextFill(Color.rgb(61, 110, 139));

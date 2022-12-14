@@ -458,7 +458,6 @@ public class ArbreBin implements ParametreGestionnaire{
 	    return generatedString;
 	}
 	
-	
 	public String prenomCheckAndUpdate(String prenom) {
 		if (prenom.isBlank() || prenom.isEmpty() || !textIsCorrect(prenom)) {
 			prenom = "XXXXXX";
