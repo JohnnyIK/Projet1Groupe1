@@ -1,21 +1,30 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
+
 import java.util.ArrayList;
+
+/**
+ * Classe pour instancier un User (nom / prenom / login / mdp)
+ *
+ */
 public abstract class User {
-	//Attributs
+	//Attributs -----------------------------------------------------------------------------
 	private String nom = "";
 	private String prenom = "";
 	private String login = "";
 	private String mdp = "";
 	
 	
-	//Constructeur vide
+	//Constructeur --------------------------------------------------------------------------------
 	public User() {
 		
 	}
-	
-	public String getLogin() {
-		return login;
-	}
+	 /**
+	  * Constructeur pour creer un User
+	  * @param nom le nom du user
+	  * @param prenom le prenom du user
+	  * @param login le login du user
+	  * @param mdp le mot de passe du user
+	  */
 	public User(String nom, String prenom, String login, String mdp) {
 		super();
 		this.nom = nom;
@@ -23,7 +32,7 @@ public abstract class User {
 		this.login = login;
 		this.mdp = mdp;
 	}
-	
+	 // getters and setters -------------------------------------------------------------------
 	public String getNom() {
 		return nom;
 	}
@@ -44,6 +53,10 @@ public abstract class User {
 	}
 	public void setLogin(String login) {
 		this.login = login;
+	}
+	
+	public String getLogin() {
+		return login;
 	}
 	
 	

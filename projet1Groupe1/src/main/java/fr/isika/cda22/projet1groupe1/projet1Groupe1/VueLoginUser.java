@@ -1,4 +1,5 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
+
 import javafx.scene.control.Button;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -25,12 +26,13 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 /**
- * Classe pour instancier des vues login Admin
+ * Classe pour instancier des vues login User
  *
  */
-public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
+
+public class VueLoginUser extends Scene implements ParametreGestionnaire{
 	
-	//attributs --------------------------------------------------------------------------------------------------
+	//attributs ------------------------------------------------------------------------------------------------
 	private Button btnLogin;
 	private TextField fieldId;
 	private PasswordField fieldMdp;
@@ -38,21 +40,19 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 	private TextField txtreveal;
 	boolean textactive = false;
 	
-	//Constructeur ---------------------------------------------------------------------------------------------------
+	//constructeur --------------------------------------------------------------------------------------------
 	/**
-	 * Constructeur pour creer une vue login Admin
+	 * Constructeur pour creer une vue login User
 	 */
-	public VueLoginAdmin () {
+	public VueLoginUser () {
 		super(new GridPane(), 800, 320);
 		GridPane rootLoginAdmin = (GridPane)this.getRoot();
 		rootLoginAdmin.setPadding(new Insets (50));
 		rootLoginAdmin.setHgap(15);
 		rootLoginAdmin.setVgap(15);
-		
 		this.setRoot(rootLoginAdmin);
 		
-		
-		Label labelTitreAdm = new Label("Bienvenue cher Administrateur,\nveuillez entrer vos identifiants :");
+		Label labelTitreAdm = new Label("Bienvenue cher Utilisateur,\nveuillez entrer vos identifiants :");
 		rootLoginAdmin.add(labelTitreAdm, 1,0,3,3);
 		
 		Label labelId = new Label("Identifiant");
@@ -66,11 +66,8 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 		
 		btnLogin = new Button ("Valider");
 		
-		
-		
-		// Bouton reveal
+		// creation bouton reveal
 		btnreveal = new Button ();
-		
 		InputStream input = getClass().getResourceAsStream("/icon/oeil.png");
 		Image image = new Image(input);
 		ImageView imageView = new ImageView(image);
@@ -98,6 +95,8 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 	      }
 	    });
 		
+		
+		
 		rootLoginAdmin.add(labelId, 1,3);
 		rootLoginAdmin.add(fieldId, 2, 3);
 		rootLoginAdmin.add(txtreveal, 2, 4);
@@ -118,14 +117,14 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 			fieldMdp.setFont(FONTTEXTE);
 			txtreveal.setFont(FONTTEXTE);
 	   	
-		}
+	    }
 	  
 		labelTitreAdm.setTextFill(Color.rgb(60, 60, 60));
 		labelId.setTextFill(Color.rgb(60, 60, 60));
 		labelmdp.setTextFill(Color.rgb(60, 60, 60));
-		
-		btnreveal.setStyle(BUTTONCOLOR);
 	  
+		btnreveal.setStyle(BUTTONCOLOR);
+		
 		btnLogin.setPrefWidth(120);
 		btnLogin.setTextFill(Color.rgb(61, 110, 139));
 		btnLogin.setStyle(BUTTONCOLOR);
@@ -139,12 +138,12 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 		});
 	 
 	  
-	this.getRoot().setStyle("-fx-font-family: 'serif'");
+	this.getRoot().setStyle("-fx-font-family: 'serif'");	
 	rootLoginAdmin.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/BG_Login.png')");
 		
 }
 	
-	// Getters and Setters -------------------------------------------------------------------------------------------------
+	// Getters and setters ---------------------------------------------------------------------------------------------------
 	public Button getBtnLogin() {
 		return btnLogin;
 	}
@@ -164,7 +163,7 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 	public void setFieldMdp(PasswordField fieldMdp) {
 		this.fieldMdp = fieldMdp;
 	}
-	
+
 	public boolean isTextactive() {
 		return textactive;
 	}
@@ -180,6 +179,8 @@ public class VueLoginAdmin extends Scene implements ParametreGestionnaire{
 	public void setTxtreveal(TextField txtreveal) {
 		this.txtreveal = txtreveal;
 	}
+	
+	
 	
 	
 }

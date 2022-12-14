@@ -29,17 +29,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+/**
+ * Classe pour instancier une vue page accueil
+ *
+ */
 public class VuePageAcceuil extends Scene implements ParametreGestionnaire{
-
 	
-
-	//attributs
-	Button btnAdmin;
-	Button btnUser;
-	//private final GridPane rootPane;
+	//attributs --------------------------------------------------------------------------------------------------------------
+	private Button btnAdmin;
+	private Button btnUser;
 	
-
-	
+	// Constructeur ------------------------------------------------------------------------------------------------------------
+	/**
+	 * Constructeur pour creer une vue page accueil
+	 */
 	public VuePageAcceuil() {
 		
 		//définition gripane et espaces
@@ -49,51 +52,30 @@ public class VuePageAcceuil extends Scene implements ParametreGestionnaire{
 		rootAcceuil.setHgap(15);
 		rootAcceuil.setVgap(15);
 		
-		
-		
 		//modif police mac sinon illisible
 		this.setRoot(rootAcceuil);
 		this.getRoot().setStyle("-fx-font-family: 'serif'");
 		
-		
-		//titre de bienvenu
-		Label labelTitre = new Label("Bienvenue sur Patrick School,\nvotre logiciel de gestion de liste de stagiaires !");
+		//titre de bienvenue
+		Label labelTitre = new Label("Bienvenue sur Patrick's School,\nvotre logiciel de gestion de liste de stagiaires !");
 		rootAcceuil.add(labelTitre, 1,1,4,2);
 		
-		
 		Label labelChoix = new Label("Êtes-vous Administrateur ou Utilisateur ?");
-
-
 		
-		
-		
+		// GRID PANE BOUTONS
 		GridPane grilleButtons = new GridPane();
 		grilleButtons.setHgap(15);
-		
-		
 		//création bouton admin et user 
 		btnAdmin = new Button("Administrateur");
-		
 		btnUser = new Button("Utilisateur");
 		grilleButtons.add(btnAdmin, 0, 0);
 		grilleButtons.add(btnUser, 1, 0);
 		
-		
 		//positionnement
 	    rootAcceuil.add(labelChoix, 1, 5);
-
 	    rootAcceuil.add(grilleButtons, 1, 7, 2, 1);
 
-	    //rootAcceuil.add(btnUser, 2, 7);
-	    
-	    
-	    
-	    //récupérer stage pour avoir acceuil créer avant btnAdmin
-	    
-	    
-//	    getStage
-	   // btnAdmin.getScene().setRoot(rootAcceuil.getRootPane);
-	    
+	    // FALSE CSS
 	    if (os.equals("PC")) {
 	    	labelTitre.setFont(FONTTITRE);
 	    	labelChoix.setFont(FONTTEXTE);
@@ -130,16 +112,11 @@ public class VuePageAcceuil extends Scene implements ParametreGestionnaire{
 		});
 	    
 	  //pb sur police mac
-	  	rootAcceuil.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/backgroundAcceuil.jpeg')");
+	  	rootAcceuil.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/BG_Login.png')");
 	    
 	}
-	//public Pane getRootPane() {
-		//return rootPane;
-	
-	
-	
 
-
+	// Getters and setters --------------------------------------------------------------------------------------------------
 	public Button getBtnAdmin() {
 		return btnAdmin;
 	}
@@ -147,16 +124,11 @@ public class VuePageAcceuil extends Scene implements ParametreGestionnaire{
 		this.btnAdmin = btnAdmin;
 	}
 
-
-
-
 	public Button getBtnUser() {
 		return btnUser;
 	}
 
-
 	public void setBtnUser(Button btnUser) {
 		this.btnUser = btnUser;
 	}
-	
 }

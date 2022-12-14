@@ -34,14 +34,23 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
+
+/**
+ * Classe pour instancier une vue pour ajouter un fichier texte (pour un import dans une tableview)
+ *
+ */
 public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 	
-	
+	// Attributs  ------------------------------------------------------------------------------------------------------
 	private TextField txtSelected;
 	private Button BtnRetour1;
 	private Button BtnValider1;
-	private String fichierTXT; 
+	private String fichierTXT;
 	
+	// Constructeur  ------------------------------------------------------------------------------------------------------
+	/**
+	 * Constructeur pour creer une vue pour ajouter un fichier
+	 */
 	public VueAjouterFichier() {
 		super(new VBox(15), 630, 130 );
 			
@@ -68,9 +77,8 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 		//TextField pour afficher le nom du/des fichiers
 		HBox hBox2 = new HBox(15);
 		ObservableList<Node> hCols2 = hBox2.getChildren();
-		//hBox2.setPadding(border11);
-		//ajout textfield
-		txtSelected = new TextField("le chemin du fichier texte selectionné sera affiché ici");
+		txtSelected = new TextField("");
+		txtSelected.setPromptText("le chemin du fichier texte selectionné sera affiché ici");
 		txtSelected.setMinWidth(400);
 		hBox2.getChildren().add(txtSelected);
 		BtnValider1 = new Button("Valider");
@@ -84,33 +92,27 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 		//action sur boutton btnfileChooserSingle
 		btnfileChooserSingle.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent ae) {
-//				Node node = (Node) ae.getSource();
 			    Stage thisStage = (Stage) vboxfichier.getScene().getWindow();
 				FileChooser fileOpen = new FileChooser();
 				File file = fileOpen.showOpenDialog(thisStage);
-				//String filename = file.getName();
 				String filename = file.getAbsolutePath();
-				
 				txtSelected.setText(filename);
 				fichierTXT = filename;
 			}
 		});
 		
+		// FALSE CSS
 		if (os.equals("PC")) {
-			// labelTitreAdm.setFont(FONTTITRE);
 			txtSelected.setFont(FONTTEXTERECH);
 			btnfileChooserSingle.setFont(FONTBUTTON);
 			BtnValider1.setFont(FONTBUTTON);
 			BtnRetour1.setFont(FONTBUTTON);
-			// fieldId.setFont(FONTTEXTE);
-			// fieldMdp.setFont(FONTTEXTE);
 
 			btnfileChooserSingle.setTextFill(Color.rgb(61, 110, 139));
 			btnfileChooserSingle.setStyle(BUTTONCOLOR);
 			btnfileChooserSingle.setOnMouseEntered((event) -> {
 				btnfileChooserSingle.setStyle(BUTTONCOLOROVER);
 				btnfileChooserSingle.setTextFill(Color.rgb(240, 240, 240));
-
 			});
 			btnfileChooserSingle.setOnMouseExited((event) -> {
 				btnfileChooserSingle.setStyle(BUTTONCOLOR);
@@ -123,7 +125,6 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 			BtnValider1.setOnMouseEntered((event) -> {
 				BtnValider1.setStyle(BUTTONCOLOROVER);
 				BtnValider1.setTextFill(Color.rgb(240, 240, 240));
-
 			});
 			
 			BtnValider1.setOnMouseExited((event) -> {
@@ -137,18 +138,15 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 			BtnRetour1.setOnMouseEntered((event) -> {
 				BtnRetour1.setStyle(BUTTONALERTCOLOROVER);
 				BtnRetour1.setTextFill(Color.rgb(240, 240, 240));
-
 			});
 			BtnRetour1.setOnMouseExited((event) -> {
 				BtnRetour1.setStyle(BUTTONCOLOR);
 				BtnRetour1.setTextFill(Color.rgb(183, 65, 14));
 			});
-
 		}
-		
-		
-		
-		}
+	}
+	
+	// Getters and setters  ------------------------------------------------------------------------------------------------------
 	public TextField getTxtSelected() {
 		return txtSelected;
 	}
@@ -171,13 +169,5 @@ public class VueAjouterFichier extends Scene implements ParametreGestionnaire{
 	public String getFichierTXT() {
 		return fichierTXT;
 	}
-	
-	/*
-	public Button getBtnfileChooserSingle() {
-		return btnfileChooserSingle;
-	}
-	*/
-	
-		
-	
-	}
+
+}

@@ -48,85 +48,75 @@ import javafx.scene.text.Text;
 
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * Classe pour instancier des objets contennat une tableView et son module de recherche
+ *
+ */
 public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
-
-	public TableView<StagiaireTableView> table = new TableView<StagiaireTableView>();
-	public ArrayList<Integer> listeImpression = new ArrayList<>();
-	public List<String> departementRech = new ArrayList<String>();
-	public String[] anneeFormationRech = { "", "" };
-
-	public RechercheMulticritere rechercheCritere = new RechercheMulticritere(false, "", false, "", true, departementRech,
-			false, "", false, anneeFormationRech);
 	
-	Text nbrResultatText = new Text();
+	// ATTRIBUTS
+	private TableView<StagiaireTableView> table = new TableView<StagiaireTableView>();
+	private ArrayList<Integer> listeImpression = new ArrayList<>();
+	private List<String> departementRech = new ArrayList<String>();
+	private String[] anneeFormationRech = { "", "" };
+	private RechercheMulticritere rechercheCritere = new RechercheMulticritere(false, "", false, "", true, departementRech, false, "", false, anneeFormationRech);
+	private Boolean rechercheActivee = false;
+	private Text nbrResultatText = new Text();
+	private ArbreBin sauvegardeBin;
 	
 	public HBox tableViewStagiaireCont;
-	public TextField nomRechTextField;
-	public TextField prenomRechTextField;
-	public TextField departementRechTextField;
-	public TextField formationRechTextField;
-	public TextField anneeMinRechTextField;
-	public TextField anneeMaxRechTextField;
-	
-	public ArbreBin sauvegardeBin;
-	
-	ComboBox anneeMincomboBox;
-	ComboBox anneeMaxcomboBox;
+	private TextField nomRechTextField;
+	private TextField prenomRechTextField;
+	private TextField departementRechTextField;
+	private TextField formationRechTextField;
+	private TextField anneeMinRechTextField;
+	private TextField anneeMaxRechTextField;
+	private ComboBox anneeMincomboBox;
+	private ComboBox anneeMaxcomboBox;
 	
 	private String userMode;
 	
 
+	/**
+	 * Constructeur pour creer une tableView (admin ou user) a partir d'un fichier TXT
+	 * 
+	 * @param cheminTXT le chemin du fichier TXT a charger
+	 * @param userMode  le mode dans lequel on se trouve : user / admin (= fonction
+	 *                  supprimer et modifier en plus)
+	 */
 	public TableViewStagiaire(String cheminTXT, String userMode) {
 
 		super(new HBox());
 		tableViewStagiaireCont = new HBox();
 		this.userMode = userMode;
-		this.importerTxtToTableView(cheminTXT);
-//		this.sauvegardeBin = new ArbreBin(CHEMIN_BIN);
-//		this.sauvegardeBin.importAnnuaireTexte();
-//		this.sauvegardeBin.afficherFichierBin();
-		//Stagiaire s15 = new Stagiaire("ZZZZZZZZZZ", "fhfjhf ", "75", "CDA 22", "2022");
-		//this.sauvegardeBin.ajouterStagiaireBin(s15);
-		this.sauvegardeBin.afficheAnneeListeConsole();
-		GridPane grille = new GridPane();
 		
-		//this.setMinWidth(2000);
+		// On importe l'arbre
+		this.importerTxtToTableView(cheminTXT);
+		this.sauvegardeBin.afficheAnneeListeConsole();
+		this.updateTableView(false, null);
+		
+		// on cree la grille qui va contenir la tableView et le module de recherche
+		GridPane grille = new GridPane();
+		grille.setHgap(15);
+		grille.setVgap(5);
 		this.getChildren().add(grille);
 		this.setAlignment(Pos.CENTER);
-		//grille.setMinWidth(1000);
-		//grille.setMaxWidth(1500);
-		
-		
 
-		//departementRech.add("91");
-		//departementRech.add("75");
-		//anneeFormationRech[0] = "2000";
-		//anneeFormationRech[1] = "2007";
-
-		// Création de la table
-
-		// TableView<StagiaireTableView> table = new TableView<StagiaireTableView>();
-
+		// CREATION TABLEVIEW -----------------------------------------------------------------------------------------------------------
+		// Si le mode est Admin, alors la tableView est editable pour modifier les entrees
 		if (userMode.equals("admin")) {
 			table.setEditable(true);
 		} else {
 			table.setEditable(false);
 		}
 		
-		//table.minHeight(2000);
+		// Setup de la tableView
 		table.setMinWidth(500);
-		//table.setMaxWidth(1000);
 		table.setPrefWidth(2000);
 		table.setPrefHeight(600);
-		
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-
-		Label label = new Label("");
-		Label labelRecherche = new Label("Recherche par critères :");
-		label.setFont(new Font("Arial", 20));
-
-		// Création des trois colonnes
+		// Création des colonnes de la tableView
 
 		TableColumn<StagiaireTableView, String> indexCol = new TableColumn<StagiaireTableView, String>("Index");
 		indexCol.setMinWidth(10);
@@ -134,11 +124,7 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 
 		TableColumn<StagiaireTableView, String> nomCol = new TableColumn<StagiaireTableView, String>("Nom");
 		nomCol.setMinWidth(100);
-		//nomCol.setMaxWidth(150);
 		nomCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("nom"));
-		//nomCol.setStyle("-fx-alignment: CENTER-LEFT;");
-
-		
 
 		TableColumn<StagiaireTableView, String> prenomCol = new TableColumn<StagiaireTableView, String>("Prénom");
 		prenomCol.setMinWidth(100);
@@ -152,33 +138,25 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		formationCol.setMinWidth(20);
 		formationCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("formation"));
 
-		TableColumn<StagiaireTableView, String> anneeFormationCol = new TableColumn<StagiaireTableView, String>(
-				"Année de Formation");
+		TableColumn<StagiaireTableView, String> anneeFormationCol = new TableColumn<StagiaireTableView, String>("Année de Formation");
 		anneeFormationCol.setMinWidth(50);
 		anneeFormationCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("anneeFormation"));
-
+		
+		TableColumn<StagiaireTableView, String> btnSuppCol = new TableColumn<StagiaireTableView, String>("Supprimer");
+		btnSuppCol.setMinWidth(100);
+		btnSuppCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("btnSupprimer"));
+		
+		// Not used : colonne CheckBOX
 		TableColumn<StagiaireTableView, String> modCol = new TableColumn<StagiaireTableView, String>("Modifier");
 		modCol.setMinWidth(100);
 		modCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("modifierCheckBox"));
 
+		// Not used : colonne modifier
 		TableColumn<StagiaireTableView, String> btnModCol = new TableColumn<StagiaireTableView, String>("Modifier");
 		btnModCol.setMinWidth(100);
 		btnModCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("btnModifier"));
 
-		TableColumn<StagiaireTableView, String> btnSuppCol = new TableColumn<StagiaireTableView, String>("Supprimer");
-		btnSuppCol.setMinWidth(100);
-		btnSuppCol.setCellValueFactory(new PropertyValueFactory<StagiaireTableView, String>("btnSupprimer"));
-
-		// On ajoute les trois colonnes à la table
-		// table.getColumns().addAll(nomCol, prenomCol, deptCol, formationCol,
-		// anneeFormationCol , modCol, btnModCol, btnSuppCol);
 		table.getColumns().addAll(nomCol, prenomCol, departementCol, formationCol, anneeFormationCol);
-		//table.
-		//table.getColumns().get(1).
-	
-
-		// On rempli la table avec la liste observable
-		this.updateTableView(false, null);
 
 		//addButtonToTable("MOD", "modifier");
 		if (userMode.equals("admin")) {
@@ -186,18 +164,7 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		} else {
 			
 		}
-		
-		//addCheckBoxToTable("CHECK", "ccc");
 
-		/*
-		// METHODE LORSQU'ON SELECTIONNE UNE LIGNE DU TABLEAU
-		// table.getSelectionModel().selectedIndexProperty().addListener(observable ->
-		// System.out.printf("Indice sélectionné: %d",
-		// table.getSelectionModel().getSelectedIndex()).println());
-		table.getSelectionModel().selectedIndexProperty().addListener(observable -> System.out
-				.printf("Index sélectionné: %d", table.getSelectionModel().getSelectedItem().getIndex()).println());
-		*/
-		
 		// MODIFICATION NOM OK
 		nomCol.setCellFactory(TextFieldTableCell.<StagiaireTableView>forTableColumn());
 		nomCol.setOnEditCommit((CellEditEvent<StagiaireTableView, String> event) -> {
@@ -217,12 +184,10 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		        a.show();
 		        this.updateTableView(false, rechercheCritere);
 			} else {
-				this.sauvegardeBin.ecrireNomBinaire(stagiaire.getIndex(), this.sauvegardeBin.nomCheckAndUpdate(nom));
-				this.updateTableView(false, null);
+				this.sauvegardeBin.modifierNom(stagiaire.getIndex(), this.sauvegardeBin.nomCheckAndUpdate(nom));
+				this.rechercheRealTime();
+				//this.updateTableView(false, rechercheCritere);
 			}
-			
-			// person.setNom(newFullName);
-
 		});
 		
 		// MODIFICATION PRENOM OK
@@ -247,7 +212,8 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 			} else {
 				this.sauvegardeBin.ecrirePrenomBinaire(stagiaire.getIndex(),
 				this.sauvegardeBin.prenomCheckAndUpdate(prenom));
-				this.updateTableView(false, rechercheCritere);
+				//this.updateTableView(false, rechercheCritere);
+				this.rechercheRealTime();
 			}
 		});
 
@@ -272,10 +238,9 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 			} else {
 				this.sauvegardeBin.ecrireDepartementBinaire(stagiaire.getIndex(),
 				this.sauvegardeBin.departementCheckAndUpdate(departement));
-				this.updateTableView(false, rechercheCritere);
-				// person.setNom(newFullName);
+				//this.updateTableView(false, rechercheCritere);
+				this.rechercheRealTime();
 			}
-
 		});
 
 		// MODIFICATION FORMATION OK
@@ -298,11 +263,10 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 				this.updateTableView(false, rechercheCritere);
 			} else {
 				this.sauvegardeBin.ecrireFormationBinaire(stagiaire.getIndex(),
-						this.sauvegardeBin.formationCheckAndUpdate(formation));
-				this.updateTableView(false, rechercheCritere);
+				this.sauvegardeBin.formationCheckAndUpdate(formation));
+				//this.updateTableView(false, rechercheCritere);
+				this.rechercheRealTime();
 			}
-			// person.setNom(newFullName);
-
 		});
 
 		// MODIFICATION ANNEEFORMATION OK
@@ -327,36 +291,19 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 			} else {
 				System.out.println("TTTT");
 				this.sauvegardeBin.ecrireAnneeFormationBinaire(stagiaire.getIndex(),
-						this.sauvegardeBin.anneeFormationCheckAndUpdate(newAnneeFormation));
-				this.updateTableView(false, rechercheCritere);
+				this.sauvegardeBin.anneeFormationCheckAndUpdate(newAnneeFormation));
+				//this.updateTableView(false, rechercheCritere);
+				this.rechercheRealTime();
 			}
 			System.out.println("TTTT");
 		});
+		// FIN CREATION TABLEVIEW -----------------------------------------------------------------
 		
+		// CREATION MODULE RECHERCHE --------------------------------------------------------------
+		Label label = new Label("");
+		Label labelRecherche = new Label("Recherche par critères :");
+		label.setFont(new Font("Arial", 20));
 	
-
-
-		
-		/*
-		TextField nomRechTextField = new TextField();
-		TextField prenomRechTextField = new TextField();
-		TextField departementRechTextField = new TextField();
-		TextField formationRechTextField = new TextField();
-//         Slider anneeRechSlider = new Slider();
-//         anneeRechSlider.setMin(1980);
-//         Date date = new Date();
-//         anneeRechSlider.setMax(date.getYear());
-//		//Instantiating the RangeSlider class
-//	      RangeSlider slider = new RangeSlider(0, 100, 10, 90);
-//	      //Setting the slider properties
-//	      slider.setShowTickLabels(true);
-//	      slider.setShowTickMarks(true);
-//	      slider.setMajorTickUnit(25);
-//	      slider.setBlockIncrement(10);
-		TextField anneeMinRechTextField = new TextField();
-		TextField anneeMaxRechTextField = new TextField();
-		*/
-		
 		this.nomRechTextField = createTextFieldRechercheInput();
 		this.prenomRechTextField = createTextFieldRechercheInput();
 		this.departementRechTextField = createTextFieldRechercheInput();
@@ -374,13 +321,12 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		
 		Label nbrResultatLabel = new Label("Résultats : ");
 		
-		CheckBox nomSelect = new CheckBox("Nom");
-		CheckBox prenomSelect = new CheckBox("Prénom");
-		CheckBox departementSelect = new CheckBox("Département");
-		CheckBox formationSelect = new CheckBox("Formation");
-		CheckBox anneeFormationSelect = new CheckBox("Année");
-		
-		
+		// Not used
+//		CheckBox nomSelect = new CheckBox("Nom");
+//		CheckBox prenomSelect = new CheckBox("Prénom");
+//		CheckBox departementSelect = new CheckBox("Département");
+//		CheckBox formationSelect = new CheckBox("Formation");
+//		CheckBox anneeFormationSelect = new CheckBox("Année");
 		
 		ArrayList<String> anneeListeMin = this.sauvegardeBin.getAnneeArrayListe();
 		ArrayList<String> anneeListeMax = new ArrayList<String>();
@@ -390,34 +336,14 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		anneeMincomboBox.setPrefWidth(70);
 		anneeMaxcomboBox.setPrefWidth(70);
 
-		
-		
-		
-		
-		
-		//anneeMincomboBox.setOn
-		
-		//Button btnRecherche = new Button();
-		//btnRecherche.setText("Rechercher");
+		// Creation du bouton pour reinitialiser les criteres de recherche
 		Button btnEffacerRecherche = new Button();
 		btnEffacerRecherche.setText("Réinitialiser");
-		
 		btnEffacerRecherche.setOnAction(e -> {
 			initRecherche();
-			/*
-			nomRechTextField.setText("");
-			prenomRechTextField.setText("");
-			formationRechTextField.setText("");
-			//anneeMinRechTextField.setText("");
-			//anneeMaxRechTextField.setText("");
-			anneeMincomboBox.setValue(null);
-			anneeMaxcomboBox.setValue(null);
-			anneeMaxcomboBox.setDisable(true);
-			this.updateTableView(false, rechercheCritere);
-			*/
 		});
 		
-		
+		// Creation de la liste des annees selectionnables en fonction de celles presentes dans l'arbre
 		anneeMincomboBox.setOnAction((event) -> {
 			int selectedIndex = anneeMincomboBox.getSelectionModel().getSelectedIndex();
 		    String selectedItem = (String) anneeMincomboBox.getSelectionModel().getSelectedItem();
@@ -430,28 +356,6 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		    	}
 		     }
 		    }
-		    /*
-		    if (anneeMaxcomboBox.isDisable() == true) {
-			    anneeMaxcomboBox.setDisable(false);
-			    if (anneeMincomboBox.getValue() != null) {
-			      for (String annee : anneeListeMin) {
-			    	if (annee.compareTo(selectedItem) > 0) {
-			    		anneeListeMax.add(annee);
-			    	}
-			     }
-			    }
-		    } else if (anneeMaxcomboBox.isDisable() == false) {
-		    	System.out.println("TEEEEESt");
-		    	anneeMaxcomboBox.setValue(null);
-		    	if (anneeMincomboBox.getValue() != null) {
-				      for (String annee : anneeListeMin) {
-				    	if (annee.compareTo(selectedItem) > 0) {
-				    		anneeListeMax.add(annee);
-				    	}
-				     }
-				    }
-		    }
-		    */
 		    anneeMaxcomboBox.setItems(FXCollections.observableArrayList(anneeListeMax));
 		    this.rechercheRealTime();
 
@@ -459,153 +363,23 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		    System.out.println("   ComboBox.getValue(): " + anneeMincomboBox.getValue());
 		});
 		
-		
-		
 		anneeMaxcomboBox.setOnAction((event) -> {
 			this.rechercheRealTime();
 		});
-		
-		
-//		nomRechTextField.setOnKeyPressed((KeyEvent event) -> {
-//					String newNom = nomRechTextField.getText();
-//					System.out.println(newNom);
-//		        	rechercheCritere.setNomRechSelect(nomSelect.isSelected());
-//					rechercheCritere.setNomRech(newNom);
-//					rechercheCritere.setPrenomRechSelect(prenomSelect.isSelected());
-//					rechercheCritere.setPrenomRech(prenomRechTextField.getText());
-//					rechercheCritere.setDepartementRechSelect(departementSelect.isSelected());
-//					departementRech.add(departementRechTextField.getText());
-//					rechercheCritere.setDepartementRech(departementRech);
-//					rechercheCritere.setFormationRechSelect(formationSelect.isSelected());
-//					rechercheCritere.setFormationRech(formationRechTextField.getText());
-//					rechercheCritere.setAnneeFormationRechSelect(anneeFormationSelect.isSelected());
-//					anneeFormationRech[0] = anneeMinRechTextField.getText();
-//					anneeFormationRech[1] = anneeMaxRechTextField.getText();
-//					rechercheCritere.setAnneeFormationRech(anneeFormationRech);
-//					this.updateTableView(CHEMIN_BIN, true, rechercheCritere);
-//		});
-		
-		/*
-		nomRechTextField.setOnKeyReleased((KeyEvent event) -> {
-			Boolean rechercheActivee;
-			String nom = nomRechTextField.getText();
-			String prenom = prenomRechTextField.getText();
-			String formation = formationRechTextField.getText();
-			//rechercheCritere.setNomRechSelect(nomSelect.isSelected());
-			if (!nom.equals("")) {
-				rechercheCritere.setNomRechSelect(true);
-				//rechercheActivee = true;
-			} else {
-				rechercheCritere.setNomRechSelect(false);
-				//rechercheActivee = false;
-			}
-			if (!prenom.equals("")) {
-				rechercheCritere.setPrenomRechSelect(true);
-				//rechercheActivee = true;
-			} else {
-				rechercheCritere.setPrenomRechSelect(false);
-				//rechercheActivee = false;
-			}
-			if (!formation.equals("")) {
-				rechercheCritere.setFormationRechSelect(true);
-				//rechercheActivee = true;
-			} else {
-				rechercheCritere.setFormationRechSelect(false);
-				//rechercheActivee = false;
-			}
-			if (rechercheCritere.isNomRechSelect() || rechercheCritere.isPrenomRechSelect() || rechercheCritere.isDepartementRechSelect() || rechercheCritere.isFormationRechSelect() || rechercheCritere.isAnneeFormationRechSelect()) {
-				rechercheActivee = true;
-			} else {
-				rechercheActivee = false;
-			}
-			rechercheCritere.setNomRech(nom);
-			//rechercheCritere.setPrenomRechSelect(prenomSelect.isSelected());
-			rechercheCritere.setPrenomRech(prenom);
-			rechercheCritere.setDepartementRechSelect(departementSelect.isSelected());
-			departementRech.add(departementRechTextField.getText());
-			rechercheCritere.setDepartementRech(departementRech);
-			rechercheCritere.setFormationRechSelect(formationSelect.isSelected());
-			//rechercheCritere.setFormationRech(formation);
-			rechercheCritere.setAnneeFormationRechSelect(anneeFormationSelect.isSelected());
-			anneeFormationRech[0] = anneeMinRechTextField.getText();
-			anneeFormationRech[1] = anneeMaxRechTextField.getText();
-			rechercheCritere.setAnneeFormationRech(anneeFormationRech);
-			this.updateTableView(CHEMIN_BIN, rechercheActivee, rechercheCritere);
-		});
-		
-		
-		prenomRechTextField.setOnKeyReleased((KeyEvent event) -> {
-			Boolean rechercheActivee;
-			String nom = nomRechTextField.getText();
-			String prenom = prenomRechTextField.getText();
-			String formation = formationRechTextField.getText();
-			//rechercheCritere.setNomRechSelect(nomSelect.isSelected());
-			if (!nom.equals("")) {
-				rechercheCritere.setNomRechSelect(true);
-				//rechercheActivee = true;
-			} else {
-				rechercheCritere.setNomRechSelect(false);
-				//rechercheActivee = false;
-			}
-			if (!prenom.equals("")) {
-				rechercheCritere.setPrenomRechSelect(true);
-				//rechercheActivee = true;
-			} else {
-				rechercheCritere.setPrenomRechSelect(false);
-				//rechercheActivee = false;
-			}
-			if (!formation.equals("")) {
-				rechercheCritere.setFormationRechSelect(true);
-				//rechercheActivee = true;
-			} else {
-				rechercheCritere.setFormationRechSelect(false);
-				//rechercheActivee = false;
-			}
-			if (rechercheCritere.isNomRechSelect() || rechercheCritere.isPrenomRechSelect() || rechercheCritere.isDepartementRechSelect() || rechercheCritere.isFormationRechSelect() || rechercheCritere.isAnneeFormationRechSelect()) {
-				rechercheActivee = true;
-			} else {
-				rechercheActivee = false;
-			}
-			rechercheCritere.setNomRech(nom);
-			//rechercheCritere.setPrenomRechSelect(prenomSelect.isSelected());
-			rechercheCritere.setPrenomRech(prenom);
-			rechercheCritere.setDepartementRechSelect(departementSelect.isSelected());
-			departementRech.add(departementRechTextField.getText());
-			rechercheCritere.setDepartementRech(departementRech);
-			rechercheCritere.setFormationRechSelect(formationSelect.isSelected());
-			//rechercheCritere.setFormationRech(formation);
-			rechercheCritere.setAnneeFormationRechSelect(anneeFormationSelect.isSelected());
-			anneeFormationRech[0] = anneeMinRechTextField.getText();
-			anneeFormationRech[1] = anneeMaxRechTextField.getText();
-			rechercheCritere.setAnneeFormationRech(anneeFormationRech);
-			this.updateTableView(CHEMIN_BIN, rechercheActivee, rechercheCritere);
-		});
-		*/
 
-
-		// handleSupprimer() ;
-
-		//BorderPane.setMargin(btn, new Insets(5, 5, 5, 5));
-		// Center
-
-		// grille.setAlignment(Pos.CENTER);
-		
-		//grille.setPadding(new Insets(10, 10, 10, 10));
-
-//		grille.add(label, 0, 1);
-//		grille.add(table, 2, 3);
-//		grille.add(btn, 0, 2);
-//		grille.add(btn1, 0, 3);
-//		grille.add(nomRechLabel, 0, 4);
-
+		// Creation de la gridPane contenant les modules de recherche
 		GridPane grilleRecherche = new GridPane();
 		
 		grilleRecherche.setPrefWidth(1030);
+		grilleRecherche.setHgap(15);
+		grilleRecherche.setVgap(5);
+		grilleRecherche.setPadding(new Insets(10));
+		grilleRecherche.setBackground(new Background(new BackgroundFill(Color.rgb(237, 237, 237), null, null)));
+		grilleRecherche.setStyle("-fx-border: 2; -fx-border-color:rgb(212, 212, 212);");
 		
 		grilleRecherche.add(label, 0, 0, 16,1);
 		grilleRecherche.add(labelRecherche, 0, 1, 16,1);
 		grilleRecherche.add(nomRechLabel, 0, 3, 1,1);
-		//grille.add(nomSelect, 0, 3, 1,1);
 		grilleRecherche.add(nomRechTextField, 0, 4, 1,1);
 		grilleRecherche.add(prenomRechLabel, 2, 3, 1,1);
 		grilleRecherche.add(prenomRechTextField, 2, 4, 1,1);
@@ -615,80 +389,35 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		grilleRecherche.add(formationRechTextField, 6, 4, 1,1);
 		grilleRecherche.add(anneeFormationRechLabel, 8, 3, 5,1);
 		grilleRecherche.add(anneeFormationRechLabelDe, 8, 4, 1,1);
-		//grille.add(anneeMinRechTextField, 10, 3, 1, 1);
 		grilleRecherche.add(anneeMincomboBox, 9, 4, 1, 1);
 		grilleRecherche.add(anneeFormationRechLabelA, 10, 4, 1, 1);
-		//grille.add(anneeMaxRechTextField, 12, 3, 1,1);
 		grilleRecherche.add(anneeMaxcomboBox, 11, 4, 1,1);
-		//grille.add(btnRecherche, 15, 2, 1,1);
 		grilleRecherche.add(btnEffacerRecherche, 14, 4, 1,1);
-		//Line line = new Line(0, 0, grilleRecherche.getPrefWidth(), 0);
-		//grilleRecherche.add(line, 0, 6, 15,1);
+
+		// FIN CREATION MODULE RECHERCHE --------------------------------------------------------------
 		
-		grilleRecherche.setHgap(15);
-		grilleRecherche.setVgap(5);
-		
-		
-		
-		grilleRecherche.setPadding(new Insets(10));
-		
-		grilleRecherche.setBackground(new Background(new BackgroundFill(Color.rgb(237, 237, 237), null, null)));
-		grilleRecherche.setStyle("-fx-border: 2; -fx-border-color:rgb(212, 212, 212);");
-		
-		grille.setHgap(15);
-		grille.setVgap(5);
-		
-		//grille.setHalignment(label, HPos.RIGHT);
-		
-		/*
-		grille.add(label, 0, 0, 16,1);
-		grille.add(labelRecherche, 1, 1, 16,1);
-		grille.add(nomRechLabel, 1, 2, 1,1);
-		//grille.add(nomSelect, 0, 3, 1,1);
-		grille.add(nomRechTextField, 1, 3, 1,1);
-		grille.add(prenomRechLabel, 3, 2, 1,1);
-		grille.add(prenomRechTextField, 3, 3, 1,1);
-		grille.add(departementRechLabel, 5, 2, 1,1);
-		grille.add(departementRechTextField, 5, 3, 1,1);
-		grille.add(formationRechLabel, 7, 2, 1,1);
-		grille.add(formationRechTextField, 7, 3, 1,1);
-		grille.add(anneeFormationRechLabel, 9, 2, 5,1);
-		grille.add(anneeFormationRechLabelDe, 9, 3, 1,1);
-		//grille.add(anneeMinRechTextField, 10, 3, 1, 1);
-		grille.add(anneeMincomboBox, 10, 3, 1, 1);
-		grille.add(anneeFormationRechLabelA, 11, 3, 1, 1);
-		//grille.add(anneeMaxRechTextField, 12, 3, 1,1);
-		grille.add(anneeMaxcomboBox, 12, 3, 1,1);
-		//grille.add(btnRecherche, 15, 2, 1,1);
-		grille.add(btnEffacerRecherche, 15, 3, 1,1);
-		grille.add(line, 1, 4, 15,1);
-		*/
-		
-		 
-		
+		// On ajoute le module de recherche
+		// on ajoute la tableView
 		grille.add(grilleRecherche, 1, 0, 15,1);
 		grille.add(table, 1, 6, 15,1);
 		
+		// Not used : permet de definir les largeurs des colonnes
+//		ColumnConstraints colFirst = new ColumnConstraints();
+//		ColumnConstraints colVide = new ColumnConstraints();
+//		ColumnConstraints colTextField = new ColumnConstraints();
+//		ColumnConstraints colButton = new ColumnConstraints();
+//		ColumnConstraints colSmall = new ColumnConstraints();
+//		ColumnConstraints colDoubleTextField = new ColumnConstraints();
+//		colFirst.setPercentWidth(0);
+//		colSmall.setPercentWidth(2);
+//		colVide.setPercentWidth(5);
+//		colTextField.setPercentWidth(15);
+//		colButton.setMaxWidth(10);
+//		grille.getColumnConstraints().addAll(colFirst, colTextField, colVide, colTextField, colVide, colTextField, colVide, colTextField, colVide, colSmall, colTextField, colSmall, colTextField, colVide, colButton, colVide);
+//		grilleRecherche.getColumnConstraints().addAll(colFirst, colTextField, colVide, colTextField, colVide, colTextField, colVide, colTextField, colVide, colSmall, colTextField, colSmall, colTextField, colVide, colButton, colVide);
 		
-		
-		ColumnConstraints colFirst = new ColumnConstraints();
-		ColumnConstraints colVide = new ColumnConstraints();
-		ColumnConstraints colTextField = new ColumnConstraints();
-		ColumnConstraints colButton = new ColumnConstraints();
-		ColumnConstraints colSmall = new ColumnConstraints();
-		//ColumnConstraints colDoubleTextField = new ColumnConstraints();
-		colFirst.setPercentWidth(0);
-		colSmall.setPercentWidth(2);
-		colVide.setPercentWidth(5);
-		colTextField.setPercentWidth(15);
-		colButton.setMaxWidth(10);
-		//grille.getColumnConstraints().addAll(colFirst, colTextField, colVide, colTextField, colVide, colTextField, colVide, colTextField, colVide, colSmall, colTextField, colSmall, colTextField, colVide, colButton, colVide);
-		//grilleRecherche.getColumnConstraints().addAll(colFirst, colTextField, colVide, colTextField, colVide, colTextField, colVide, colTextField, colVide, colSmall, colTextField, colSmall, colTextField, colVide, colButton, colVide);
-		
-		
+		// FALSE CSS
 		if (os.equals("PC")) {
-			
-			//labelTitreAdm.setFont(FONTTITRE);
 			labelRecherche.setFont(FONTTEXTERECH);
 			nomRechLabel.setFont(FONTTEXTERECH);
 			prenomRechLabel.setFont(FONTTEXTERECH);
@@ -704,11 +433,6 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 			anneeMinRechTextField.setFont(FONTTEXTERECH);
 			anneeMaxRechTextField.setFont(FONTTEXTERECH);
 			btnEffacerRecherche.setFont(FONTBUTTON);
-			//btnImpress.setFont(FONTBUTTON);
-			//btnFile.setFont(FONTBUTTON);
-			//btnDoc.setFont(FONTBUTTON);
-			//fieldId.setFont(FONTTEXTE);
-			//fieldMdp.setFont(FONTTEXTE);
 			
 			btnEffacerRecherche.setTextFill(Color.rgb(61, 110, 139));
 			btnEffacerRecherche.setStyle(BUTTONCOLOR);
@@ -728,36 +452,43 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		
 		
 	}
+	
+	//GETTERS AND SETTERS----------------------------------------------------------------------------------------------------------------
+	public RechercheMulticritere getRechercheCritere() {
+		return rechercheCritere;
+	}
 
-//    private void handleSupprimer() {
-// 		btnSupprimer.setOnAction(new EventHandler<ActionEvent>() {
-//
-// 			@Override
-// 			public void handle(ActionEvent event) {
-// 				Stagiaire cleSupprimer = tableStagiaires.getSelectionModel().getSelectedItem();
-// 				mesStagiaires.supprimerNoeud(cleSupprimer);
-// 				setMesStagiaires(mesStagiaires);
-// 			}
-// 		});
-// 	}
-	/**
-	 * TEST
-	 */
-	public void testAppel() {
-		this.sauvegardeBin.afficheAnneeListeConsole();
-		Stagiaire s15 = new Stagiaire("ZZZZZZZZZZ", "fhfjhf ", "75", "CDA 22", "2022");
-		this.sauvegardeBin.ajouterStagiaireBin(s15);
+	public void setRechercheCritere(RechercheMulticritere rechercheCritere) {
+		this.rechercheCritere = rechercheCritere;
+	}
+
+	public Boolean getRechercheActivee() {
+		return rechercheActivee;
+	}
+
+	public void setRechercheActivee(Boolean rechercheActivee) {
+		this.rechercheActivee = rechercheActivee;
 	}
 	
+	public ArbreBin getSauvegardeBin() {
+		return sauvegardeBin;
+	}
 
+	public void setSauvegardeBin(ArbreBin sauvegardeBin) {
+		this.sauvegardeBin = sauvegardeBin;
+	}
+	
+	
+	
+	// METHODES --------------------------------------------------------------------------------------------------------------------------------
 	/**
 	 * Update la liste des stagiaires dans le TableView
 	 * 
 	 */
 	public void updateTableView(Boolean rechActive, RechercheMulticritere rechercheCritere) {
-		if (rechActive == false) {
-			//this.initRecherche();
-		}
+//		if (rechActive == false) {
+//			this.initRecherche();
+//		}
 		ObservableList<StagiaireTableView> getStagiaireTableViewList = getStagiaireTableViewList(rechActive, rechercheCritere);
 		this.nbrResultatText.setText(String.valueOf(getStagiaireTableViewList.size())+" stagiaires trouvés");
 		this.table.setItems(getStagiaireTableViewList(rechActive, rechercheCritere));
@@ -772,11 +503,6 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 	 *         departement / formation / anneeFormation)
 	 */
 	private ObservableList<StagiaireTableView> getStagiaireTableViewList(Boolean rechActive, RechercheMulticritere rechercheCritere) {
-
-		//ArbreBin sauvegardeBin = new ArbreBin(cheminFichierBin);
-		//sauvegardeBin.importAnnuaireTexte();
-		//sauvegardeBin.afficheAnneeListeConsole(cheminFichierBin);
-		//sauvegardeBin.afficherFichierBin();
 
 		ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
 		this.sauvegardeBin.exportToArrayListOptionRecherche(listeNoeud, rechActive, rechercheCritere);
@@ -830,20 +556,37 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 									+ " " + stagiaire.getDepartement() + " " + stagiaire.getFormation() + " "
 									+ stagiaire.getAnneeFormation() + " [" + stagiaire.getIndex() + "] ");
 							
+							// creation du stage
 							Stage dialog = new Stage();
 							dialog.initModality(Modality.APPLICATION_MODAL);
 							dialog.setResizable(false);
-							
+							dialog.setTitle("Retirer un stagiaire de la liste");
+
+							//  creation grille mere
 							GridPane grilleDialog = new GridPane();
 							grilleDialog.setHgap(10);
 							grilleDialog.setVgap(10);
 							grilleDialog.setPadding(new Insets(30, 30, 30, 30));
+							BackgroundFill bgrFill = new BackgroundFill(Color.rgb(182,213,231), null, null);
+							grilleDialog.setBackground(new Background(bgrFill));
 							
+							Label texteLabel = new Label("Voulez-vous retirer ce stagiaire de la liste ?");
+							Button annuler = new Button("Annuler");
+							Button supprimer = new Button("Retirer de la liste");
+							annuler.setPrefWidth(160);
+							supprimer.setPrefWidth(160);
+							grilleDialog.add(texteLabel, 1, 1, 3, 1);
+							grilleDialog.add(annuler, 1, 9, 1, 1);
+							grilleDialog.add(supprimer, 2, 9, 1, 1);
+							
+							 // creation grille fille où sont recapitules les infos su stagiaire
 							GridPane grilleRecap = new GridPane();
+							grilleRecap.setHgap(25);
+							grilleRecap.setVgap(5);
+							grilleRecap.setPadding(new Insets(25));
+							grilleRecap.setBackground(new Background(new BackgroundFill(Color.rgb(237, 237, 237), null, null)));
+							grilleRecap.setStyle("-fx-border: 2; -fx-border-color:rgb(212, 212, 212);");
 							
-							// Setting the title
-							dialog.setTitle("Suppression");
-							Label texteLabel = new Label("Voulez-vous supprimer ce stagiaire de la liste ?");
 							Label nomLabel = new Label("Nom");
 							Label nom = new Label(stagiaire.getNom());
 							Label prenomLabel = new Label("Prénom");
@@ -854,12 +597,7 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							Label formation = new Label(stagiaire.getFormation());
 							Label anneeFormationLabel = new Label("Année de formation");
 							Label anneeFormation = new Label(stagiaire.getAnneeFormation());
-							
-							Button annuler = new Button("Annuler");;
-							Button supprimer = new Button("Supprimer");
-							
-							grilleDialog.add(texteLabel, 1, 1, 3, 1);
-							
+
 							grilleRecap.add(nomLabel, 0, 0, 1, 1);
 							grilleRecap.add(nom, 0, 1, 1, 1);
 							grilleRecap.add(prenomLabel, 1, 0, 1, 1);
@@ -871,36 +609,10 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							grilleRecap.add(anneeFormationLabel, 1, 3, 1, 1);
 							grilleRecap.add(anneeFormation, 1, 4, 1, 1);
 							
-							grilleRecap.setHgap(25);
-							grilleRecap.setVgap(5);
-							grilleRecap.setPadding(new Insets(25));
-							
-							grilleRecap.setBackground(new Background(new BackgroundFill(Color.rgb(237, 237, 237), null, null)));
-							grilleRecap.setStyle("-fx-border: 2; -fx-border-color:rgb(212, 212, 212);");
-							
+							// on ajoute la grille fille à la grille mere
 							grilleDialog.add(grilleRecap, 1, 2, 3, 5);
-	
-							
-							/*
-							grilleDialog.add(nomLabel, 1, 3, 1, 1);
-							grilleDialog.add(nom, 1, 4, 1, 1);
-							grilleDialog.add(prenomLabel, 2, 3, 1, 1);
-							grilleDialog.add(prenom, 2, 4, 1, 1);
-							grilleDialog.add(departementLabel, 3, 6, 1, 1);
-							grilleDialog.add(departement, 3, 7, 1, 1);
-							grilleDialog.add(formationLabel, 1, 6, 1, 1);
-							grilleDialog.add(formation, 1, 7, 1, 1);
-							grilleDialog.add(anneeFormationLabel, 2, 6, 1, 1);
-							grilleDialog.add(anneeFormation, 2, 7, 1, 1);
-							*/
-							
-							grilleDialog.add(annuler, 2, 9, 1, 1);
-							grilleDialog.add(supprimer, 3, 9, 1, 1);
-							
-							grilleDialog.setHalignment(annuler,HPos.RIGHT);
-
-							Scene dialogScene = new Scene(grilleDialog);
-
+					
+							// on configure les boutons
 							annuler.setOnAction((e) -> {
 							    dialog.close();
 							});
@@ -911,19 +623,13 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 								+ stagiaire.getAnneeFormation() + " [" + stagiaire.getIndex() + "] ");
 								Noeud noeudVide = new Noeud();
 								noeudVide.supprimerStagiaireNoeud(stagiaire.getIndex());
-								//this.updateTableView(false, null);
-								//TableViewStagiaire test = new TableViewStagiaire();
-								//test.sauvegardeBin = new ArbreBin(CHEMIN_BIN);
-								//tableReference.testAppel();
 								tableReference.rechercheRealTime();
-								//tableReference.updateTableView(false, null);
-								
 							    dialog.close();
 							});
 							
+							// FALSE CSS
 							if (os.equals("PC")) {
 								
-								//labelTitreAdm.setFont(FONTTITRE);
 								texteLabel.setFont(FONTTEXTE);
 								nomLabel.setFont(FONTTEXTE);
 								prenomLabel.setFont(FONTTEXTE);
@@ -935,15 +641,10 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							    departement.setFont(FONTTEXTEBOLD);
 							    formation.setFont(FONTTEXTEBOLD);
 							    anneeFormation.setFont(FONTTEXTEBOLD);
-					
+							    
 								annuler.setFont(FONTBUTTON);
 								supprimer.setFont(FONTBUTTON);
-								//btnImpress.setFont(FONTBUTTON);
-								//btnFile.setFont(FONTBUTTON);
-								//btnDoc.setFont(FONTBUTTON);
-								//fieldId.setFont(FONTTEXTE);
-								//fieldMdp.setFont(FONTTEXTE);
-								
+
 								annuler.setTextFill(Color.rgb(183, 65, 14));
 								annuler.setStyle(BUTTONCOLOR);
 								annuler.setOnMouseEntered(e -> {
@@ -970,97 +671,10 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 						    	
 						    }
 
+							Scene dialogScene = new Scene(grilleDialog);
 							dialog.setScene(dialogScene);
 							dialog.showAndWait();
-							
-							
-							
-							/*
-							Dialog<String> dialog = new Dialog<String>();
-							GridPane grilleDialog = new GridPane();
-							grilleDialog.setHgap(10);
-							grilleDialog.setVgap(10);
-							grilleDialog.setPadding(new Insets(20, 150, 10, 10));
-							
-							// Setting the title
-							dialog.setTitle("Suppression");
-							Label texteLabel = new Label("Voulez-vous supprimer ce stagiaire de la liste ?");
-							Label nomLabel = new Label("Nom");
-							Label nom = new Label(stagiaire.getNom());
-							Label prenomLabel = new Label("Prénom");
-							Label prenom = new Label(stagiaire.getPrenom());
-							Label departementLabel = new Label("Département");
-							Label departement = new Label(stagiaire.getDepartement());
-							Label formationLabel = new Label("Formation");
-							Label formation = new Label(stagiaire.getFormation());
-							Label anneeFormationLabel = new Label("Année de formation");
-							Label anneeFormation = new Label(stagiaire.getAnneeFormation());
-							
-							ButtonType annulerBTN = new ButtonType("Annuler", ButtonData.OK_DONE);
-							ButtonType supprimerBTN = new ButtonType("Supprimer", ButtonData.YES);
-							
-							Button annuler = new Button("Annuler");
-							Button supprimer = new Button("Supprimer");
-							
-						
-							
-							
-
-							
-							grilleDialog.add(texteLabel, 1, 1, 3, 1);
-							grilleDialog.add(nomLabel, 1, 3, 1, 1);
-							grilleDialog.add(nom, 1, 4, 1, 1);
-							grilleDialog.add(prenomLabel, 2, 3, 1, 1);
-							grilleDialog.add(prenom, 2, 4, 1, 1);
-							grilleDialog.add(departementLabel, 3, 6, 1, 1);
-							grilleDialog.add(departement, 3, 7, 1, 1);
-							grilleDialog.add(formationLabel, 1, 6, 1, 1);
-							grilleDialog.add(formation, 1, 7, 1, 1);
-							grilleDialog.add(anneeFormationLabel, 2, 6, 1, 1);
-							grilleDialog.add(anneeFormation, 2, 7, 1, 1);
-							grilleDialog.add(annuler, 2, 9, 1, 1);
-							//grilleDialog.add(supprimer, 3, 9, 1, 1);
-							
-							
-							//dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
-							// Adding buttons to the dialog pane
-							dialog.getDialogPane().setContent(grilleDialog);
-							dialog.getDialogPane().getButtonTypes().add(annulerBTN);
-							dialog.getDialogPane().getButtonTypes().add(supprimerBTN);
-							// Setting the label
-							Text txt = new Text("Click the button to show the dialog");
-							Font font = Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 12);
-							txt.setFont(font);
-							dialog.showAndWait();
-							
-							
-
-							
-							
-					
-							
-//							if (annulerBTN.getButtonData() == ButtonData.OK_DONE){
-//								System.out.println("TEST "+annulerBTN.getButtonData());
-//								}
-//							
-//							if (supprimerBTN.getButtonData() == ButtonData.YES){
-//							System.out.println("TEST "+supprimerBTN.getButtonData());
-//							}
-							
-							
-
-
-							
-							
-						
-						
-						
-						*/
-							
-							
-							
-							
-							
+		
 						});
 					}
 
@@ -1079,7 +693,7 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		};
 
 		colBtn.setCellFactory(cellFactory);
-
+		// on ajoute les boutons dans la colonne
 		table.getColumns().add(colBtn);
 
 	}
@@ -1105,7 +719,6 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 							StagiaireTableView stagiaire = getTableView().getItems().get(getIndex());
 							System.out.println("selectedData: " + stagiaire.getNom());
 							listeImpression.add(stagiaire.getIndex());
-							// SYSO pour test
 							for (Integer i : listeImpression) {
 								System.out.println("ArrayList index: " + i);
 							}
@@ -1132,8 +745,11 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 
 	}
 	
+	/**
+	 * methode interne pour creer un TextField dont chaque input au clavier declenchera une recherche
+	 * @return un TextField de recherche
+	 */
 	private TextField createTextFieldRechercheInput() {
-		
 		TextField textFieldRechercheInput = new TextField();
 		textFieldRechercheInput.setOnKeyReleased((KeyEvent event) -> {
 			this.rechercheRealTime();
@@ -1141,87 +757,78 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		return textFieldRechercheInput;
 	}
 	
+	/**
+	 * methode interne de recherche en fonction des inputs des TextFiels de recherche
+	 */
 	private void rechercheRealTime() {
-		Boolean rechercheActivee;
 		String nom = this.nomRechTextField.getText();
 		String prenom = this.prenomRechTextField.getText();
 		String formation = this.formationRechTextField.getText();
 		String departement = this.departementRechTextField.getText();
-		// String anneeMin = this.anneeMinRechTextField.getText();
-		// String anneeMax = this.anneeMaxRechTextField.getText();
 		String anneeMin = (String) anneeMincomboBox.getSelectionModel().getSelectedItem();
 		String anneeMax = (String) anneeMaxcomboBox.getSelectionModel().getSelectedItem();
 		System.out.println(anneeMin);
 		System.out.println(anneeMax);
-		// rechercheCritere.setNomRechSelect(nomSelect.isSelected());
+
+		// teste s'il y a eu des inputs de recherche dans les TextField (cad leur contenu != "")
+		// et affecte les booleen de selection (des champs de recherche correspondants) à l'objet rechercheCritere
 		if (!nom.equals("")) {
 			this.rechercheCritere.setNomRechSelect(true);
-			// rechercheActivee = true;
 		} else {
 			this.rechercheCritere.setNomRechSelect(false);
-			// rechercheActivee = false;
 		}
 		if (!prenom.equals("")) {
 			this.rechercheCritere.setPrenomRechSelect(true);
-			// rechercheActivee = true;
 		} else {
 			this.rechercheCritere.setPrenomRechSelect(false);
-			// rechercheActivee = false;
 		}
 		if (!departement.equals("")) {
 			this.rechercheCritere.setFormationRechSelect(true);
-			// rechercheActivee = true;
 		} else {
 			this.rechercheCritere.setFormationRechSelect(false);
-			// rechercheActivee = false;
 		}
 		if (!formation.equals("")) {
 			this.rechercheCritere.setFormationRechSelect(true);
-			// rechercheActivee = true;
 		} else {
 			this.rechercheCritere.setFormationRechSelect(false);
-			// rechercheActivee = false;
 		}
 		if (anneeMin != null) {
 			this.rechercheCritere.setAnneeFormationRechSelect(true);
-			// rechercheActivee = true;
 		} else {
 			this.rechercheCritere.setAnneeFormationRechSelect(false);
-			// rechercheActivee = false;
 		}
-		/*
-		 * if (!((anneeMin.equals("")) || (anneeMax.equals("")))){
-		 * this.rechercheCritere.setAnneeFormationRechSelect(true); //rechercheActivee =
-		 * true; } else { this.rechercheCritere.setAnneeFormationRechSelect(false);
-		 * //rechercheActivee = false; }
-		 */
+	
+		// si un des champs de recherche est activé (input != ""), alors on considère que la recherche est active (rechercheActivee = true)
 		this.rechercheCritere.setAnneeFormationRechSelect(true);
 		if (this.rechercheCritere.isNomRechSelect() || this.rechercheCritere.isPrenomRechSelect()
 				|| this.rechercheCritere.isDepartementRechSelect() || this.rechercheCritere.isFormationRechSelect()
 				|| this.rechercheCritere.isAnneeFormationRechSelect()) {
-			rechercheActivee = true;
+			this.rechercheActivee = true;
 		} else {
-			rechercheActivee = false;
+			this.rechercheActivee = false;
 		}
+		
+		// on recupère les inputs et on les transmet à l'objet rechercheCritere
+		// nom
 		if (!nom.equals("")) {
 			this.rechercheCritere.setNomRech(nom.toUpperCase());
 		}
-		// rechercheCritere.setPrenomRechSelect(prenomSelect.isSelected());
+		// prenom
 		if (!prenom.equals("")) {
 			String prenomFormate ="";
 			prenomFormate += prenom.substring(0,1).toUpperCase();
 			prenomFormate += prenom.substring(1).toLowerCase();
 			this.rechercheCritere.setPrenomRech(prenomFormate);
 		}
-		//this.rechercheCritere.setDepartementRechSelect(false);
+		// departement
 		departementRech.clear();
 		this.departementRech.add(departementRechTextField.getText());
 		this.rechercheCritere.setDepartementRech(departementRech);
-		// this.rechercheCritere.setFormationRechSelect(formationSelect.isSelected());
+		// formation
 		if (!formation.equals("")) {
 			this.rechercheCritere.setFormationRech(formation.toUpperCase());
 		}
-		// this.rechercheCritere.setAnneeFormationRechSelect(false);
+		// annee formation
 		if (anneeMin == null) {
 			this.anneeFormationRech[0] = "1000";
 			this.anneeFormationRech[1] = "3000";
@@ -1235,21 +842,10 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 			this.anneeFormationRech[0] = "1000";
 			this.anneeFormationRech[1] = "3000";
 		}
-		/*
-		 * if (anneeMin.equals("") && !anneeMax.equals("")) { this.anneeFormationRech[0]
-		 * = anneeMaxRechTextField.getText(); this.anneeFormationRech[1] =
-		 * anneeMaxRechTextField.getText(); } else if (!anneeMin.equals("") &&
-		 * anneeMax.equals("")) { this.anneeFormationRech[0] =
-		 * anneeMinRechTextField.getText(); this.anneeFormationRech[1] =
-		 * anneeMinRechTextField.getText(); } else if (!anneeMin.equals("") &&
-		 * !anneeMax.equals("")) { this.anneeFormationRech[0] =
-		 * anneeMinRechTextField.getText(); this.anneeFormationRech[1] =
-		 * anneeMaxRechTextField.getText(); } else if (anneeMin.equals("") &&
-		 * anneeMax.equals("")) { this.anneeFormationRech[0] = "1000";
-		 * this.anneeFormationRech[1] = "3000"; }
-		 */
 		this.rechercheCritere.setAnneeFormationRech(anneeFormationRech);
-		this.updateTableView(rechercheActivee, rechercheCritere);
+		
+		// on lance l'update de la tableview avec les critères contenus dans rechercheCritere
+		this.updateTableView(this.rechercheActivee, rechercheCritere);
 	}
 	
 	/**
@@ -1261,14 +857,16 @@ public class TableViewStagiaire extends HBox implements ParametreGestionnaire {
 		prenomRechTextField.setText("");
 		formationRechTextField.setText("");
 		departementRechTextField.setText("");
-		//anneeMinRechTextField.setText("");
-		//anneeMaxRechTextField.setText("");
 		anneeMincomboBox.setValue(null);
 		anneeMaxcomboBox.setValue(null);
 		anneeMaxcomboBox.setDisable(true);
 		this.updateTableView(false, rechercheCritere);
 	}
 	
+	/**
+	 * Importe un fichier texte (dans l'optique de l'utiliser pour creer unn arbre bianire à mettre dans une tableview)
+	 * @param cheminTXT le fichier texte à importer
+	 */
 	public void importerTxtToTableView(String cheminTXT) {
 		this.sauvegardeBin = new ArbreBin(CHEMIN_BIN);
 		this.sauvegardeBin.importAnnuaireTexte(cheminTXT);

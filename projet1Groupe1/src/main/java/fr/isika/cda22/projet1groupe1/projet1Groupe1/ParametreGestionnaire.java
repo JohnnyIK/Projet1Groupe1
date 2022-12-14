@@ -33,6 +33,18 @@ import javafx.scene.text.FontWeight;
  * @CHEMIN_BIN_SAUVEGARDE_V02 (utilise pour tester) Chemin relatif du fichier Bin contenant la liste des stagiaires recherches
  * 
  * @modeUtilisateur Indicateur prenant les valeurs "ADMIN" ou "USER" pour generer et tracker les modes Admin ou User
+ * 
+ * @FONTTITRE Set-up de police pour les titres
+ * @FONTTEXTE Set-up de police pour les textes
+ * @FONTTEXTEBOLD Set-up de police pour les textes
+ * @FONTTEXTERECH Set-up de police pour les textes des champs de recherche
+ * @FONTBUTTON Set-up de police pour les boutons
+ * @BUTTONCOLOR Set-up de couleur de base pour les boutons
+ * @BUTTONGREY Set-up de couleur de base pour le bouton de reinitialise
+ * @BUTTONCOLOROVER Set-up de couleur de base pour les boutons en rollOver
+ * @BUTTONALERTCOLOROVER Set-up de couleur de base pour les boutons d'alerte en rollOver
+ * @ALERT Set-up de couleur de base pour les alertes
+ * @os Test pour os car bugs de police
  */
 
 
@@ -58,19 +70,14 @@ public interface ParametreGestionnaire {
 	public final static int INDEX_DOUBLON_OCTET = 4 + TAILLE_STAGIAIRE_OCTET + 4 + 4;
 
 	public final static String CHEMIN_TXT = "src/main/java/Fichier/STAGIAIRESTOTAL.DON";
-	
 	public final static String CHEMIN_BIN = "src/main/java/Fichier/sauvegardeAnnuaire.bin";
+	public final static String CHEMIN_TXT_IMPRESSION = "src/main/java/Fichier/AnnuaireImpression.txt";
+	public final static String CHEMIN_TXT_LOGIN_ADMIN = "src/main/java/Fichier/loginAdmin.txt";
+	public final static String CHEMIN_TXT_LOGIN_UTILISATEUR = "src/main/java/Fichier/loginUtilisateur.txt";
 	public final static String CHEMIN_RESULTATS_RECHERCHE_BIN = "src/main/java/Fichier/resultatsRecherche.bin";
 	public final static String CHEMIN_BIN_SAUVEGARDE_V02 = "src/main/java/Fichier/sauvegardeAnnuaireV02.bin";
 	
-	public final static String CHEMIN_TXT_IMPRESSION = "src/main/java/Fichier/AnnuaireImpression.txt";
-	
-	public final static String CHEMIN_TXT_LOGIN_ADMIN = "src/main/java/Fichier/loginAdmin.txt";
-	public final static String CHEMIN_TXT_LOGIN_UTILISATEUR = "src/main/java/Fichier/loginUtilisateur.txt";
-	
-	//public final static String FONTGENERAL = "Verdana";
 	public final static Font FONTTITRE = Font.font("Roboto", FontWeight.SEMI_BOLD, 25);
-	//public final static Font FONTTITRE = new Font("Roboto", 22);
 	public final static Font FONTTEXTE = Font.font("Roboto", FontWeight.SEMI_BOLD, 14);
 	public final static Font FONTTEXTEBOLD = Font.font("Roboto", FontWeight.BOLD, 14);
 	public final static Font FONTTEXTERECH = Font.font("Roboto", FontWeight.SEMI_BOLD, 13);

@@ -1,13 +1,14 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 import java.io.BufferedReader;
-//import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-//import java.util.Scanner;
 
 
-
+/**
+ * Classe pour instancier des Administrateurs
+ *
+ */
 public class Administrateur extends User implements ParametreGestionnaire {
 	ArrayList<Administrateur> listeAdmin;
 	

@@ -1,28 +1,44 @@
 package fr.isika.cda22.projet1groupe1.projet1Groupe1;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+
+import javafx.stage.FileChooser;
+
 import java.util.*;
 
 /**
- * Classe pour instancier des Objets Arbres Bnaires ecrits dans un fichier Bin
+ * Classe pour instancier des Objets Arbres Binaires retranscrits dans un fichier Bin
  *
  */
 public class ArbreBin implements ParametreGestionnaire{
 	
-	// Attributs
-	public String adresseFichierBin = "";
-	public RandomAccessFile raf;
+	// Attributs ----------------------------------------------------------------------------------------------------------
+	private String adresseFichierBin = "";
+	private RandomAccessFile raf;
 	private ArrayList<String> anneeListe;
 
-	
+	//Constructeur --------------------------------------------------------------------------------------------------------
 	/**
 	 * Constructeur permettant d'initialiser un arbre binaire avec une adresse pointant vers un fichier Bin
 	 * @adresseFichierBin
@@ -33,15 +49,41 @@ public class ArbreBin implements ParametreGestionnaire{
 		this.anneeListe = new ArrayList<String>();
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
+	// GETTERS AND SETTERS ------------------------------------------------------------------------------------------------
+	public String getAdresseFichierBin() {
+		return adresseFichierBin;
+	}
+
+
+	public void setAdresseFichierBin(String adresseFichierBin) {
+		this.adresseFichierBin = adresseFichierBin;
+	}
+
+
+	public RandomAccessFile getRaf() {
+		return raf;
+	}
+
+
+	public void setRaf(RandomAccessFile raf) {
+		this.raf = raf;
+	}
+
+
+	public ArrayList<String> getAnneeListe() {
+		return anneeListe;
+	}
+
+
+	public void setAnneeListe(ArrayList<String> anneeListe) {
+		this.anneeListe = anneeListe;
+	}
+
 	public ArrayList<String> getAnneeArrayListe(){
 		return this.anneeListe;
 	}
 	
-	
+	// METHODES ----------------------------------------------------------------------------------------------------------------------------
 	/**
 	 * Creation d'un "nomFormate" de TAILLE_MAX_NOM pour l'écriture dans le fichier binaire
 	 * @param nom Le nom a formater
@@ -143,15 +185,13 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Ecrit en binaire l'index du noeud dans le fichier binaire
-	 * @param indexNoeud l'index du noeud a affecter
+	 * @param indexNoeud l'index du noeud a affecter la valeur
 	 * @param index l'index a ecrire
 	 */
 	private void ecrireIndexNoeudBin(int indexNoeud, int index) {
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud));
 			raf.writeInt(index);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -159,21 +199,24 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Ecrit en binaire le nom du noeud dans le fichier binaire
-	 * @param indexNoeud l'index du noeud a affecter
+	 * @param indexNoeud l'index du noeud a affecter la valeur
 	 * @param nom le nom a ecrire
 	 */
 	private void ecrireNomBin(int indexNoeud, String nom) {
 		String nomFormate = this.getNomFormate(nom);
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_NOM_OCTET);
 			raf.writeChars(nomFormate);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Ecrit en binaire le nom du noeud dans le fichier binaire (open/close raf)
+	 * @param indexNoeud l'index du noeud a affecter la valeur
+	 * @param nom le nom a ecrire
+	 */
 	public void ecrireNomBinaire(int indexNoeud, String nom) {
 		nom = this.nomCheckAndUpdate(nom);
 		String nomFormate = this.getNomFormate(nom);
@@ -189,21 +232,24 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Ecrit en binaire le prenom du noeud dans le fichier binaire
-	 * @param indexNoeud l'index du noeud a affecter
+	 * @param indexNoeud l'index du noeud a affecter la valeur
 	 * @param prenom le prenom a ecrire
 	 */
 	private void ecrirePrenomBin(int indexNoeud, String prenom) {
 		String prenomFormate = this.getPrenomFormate(prenom);
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_PRENOM_OCTET);
 			raf.writeChars(prenomFormate);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Ecrit en binaire le prenom du noeud dans le fichier binaire (open/close raf)
+	 * @param indexNoeud l'index du noeud a affecter la valeur
+	 * @param prenom le prenom a ecrire
+	 */
 	public void ecrirePrenomBinaire(int indexNoeud, String prenom) {
 		String prenomFormate = this.getPrenomFormate(prenom);
 		try {
@@ -218,21 +264,24 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Ecrit en binaire le departement du noeud dans le fichier binaire
-	 * @param indexNoeud l'index du noeud a affecter
+	 * @param indexNoeud l'index du noeud a affecter la valeur
 	 * @param departement le departement a ecrire
 	 */
 	private void ecrireDepartementBin(int indexNoeud, String departement) {
 		String departementFormate = this.getDepartementFormate(departement);
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_DEPARTEMENT_OCTET);
 			raf.writeChars(departementFormate);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Ecrit en binaire le departement du noeud dans le fichier binaire (open/close raf)
+	 * @param indexNoeud l'index du noeud a affecter la valeur
+	 * @param departement le departement a ecrire
+	 */
 	public void ecrireDepartementBinaire(int indexNoeud, String departement) {
 		String departementFormate = this.getDepartementFormate(departement);
 		try {
@@ -247,21 +296,23 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Ecrit en binaire la formation du noeud dans le fichier binaire
-	 * @param indexNoeud l'index du noeud a affecter
+	 * @param indexNoeud l'index du noeud a affecter la valeur
 	 * @param formation la formation a ecrire
 	 */
 	private void ecrireFormationBin(int indexNoeud, String formation) {
 		String formationFormate = this.getFormationFormate(formation);
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_FORMATION_OCTET);
 			raf.writeChars(formationFormate);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+	 /**
+	  * Ecrit en binaire la formation du noeud dans le fichier binaire (open/close raf)
+	  * @param indexNoeud l'index du noeud a affecter la valeur
+	  * @param formation la formation a ecrire
+	  */
 	public void ecrireFormationBinaire(int indexNoeud, String formation) {
 		String formationFormate = this.getFormationFormate(formation);
 		try {
@@ -276,21 +327,24 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Ecrit en binaire l'annee de formation du noeud dans le fichier binaire
-	 * @param indexNoeud l'index du noeud a affecter
+	 * @param indexNoeud l'index du noeud a affecter la valeur
 	 * @param anneeFormation l'annee de formation a ecrire
 	 */
 	private void ecrireAnneeFormationBin(int indexNoeud, String anneeFormation) {
 		String anneeFormationFormate = this.getAnneeFormationFormate(anneeFormation);
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_ANNEEFORMATION_OCTET);
 			raf.writeChars(anneeFormationFormate);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Ecrit en binaire l'annee de formation du noeud dans le fichier binaire (open/close raf)
+	 * @param indexNoeud l'index du noeud a affecter la valeur
+	 * @param anneeFormation l'annee de formation a ecrire
+	 */
 	public void ecrireAnneeFormationBinaire(int indexNoeud, String anneeFormation) {
 		anneeFormation = this.anneeFormationCheckAndUpdate(anneeFormation);
 		String anneeFormationFormate = this.getAnneeFormationFormate(anneeFormation);
@@ -311,10 +365,8 @@ public class ArbreBin implements ParametreGestionnaire{
 	 */
 	private void ecrireIndexFilsGaucheBin(int indexNoeud, int indexFilsGauche) {
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_FILS_GAUCHE_OCTET);
 			raf.writeInt(indexFilsGauche);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -327,10 +379,8 @@ public class ArbreBin implements ParametreGestionnaire{
 	 */
 	private void ecrireIndexFilsDroitBin(int indexNoeud, int indexFilsDroit) {
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_FILS_DROIT_OCTET);
 			raf.writeInt(indexFilsDroit);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -343,10 +393,8 @@ public class ArbreBin implements ParametreGestionnaire{
 	 */
 	private void ecrireIndexDoublonBin(int indexNoeud, int indexDoublon) {
 		try {
-			//this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
 			raf.seek(this.indexToOctet(indexNoeud)+INDEX_DOUBLON_OCTET);
 			raf.writeInt(indexDoublon);
-			//raf.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -354,7 +402,7 @@ public class ArbreBin implements ParametreGestionnaire{
 	
 	/**
 	 * Retourne le nombre de noeud (et donc de stagiaires) du fichier binaire 
-	 * @return
+	 * @return le nombre de stagiaires dans l'arbre binaire
 	 */
 	public int nbrStagiaires() {
 		int nbrNoeuds = 0;
@@ -369,6 +417,11 @@ public class ArbreBin implements ParametreGestionnaire{
 		return nbrNoeuds;
 	}
 	
+	/**
+	 * Teste si le string est alphanumerique
+	 * @param s
+	 * @return true si le string est alphanumerique
+	 */
 	public Boolean isAlphaNumeric(String s) {
         for (int i = 0; i < s.length(); i++)
         {
@@ -382,18 +435,11 @@ public class ArbreBin implements ParametreGestionnaire{
         return true;
     }
 	
-	public Boolean isAlpha(String s) {
-        for (int i = 0; i < s.length(); i++)
-        {
-            char c = s.charAt(i);
-            if (!(c >= 'à' && c <= 'û') && !(c == ' ') && !(c == '-') && !(c >= 'A' && c <= 'Z') &&
-                    !(c >= 'a' && c <= 'z')) {
-                return false;
-            }
-        }
-        return true;
-    }
-	
+	/**
+	 * Teste si le string est seulement numerique
+	 * @param s
+	 * @return true si le string est seulement numerique
+	 */
 	public Boolean isNumeric(String s) {
         for (int i = 0; i < s.length(); i++)
         {
@@ -405,6 +451,11 @@ public class ArbreBin implements ParametreGestionnaire{
         return true;
     }
 	
+	/**
+	 * Teste si le texte est seulement alphabetique
+	 * @param s
+	 * @return true true si le texte est seulement alphabetique
+	 */
 	public Boolean textIsCorrect(String s) {
         for (int i = 0; i < s.length(); i++)
         {
@@ -417,6 +468,11 @@ public class ArbreBin implements ParametreGestionnaire{
         return true;
     }
 	
+	/**
+	 * Teste si le departement ne contient que des lettres et des chiffres
+	 * @param s
+	 * @return true si le departement ne contient que des lettres et des chiffres
+	 */
 	public Boolean departementIsCorrect(String s) {
         for (int i = 0; i < s.length(); i++)
         {
@@ -428,68 +484,12 @@ public class ArbreBin implements ParametreGestionnaire{
         }
         return true;
     }
-	
-	
-	
-	
-	public String nomCheckAndUpdate(String nom) {
-		if (nom.isBlank() || nom.isEmpty() || !textIsCorrect(nom)) {
-			nom = "XXXXXXXXX";
-		}
-		if (nom.length()>TAILLE_MAX_NOM) {
-			nom = nom.substring(0, TAILLE_MAX_NOM);
-		}
-		nom = nom.toUpperCase();
-		return nom.trim() ;
-	}
-	
-	public String randDomString() {
-	    int leftLimit = 97; // letter 'a'
-	    int rightLimit = 122; // letter 'z'
-	    int targetStringLength = 10;
-	    Random random = new Random();
-
-	    String generatedString = random.ints(leftLimit, rightLimit + 1)
-	      .limit(targetStringLength)
-	      .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-	      .toString();
-
-	    //System.out.println(generatedString);
-	    return generatedString;
-	}
-	
-	public String prenomCheckAndUpdate(String prenom) {
-		if (prenom.isBlank() || prenom.isEmpty() || !textIsCorrect(prenom)) {
-			prenom = "XXXXXX";
-		}
-		if (prenom.length()>TAILLE_MAX_PRENOM) {
-			prenom = prenom.substring(0, TAILLE_MAX_PRENOM);
-		}
-		String prenomFormate ="";
-		prenomFormate += prenom.substring(0,1).toUpperCase();
-		prenomFormate += prenom.substring(1).toLowerCase();
-		return prenomFormate.strip();
-	}
-	
-	public String departementCheckAndUpdate(String departement) {
-		String departementFormate = "";
-		if (departement.isBlank() || departement.isEmpty() || departement.contains(" ")  ){
-			for (int i = 0; i < TAILLE_MAX_DEPARTEMENT; i++) {
-				departementFormate = "0" + departementFormate;
-			}
-		} else if (departement.length() < TAILLE_MAX_DEPARTEMENT ) {
-			for (int i = departement.length(); i < TAILLE_MAX_DEPARTEMENT; i++) {
-				departementFormate = "0" + departementFormate;
-			}
-			departementFormate += departement;
-		} else if (departement.length()>TAILLE_MAX_DEPARTEMENT){
-			departementFormate = departement.substring(0, TAILLE_MAX_DEPARTEMENT);
-		} else {
-			departementFormate = departement;
-		}
-		return departementFormate;
-	}
-	
+	 
+	/**
+	 * Teste si le departement est un departement francais
+	 * @param departement le departement a tester
+	 * @return true si le departement est un departement francais
+	 */
 	public Boolean departementCheck(String departement) {
 		if (!this.departementIsCorrect(departement)) {
 			return false;
@@ -510,6 +510,123 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 	}
 	
+	/**
+	 * Teste si la formation ne contient que des lettres et des chiffres
+	 * 
+	 * @param s
+	 * @return true si le departement ne contient que des lettres et des chiffres
+	 */
+	public Boolean formationCheck(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			char c = s.charAt(i);
+			if (!(c >= 'A' && c <= 'Z') && !(c == ' ') && !(c == '-') && !(c >= '0' && c <= '9')
+					&& !(c >= 'a' && c <= 'z')) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Teste si l'année est une annee entre cette annee-100 et cette annee
+	 * @param anneeFormation l'annee a tester
+	 * @return true si l'année est une annee entre cette annee-100 et cette annee
+	 */
+	public Boolean anneeFormationCheck(String anneeFormation) {
+		Date date = new Date();
+		int year = 2022;
+		System.out.println("YEAR : " + year);
+		if (!isNumeric(anneeFormation)) {
+			return false;
+		} else if (anneeFormation.length() != TAILLE_MAX_ANNEEFORMATION) {
+			return false;
+		} else if (Integer.parseInt(anneeFormation) < year - 100 || Integer.parseInt(anneeFormation) > year) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	
+	/**
+	 * Genere une string aleatoire
+	 * @return une string aleatoire de 10 caracteres
+	 */
+	public String randDomString() {
+		int leftLimit = 97; // letter 'a'
+		int rightLimit = 122; // letter 'z'
+		int targetStringLength = 10;
+		Random random = new Random();
+
+		String generatedString = random.ints(leftLimit, rightLimit + 1).limit(targetStringLength)
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+
+		return generatedString;
+	}
+	
+	/**
+	 * Verifie le nom et le formate pour l'affichage
+	 * @param nom le nom a verifier
+	 * @return le nom formate pour l'affichage
+	 */
+	public String nomCheckAndUpdate(String nom) {
+		if (nom.isBlank() || nom.isEmpty() || !textIsCorrect(nom)) {
+			nom = "XXXXXXXXX";
+		}
+		if (nom.length()>TAILLE_MAX_NOM) {
+			nom = nom.substring(0, TAILLE_MAX_NOM);
+		}
+		nom = nom.toUpperCase();
+		return nom.trim() ;
+	}
+	
+	/**
+	 * Verifie le prenom et le formate pour l'affichage
+	 * @param prenom le prenom a verifier
+	 * @return le prenom formate pour l'affichage
+	 */
+	public String prenomCheckAndUpdate(String prenom) {
+		if (prenom.isBlank() || prenom.isEmpty() || !textIsCorrect(prenom)) {
+			prenom = "XXXXXX";
+		}
+		if (prenom.length()>TAILLE_MAX_PRENOM) {
+			prenom = prenom.substring(0, TAILLE_MAX_PRENOM);
+		}
+		String prenomFormate ="";
+		prenomFormate += prenom.substring(0,1).toUpperCase();
+		prenomFormate += prenom.substring(1).toLowerCase();
+		return prenomFormate.strip();
+	}
+	
+	/**
+	 * Verifie le departement et le formate pour l'affichage
+	 * @param departement le departement a verifier
+	 * @return le departement formate pour l'affichage
+	 */
+	public String departementCheckAndUpdate(String departement) {
+		String departementFormate = "";
+		if (departement.isBlank() || departement.isEmpty() || departement.contains(" ")  ){
+			for (int i = 0; i < TAILLE_MAX_DEPARTEMENT; i++) {
+				departementFormate = "0" + departementFormate;
+			}
+		} else if (departement.length() < TAILLE_MAX_DEPARTEMENT ) {
+			for (int i = departement.length(); i < TAILLE_MAX_DEPARTEMENT; i++) {
+				departementFormate = "0" + departementFormate;
+			}
+			departementFormate += departement;
+		} else if (departement.length()>TAILLE_MAX_DEPARTEMENT){
+			departementFormate = departement.substring(0, TAILLE_MAX_DEPARTEMENT);
+		} else {
+			departementFormate = departement;
+		}
+		return departementFormate;
+	}
+	
+	/**
+	 * Verifie la formation et la formate pour l'affichage
+	 * @param formation la formation a verifier
+	 * @return la formation formate pour l'affichage
+	 */
 	public String formationCheckAndUpdate(String formation) {
 		if (!formationCheck(formation)) {
 			return "XXX";
@@ -521,18 +638,11 @@ public class ArbreBin implements ParametreGestionnaire{
 		return formation.strip();
 	}
 	
-	public Boolean formationCheck(String s) {
-        for (int i = 0; i < s.length(); i++)
-        {
-            char c = s.charAt(i);
-            if (!(c >= 'A' && c <= 'Z') && !(c == ' ') && !(c == '-') &&
-                    !(c >= '0' && c <= '9') && !(c >= 'a' && c <= 'z')) {
-                return false;
-            }
-        }
-        return true;
-    }
-	
+	/**
+	 * Verifie l'annee de formation et la formate pour l'affichage
+	 * @param anneeFormation l'annee de formation a verifier
+	 * @return l'annee de formation formate pour l'affichage
+	 */
 	public String anneeFormationCheckAndUpdate(String anneeFormation) {
 		if (anneeFormation.length() != TAILLE_MAX_ANNEEFORMATION) {
 			return "0000";
@@ -542,22 +652,11 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 		return anneeFormation.strip();
 	}
-	
-	public Boolean anneeFormationCheck(String anneeFormation) {
-		Date date = new Date();
-		int year = 2022;
-		System.out.println("YEAR : "+year);
-		if (!isNumeric(anneeFormation)) {
-			return false;
-		} else if (anneeFormation.length() != TAILLE_MAX_ANNEEFORMATION) {
-			return false;
-		} else if (Integer.parseInt(anneeFormation) < year-100 || Integer.parseInt(anneeFormation) > year){
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
+
+	/**
+	 * Ajoute une annee si elle n'est pas deja presente dans l'arbre
+	 * @param annee l'annee a ajouter
+	 */
 	private void anneeAddListe(String annee){
 		Boolean anneePresente = false;
 		if (this.anneeListe.size() != 0) {
@@ -572,10 +671,12 @@ public class ArbreBin implements ParametreGestionnaire{
 			}
 		} else {
 			this.anneeListe.add(annee);
-			//System.out.println("AJOUT ANNEE");
 		}
 	}
 	
+	/**
+	 * Affiche la liste des annees presentes dans l'arbre dans la console
+	 */
 	public void afficheAnneeListeConsole(){
 		if (this.anneeListe != null) {
 			System.out.println("LISTE");
@@ -620,7 +721,6 @@ public class ArbreBin implements ParametreGestionnaire{
 
 				Noeud noeud = new Noeud(-1, stagiaire, -1, -1, -1);
 
-				//System.out.println("cpt " + cpt);
 				cpt++;
 
 				this.ajouterStagiaireBin(noeud);
@@ -628,7 +728,6 @@ public class ArbreBin implements ParametreGestionnaire{
 
 			}
 
-			//this.afficheAnneeListeConsole();
 			fichier.close();
 			this.raf.close();
 
@@ -670,7 +769,6 @@ public class ArbreBin implements ParametreGestionnaire{
 
 				Noeud noeud = new Noeud(-1, stagiaire, -1, -1, -1);
 
-				//System.out.println("cpt " + cpt);
 				cpt++;
 
 				this.ajouterStagiaireBin(noeud);
@@ -678,10 +776,153 @@ public class ArbreBin implements ParametreGestionnaire{
 
 			}
 
-			//this.afficheAnneeListeConsole();
 			fichier.close();
 			this.raf.close();
 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Methode pour modifier le nom situe au noeud a l'index indexNoeud
+	 * 
+	 * @param index
+	 * @param nom
+	 */
+	public void modifierNom(int indexNoeud, String nom) {
+		try {
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+
+			Noeud noeud = new Noeud();
+			noeud = this.recupereNoeudBin(indexNoeud);
+			noeud.getCle().setNom(nom);
+			noeud.supprimerStagiaireNoeud(indexNoeud);
+			this.ajouterStagiaireBin(noeud);
+
+			this.raf.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	// WIP Tests
+	/*
+	public void telechargerFichier(String FILE_URL, String FILE_NAME) {
+		//URL url1 = new URL("https://www.javatpoint.com/");
+		//System.out.println("export");
+		//Media media = new Media("file:///D:/ISIKA/CDA22/Projet1Groupe1/projet1Groupe1/src/main/java/Fichier/AnnuaireImpression.txt");
+		
+		
+		try (
+		
+				BufferedInputStream in = new BufferedInputStream(new URL(FILE_URL).openStream());
+				FileOutputStream fileOutputStream = new FileOutputStream(FILE_NAME)) {
+			byte dataBuffer[] = new byte[1024];
+			int bytesRead;
+			while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+				fileOutputStream.write(dataBuffer, 0, bytesRead);
+			}
+		} catch (IOException e) {
+			// handle exception
+		}
+		
+	}
+		//telechargerFichier("D:/ISIKA/CDA22/Projet1Groupe1/projet1Groupe1/src/main/java/Fichier", "AnnuaireImpression.txt");
+			//telechargerFichier("D:/ISIKA/CDA22/Projet1Groupe1/projet1Groupe1/src/main/java/Fichier", "AnnuaireImpression.txt");
+	
+	
+	public void downloadTest() {
+        String url = "D:/ISIKA/CDA22/Projet1Groupe1/projet1Groupe1/src/main/java/Fichier/AnnuaireImpression.txt";
+        
+        try {
+            downloadUsingNIO(url, "/src/main/java/Fichier/AnnuaireImpression02.txt");
+            
+            downloadUsingStream(url, "/src/main/java/Fichier/AnnuaireImpression03.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+   
+
+    private static void downloadUsingStream(String urlStr, String file) throws IOException{
+        URL url = new URL(urlStr);
+        BufferedInputStream bis = new BufferedInputStream(url.openStream());
+        FileOutputStream fis = new FileOutputStream(file);
+        byte[] buffer = new byte[1024];
+        int count=0;
+        while((count = bis.read(buffer,0,1024)) != -1)
+        {
+            fis.write(buffer, 0, count);
+        }
+        fis.close();
+        bis.close();
+    }
+
+    private static void downloadUsingNIO(String urlStr, String file) throws IOException {
+        URL url = new URL(urlStr);
+        ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        fos.close();
+        rbc.close();
+    }
+     */
+	
+	/**
+	 * Ecrit la liste des stagiaires dans un fichier texte
+	 * @param listeStagiaire la liste des stagiaires de l'arbre sous la forme d'une liste de noeuds
+	 */
+	public void ecrireFichierTxt(ArrayList<Noeud> listeStagiaire) {
+		
+		int nbStagiaire = listeStagiaire.size();
+		System.out.println("lancement creation fichier texte");
+		
+		try {
+			
+			FileWriter fw = new FileWriter(CHEMIN_TXT_IMPRESSION,false);
+			
+			fw.write("Patrick School");
+			fw.write("LISTE DES STAGIAIRES\n\n");
+			
+			fw.write("Nombre de stagiaire : " + nbStagiaire + "\n\n");
+			
+			int cpt = 1;
+			
+			fw.write("\t\t\t\t" + this.getNomFormate("Nom"));
+			fw.write(this.getPrenomFormate("Prénom"));
+			fw.write(this.getDepartementFormate("Département")+ "\t\t");
+			fw.write(this.getFormationFormate("Formation"));
+			fw.write(this.getAnneeFormationFormate("Année de la formation") + "\n");
+			
+			for (Noeud noeud : listeStagiaire) {				
+				
+				fw.write("Stagiaire " + cpt + "\n");
+				
+				fw.write("\t\t\t\t" + noeud.getCle().getNomFormate());
+				fw.write(noeud.getCle().getPrenomFormate());
+				fw.write(noeud.getCle().getDepartementFormate() + "\t\t\t\t");
+				fw.write(noeud.getCle().getFormationFormate());
+				fw.write(noeud.getCle().getAnneeFormationFormate() + "\n");
+				
+				
+				cpt++;
+				
+				}
+			
+			fw.close();
+			/*
+			File file = new File(CHEMIN_TXT_IMPRESSION);
+			FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(file);
+            fileChooser.showSaveDialog(null)
+			//file.getAbsolutePath();
+			
+			 */
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -714,7 +955,6 @@ public class ArbreBin implements ParametreGestionnaire{
 			if (this.raf.length() == 0) { // si le fichier binaire est vide, on écrit le stagiaire
 				this.ecrireNoeudBin(noeudAjout, indexNoeudRacine);
 			} else {
-				// this.raf.seek(TAILLE_NOEUD_OCTET);
 				this.ecritureNoeudBinRecursive(noeudAjout, indexNoeudRacine);
 			}
 			this.anneeAddListe(noeudAjout.getCle().getAnneeFormation());
@@ -739,7 +979,6 @@ public class ArbreBin implements ParametreGestionnaire{
 			if (this.raf.length() == 0) { // si le fichier binaire est vide, on écrit le stagiaire
 				this.ecrireNoeudBin(noeudAjout, indexNoeudRacine);
 			} else {
-				// this.raf.seek(TAILLE_NOEUD_OCTET);
 				this.ecritureNoeudBinRecursive(noeudAjout, indexNoeudRacine);
 			}
 			this.anneeAddListe(noeudAjout.getCle().getAnneeFormation());
@@ -767,29 +1006,6 @@ public class ArbreBin implements ParametreGestionnaire{
 		this.ecrireIndexFilsGaucheBin(indexNoeud, noeudAjout.getIndexFilsGauche());
 		this.ecrireIndexFilsDroitBin(indexNoeud, noeudAjout.getIndexFilsDroit());
 		this.ecrireIndexDoublonBin(indexNoeud, noeudAjout.getIndexDoublon());
-		
-		
-		/* SECU : OLD INSTRUCTIONS OK
-		try {
-
-			this.raf.seek(this.raf.length());
-			this.raf.writeInt(indexNoeud);
-			//recuperationAttributsStagiaireBin(noeudAjout.getCle());
-			this.raf.writeChars(noeudAjout.getCle().getNomFormate());
-			this.raf.writeChars(noeudAjout.getCle().getPrenomFormate());
-			this.raf.writeChars(noeudAjout.getCle().getDepartementFormate());
-			this.raf.writeChars(noeudAjout.getCle().getFormationFormate());
-			this.raf.writeChars(noeudAjout.getCle().getAnneeFormationFormate());
-			//
-			this.raf.writeInt(noeudAjout.getIndexFilsGauche());
-			this.raf.writeInt(noeudAjout.getIndexFilsDroit());
-			this.raf.writeInt(noeudAjout.getIndexDoublon());
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
-		
 
 	}
 	
@@ -829,68 +1045,7 @@ public class ArbreBin implements ParametreGestionnaire{
 		}
 
 	}
-		
-		/* TEST NOT OK
-		// Methode recursive d'ajout de stagiaire dans le fichier bin
-		public void ecritureNoeudBinRecursive(Noeud noeudAjout, int index) {
-			try {
-				int indexNoeud = (int) (this.raf.length() / TAILLE_NOEUD_OCTET);
-
-				if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(index)) < 0) { // on part a gauche
-
-					if (recupererIndexFilsGauche(index) != -1) { // il y a un fils gauche
-						index = recupererIndexFilsGauche(index);
-						ecritureNoeudBinRecursive(noeudAjout, index); // on passe la methode au fils gauche
-					} else { // il n'y a pas de fils gauche
-						ecrireFilsGauche(index, indexNoeud);
-						ecrireNoeudBin(noeudAjout, indexNoeud);
-					}
-				} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(index)) > 0) { // on part a Droite
-
-					if (recupererIndexFilsDroit(index) != -1) { // il y a un fils Droit
-						index = recupererIndexFilsDroit(index);
-						ecritureNoeudBinRecursive(noeudAjout, index); // on passe la methode au fils Droit
-					} else { // il n'y a pas de fils Droit
-						ecrireFilsDroit(index, indexNoeud);
-						ecrireNoeudBin(noeudAjout, indexNoeud);
-					}
-				} else if (noeudAjout.getCle().getNomFormate().compareTo(recupereNomFormateNoeudBin(index)) == 0) {
-					if (recupererIndexDoublon(index) == -1) {
-						ecrireDoublon(index, indexNoeud);
-						ecrireNoeudBin(noeudAjout, indexNoeud);
-					} else {
-					    insererDoublonRecursive(noeudAjout, index, indexNoeud, index);
-					}
-				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		}
-		
-		
-		public void insererDoublonRecursive(Noeud noeudAjout, int index, int indexNoeud, int indexParent) {
-			if (recupererIndexDoublon(index) != -1) {
-				if (noeudAjout.getCle().getPrenom().compareTo(recuperePrenomNoeudBin(index)) > 0) {
-					indexParent = index;
-					index = recupererIndexDoublon(index);
-					insererDoublonRecursive(noeudAjout, index, indexNoeud, indexParent);
-				} else if (noeudAjout.getCle().getPrenom().compareTo(recuperePrenomNoeudBin(index)) <= 0) {
-					ecrireNoeudBin(noeudAjout, indexNoeud);
-					ecrireDoublon(indexParent, indexNoeud);
-					ecrireDoublon(indexNoeud, index);	
-				}
-			} else {
-				
-				ecrireDoublon(index, indexNoeud);
-				ecrireNoeudBin(noeudAjout, indexNoeud);
-			}
-		}
-		*/
-		
-
-		// Methode recursive d'ajout de stagiaire dans le fichier bin
+	
 	/**
 	 * Methode recursive interne pour ajouter un noeud dans l'arbre binaire
 	 * @param noeudAjout le noeud à ajouter
@@ -951,7 +1106,6 @@ public class ArbreBin implements ParametreGestionnaire{
 		try {
 			this.raf.seek(index * TAILLE_NOEUD_OCTET);
 			indexNoeud = raf.readInt();
-			// raf.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1205,809 +1359,381 @@ public class ArbreBin implements ParametreGestionnaire{
 		return noeud;
 	}
 		
-		// Methode qui modifie l'indexFilsGauche du noeud parent en lui attribuant la valeur indexNoeud
-		public void ecrireFilsGaucheBin(int indexParent, int indexNoeud) {
-			try {
-				this.raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
-				this.raf.writeInt(indexNoeud);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	/**
+	 * Methode qui modifie l'indexFilsGauche du noeud parent en lui attribuant la valeur indexNoeud
+	 * @param indexParent
+	 * @param indexNoeud
+	 */
+	private void ecrireFilsGaucheBin(int indexParent, int indexNoeud) {
+		try {
+			this.raf.seek((indexParent * TAILLE_NOEUD_OCTET) + INDEX_FILS_GAUCHE_OCTET);
+			this.raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		// Methode qui modifie l'indexFilsDroit du noeud parent en lui attribuant la valeur indexNoeud
-		public void ecrireFilsDroitBin(int indexParent, int indexNoeud) {
-			try {
-				this.raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
-				this.raf.writeInt(indexNoeud);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	}
+
+	/**
+	 * Methode qui modifie l'indexFilsDroit du noeud parent en lui attribuant la valeur indexNoeud
+	 * @param indexParent
+	 * @param indexNoeud
+	 */
+	private void ecrireFilsDroitBin(int indexParent, int indexNoeud) {
+		try {
+			this.raf.seek((indexParent * TAILLE_NOEUD_OCTET) + INDEX_FILS_DROIT_OCTET);
+			this.raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		// Methode qui modifie l'indexDoublon du noeud parent en lui attribuant la valeur indexNoeud
-		public void ecrireDoublonBin(int indexParent, int indexNoeud) {
-			try {
-				this.raf.seek((indexParent*TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
-				this.raf.writeInt(indexNoeud);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	}
+
+	/**
+	 * Methode qui modifie l'indexDoublon du noeud parent en lui attribuant la valeur indexNoeud
+	 * @param indexParent
+	 * @param indexNoeud
+	 */
+	private void ecrireDoublonBin(int indexParent, int indexNoeud) {
+		try {
+			this.raf.seek((indexParent * TAILLE_NOEUD_OCTET) + INDEX_DOUBLON_OCTET);
+			this.raf.writeInt(indexNoeud);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
 		
-		/**
-		 * Affiche dans la console le contenu du fichier binaire
-		 * 
-		 * @return Affiche dans la console la liste des noeuds contenus dans le fichier
-		 *         binaire avec leurs attributs: [ index / nom / prenom / departement /
-		 *         formation / anneeFormation / indexFilsGauche / indexFilsDroit /
-		 *         indexDoublon ]
-		 */
-		public void afficherFichierBin() {
-			try {
-				System.out.println("\n******* FICHIER BIN: " + this.adresseFichierBin);
-				this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
-				int nbrStagiaires = (int) (this.raf.length() / (TAILLE_NOEUD_OCTET));
-				// on ouvre le flux "raf" associé au fichier binaire
+	/**
+	 * Affiche dans la console le contenu du fichier binaire
+	 * 
+	 * @return Affiche dans la console la liste des noeuds contenus dans le fichier
+	 *         binaire avec leurs attributs: [ index / nom / prenom / departement /
+	 *         formation / anneeFormation / indexFilsGauche / indexFilsDroit /
+	 *         indexDoublon ]
+	 */
+	public void afficherFichierBin() {
+		try {
+			System.out.println("\n******* FICHIER BIN: " + this.adresseFichierBin);
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+			int nbrStagiaires = (int) (this.raf.length() / (TAILLE_NOEUD_OCTET));
+			// on ouvre le flux "raf" associé au fichier binaire
 
-				// int nbrStagiaires = 100; // A DEFINIR PAR UNE FONCTION
-				// annuaire.getNombreStagiaires() qui calcule le nombre de noeuds dans
-				// l'annuaire;
-				for (int i = 0; i < nbrStagiaires; i++) {
-					// on positionne la tête de lecture en position "i * TAILLE_STAGIAIRE_OCTET"
-					// car .seek() se base sur l'octet et non sur le caractère (1 letter = 2 octets
-					// / 1 int = 4 octets)
-					// contrairement à .readChar() qui lui se déplace de caractère en caractère
-					this.raf.seek(i * (TAILLE_NOEUD_OCTET));
+			// int nbrStagiaires = 100; // A DEFINIR PAR UNE FONCTION
+			// annuaire.getNombreStagiaires() qui calcule le nombre de noeuds dans
+			// l'annuaire;
+			for (int i = 0; i < nbrStagiaires; i++) {
+				// on positionne la tête de lecture en position "i * TAILLE_STAGIAIRE_OCTET"
+				// car .seek() se base sur l'octet et non sur le caractère (1 letter = 2 octets
+				// / 1 int = 4 octets)
+				// contrairement à .readChar() qui lui se déplace de caractère en caractère
+				this.raf.seek(i * (TAILLE_NOEUD_OCTET));
 
-					// on crée les variables qui vont stocker les valeurs des attributs
-					int indexNoeud = 0;
-					String nomRecup = "";
-					String prenomRecup = "";
-					String departementRecup = "";
-					String formationRecup = "";
-					String anneeFormationRecup = "";
-					int indexFilsGauche = 0;
-					int indexFilsDroit = 0;
-					int indexDoublon = 0;
+				// on crée les variables qui vont stocker les valeurs des attributs
+				int indexNoeud = 0;
+				String nomRecup = "";
+				String prenomRecup = "";
+				String departementRecup = "";
+				String formationRecup = "";
+				String anneeFormationRecup = "";
+				int indexFilsGauche = 0;
+				int indexFilsDroit = 0;
+				int indexDoublon = 0;
 
-					// DEBUT DE LA LECTURE DU "raf"
-					// On commence à parcourir/lire le fichier binaire selon ce principe :
-					indexNoeud = this.raf.readInt();
-					// 1--> de 0 à TAILLE_MAX_NOM, on sait qu'il s'agit des lettres du "nom" du
-					// stagiaire
-					for (int k = 0; k < TAILLE_MAX_NOM; k++) {
-						nomRecup += this.raf.readChar();
-					}
-					// 1--> de 0 à TAILLE_MAX_PRENOM, on sait qu'il s'agit des lettres du "prenom"
-					// du stagiaire
-					for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
-						prenomRecup += this.raf.readChar();
-					}
-					// 1--> de 0 à TAILLE_MAX_DEPARTEMENT, on sait qu'il s'agit des numeros du
-					// "département" du stagiaire
-					for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
-						departementRecup += this.raf.readChar();
-					}
-					// 1--> de 0 à TAILLE_MAX_FORMATION, on sait qu'il s'agit des lettres de la
-					// "formation" du stagiaire
-					for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
-						formationRecup += this.raf.readChar();
-					}
-					// 1--> de 0 à TAILLE_MAX_ANNEEFORMATION, on sait qu'il s'agit des lettres de l'
-					// "annee de formation" du stagiaire
-					for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
-						anneeFormationRecup += this.raf.readChar();
-					}
-					indexFilsGauche += this.raf.readInt();
-					indexFilsDroit += this.raf.readInt();
-					indexDoublon += this.raf.readInt();
-
-					// FIN DE LA LECTURE
-
-					// On affiche les résultats
-
-					System.out.println("[IndexNoeud: " + indexNoeud + "]");
-					System.out.println("nom: " + nomRecup.trim() + " / " + "prenom: " + prenomRecup.trim() + " / "
-							+ "dept: " + departementRecup.trim() + " / " + "formation: " + formationRecup.trim() + " / "
-							+ "Annee: " + anneeFormationRecup.trim());
-					System.out.println("[" + "FG: " + indexFilsGauche + "][" + "FD: " + indexFilsDroit + "][" + "DB: "
-							+ indexDoublon + "]\n");
+				// DEBUT DE LA LECTURE DU "raf"
+				// On commence à parcourir/lire le fichier binaire selon ce principe :
+				indexNoeud = this.raf.readInt();
+				// 1--> de 0 à TAILLE_MAX_NOM, on sait qu'il s'agit des lettres du "nom" du
+				// stagiaire
+				for (int k = 0; k < TAILLE_MAX_NOM; k++) {
+					nomRecup += this.raf.readChar();
 				}
-
-				// on ferme le flux "raf"
-				this.raf.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		
-		/**
-		 * RechercherMulticritere : Methode principale. 
-		 * Cree une ArrayList contenant les index de noeuds recherches (dont les criteres sont dans l'objet 
-		 * @param recherche Objet de classe RechercheMulticritere contenant les filtres de recherche
-		 * @return une ArrayList des index des noeuds recherches
-		 */
-		public ArrayList<Integer> rechercheMulticriteres(RechercheMulticritere recherche) {
-			ArrayList<Integer> resultatRecherche = new ArrayList<Integer>();
-			try {
-				this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
-				
-				if (this.raf.length() == 0) {
-					System.out.println("ERROR >> Recherche impossible dans un fichier vide");
-				} else {
-					resultatRecherche =  this.rechercheMulticriteresRecursive(recherche);
+				// 1--> de 0 à TAILLE_MAX_PRENOM, on sait qu'il s'agit des lettres du "prenom"
+				// du stagiaire
+				for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
+					prenomRecup += this.raf.readChar();
 				}
-				
-				this.raf.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return resultatRecherche;
-
-		}
-		
-		/**
-		 * Methode secondaire pour la RechercherMulticritere : 
-		 * Methode recursive de recherche des index des noeuds et de leur écriture dans une ArrayList
-		 * @param recherche Objet de classe RechercheMulticritere contenant les filtres de recherche
-		 * @return une ArrayList des index des noeuds recherches
-		 */
-		private ArrayList<Integer> rechercheMulticriteresRecursive(RechercheMulticritere recherche) {
-			ArrayList<Integer> resultatRecherche = new ArrayList<Integer>();
-			try {
-				int nombreStagiairesBin = (int) (this.raf.length() / TAILLE_NOEUD_OCTET);
-				for (int index = 0; index < nombreStagiairesBin; index++) {
-					this.raf.seek(index);
-					Noeud noeud = this.recupereNoeudBin(index);
-					if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
-						resultatRecherche.add(index);
-					}
-					
+				// 1--> de 0 à TAILLE_MAX_DEPARTEMENT, on sait qu'il s'agit des numeros du
+				// "département" du stagiaire
+				for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
+					departementRecup += this.raf.readChar();
 				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
+				// 1--> de 0 à TAILLE_MAX_FORMATION, on sait qu'il s'agit des lettres de la
+				// "formation" du stagiaire
+				for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
+					formationRecup += this.raf.readChar();
+				}
+				// 1--> de 0 à TAILLE_MAX_ANNEEFORMATION, on sait qu'il s'agit des lettres de l'
+				// "annee de formation" du stagiaire
+				for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
+					anneeFormationRecup += this.raf.readChar();
+				}
+				indexFilsGauche += this.raf.readInt();
+				indexFilsDroit += this.raf.readInt();
+				indexDoublon += this.raf.readInt();
+
+				// FIN DE LA LECTURE
+
+				// On affiche les résultats
+
+				System.out.println("[IndexNoeud: " + indexNoeud + "]");
+				System.out.println("nom: " + nomRecup.trim() + " / " + "prenom: " + prenomRecup.trim() + " / "
+						+ "dept: " + departementRecup.trim() + " / " + "formation: " + formationRecup.trim() + " / "
+						+ "Annee: " + anneeFormationRecup.trim());
+				System.out.println("[" + "FG: " + indexFilsGauche + "][" + "FD: " + indexFilsDroit + "][" + "DB: "
+						+ indexDoublon + "]\n");
 			}
-			return resultatRecherche;
 
-		}
-		
-		/**
-		 * Methode complementaire de l'algorithme de RechercheMulticritere :
-		 * Transforme une Array list d'index de noeuds en Arbre binaire des noeud correspondants aux index
-		 * @param listeIndexNoeud L'array list recuperee en sortie de la RechercheMulticriteres
-		 * @param arbreBin L'arbre danns lequel transcrire l'ArrayList
-		 */
-		private void importArrayToArbreBin(ArrayList<Integer> listeIndexNoeud, ArbreBin arbreBin){
-			try {
-
-				this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
-				RandomAccessFile rafParent = new RandomAccessFile(arbreBin.adresseFichierBin, "rw");
-				this.raf.setLength(0);
-
-					for (Integer indexNoeud : listeIndexNoeud) {
-						Noeud noeud = this.recupereNoeudIndex(indexNoeud, rafParent);
-						this.ajouterStagiaireBin(noeud);
-					}
-					
-					this.raf.close();
-					rafParent.close();
-
-				} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		/**
-		  * Methode principale de la transformation de l'ArbreBin en ArrayList
-		  * Exporte l'ArbreBin dans l'ArrayList passee en argument
-		  * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
-		  */
-		public void exportToArrayListOptionRecherche(ArrayList<Noeud> listeNoeud, boolean rechMultActivee, RechercheMulticritere recherche){
-			try {
-				
-				this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
-			    if (this.raf.length() == 0) {
-			    	listeNoeud = null;
-			    } else {
-			    	if (rechMultActivee == true) {
-			    		this.exportToArrayListOptionRechercheRecursive(listeNoeud,0, 0, recherche);
-			    	} else {
-			    		this.exportToArrayListRecursive(listeNoeud,0, 0);
-			    	}
-			}
-			
+			// on ferme le flux "raf"
 			this.raf.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+	}
 		
-		/**
-		 * Methode secondaire recursive pour la transformation de l'ArbreBin en ArrayList :
-		 * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
-		 * @param indexEnCours L'index du noeud sur lequel on se situe
-		 * @param indexParent L'index du noeud parent au noeud dans lequel on se trouve
-		 */
-		private void exportToArrayListOptionRechercheRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent, RechercheMulticritere recherche){
-			int indexEnCoursLocal = indexEnCours;
 		
-			if (this.recupererIndexFilsGaucheBin(indexEnCours) != -1) {
-				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsGaucheBin(indexEnCours);
-				this.exportToArrayListOptionRechercheRecursive(listeNoeud,indexEnCours, indexParent, recherche);
+	/**
+	 * RechercherMulticritere : Methode principale. Cree une ArrayList contenant les
+	 * index de noeuds recherches (dont les criteres sont dans l'objet
+	 * 
+	 * @param recherche Objet de classe RechercheMulticritere contenant les filtres
+	 *                  de recherche
+	 * @return une ArrayList des index des noeuds recherches
+	 */
+	public ArrayList<Integer> rechercheMulticriteres(RechercheMulticritere recherche) {
+		ArrayList<Integer> resultatRecherche = new ArrayList<Integer>();
+		try {
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+
+			if (this.raf.length() == 0) {
+				System.out.println("ERROR >> Recherche impossible dans un fichier vide");
+			} else {
+				resultatRecherche = this.rechercheMulticriteresRecursive(recherche);
 			}
-			
-			Noeud noeud = this.recupereNoeudBin(indexEnCoursLocal);
-			if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
+
+			this.raf.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return resultatRecherche;
+
+	}
+
+	/**
+	 * Methode secondaire pour la RechercherMulticritere : Methode recursive de
+	 * recherche des index des noeuds et de leur écriture dans une ArrayList
+	 * 
+	 * @param recherche Objet de classe RechercheMulticritere contenant les filtres
+	 *                  de recherche
+	 * @return une ArrayList des index des noeuds recherches
+	 */
+	private ArrayList<Integer> rechercheMulticriteresRecursive(RechercheMulticritere recherche) {
+		ArrayList<Integer> resultatRecherche = new ArrayList<Integer>();
+		try {
+			int nombreStagiairesBin = (int) (this.raf.length() / TAILLE_NOEUD_OCTET);
+			for (int index = 0; index < nombreStagiairesBin; index++) {
+				this.raf.seek(index);
+				Noeud noeud = this.recupereNoeudBin(index);
+				if (recherche.rechercheMulticritereNoeud(noeud) == true) {
+					resultatRecherche.add(index);
+				}
+
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return resultatRecherche;
+
+	}
+
+	/**
+	 * Methode complementaire de l'algorithme de RechercheMulticritere : Transforme
+	 * une Array list d'index de noeuds en Arbre binaire des noeud correspondants
+	 * aux index
+	 * 
+	 * @param listeIndexNoeud L'array list recuperee en sortie de la
+	 *                        RechercheMulticriteres
+	 * @param arbreBin        L'arbre danns lequel transcrire l'ArrayList
+	 */
+	private void importArrayToArbreBin(ArrayList<Integer> listeIndexNoeud, ArbreBin arbreBin) {
+		try {
+
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+			RandomAccessFile rafParent = new RandomAccessFile(arbreBin.adresseFichierBin, "rw");
+			this.raf.setLength(0);
+
+			for (Integer indexNoeud : listeIndexNoeud) {
+				Noeud noeud = this.recupereNoeudIndex(indexNoeud, rafParent);
+				this.ajouterStagiaireBin(noeud);
+			}
+
+			this.raf.close();
+			rafParent.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Methode principale de la transformation de l'ArbreBin en ArrayList  : Exporte
+	 * l'ArbreBin dans l'ArrayList passee en argument
+	 * 
+	 * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
+	 */
+	public void exportToArrayListOptionRecherche(ArrayList<Noeud> listeNoeud, boolean rechMultActivee,
+			RechercheMulticritere recherche) {
+		try {
+
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+			if (this.raf.length() == 0) {
+				listeNoeud = null;
+			} else {
+				if (rechMultActivee == true) {
+					this.exportToArrayListOptionRechercheRecursive(listeNoeud, 0, 0, recherche);
+				} else {
+					this.exportToArrayListRecursive(listeNoeud, 0, 0);
+				}
+			}
+
+			this.raf.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Methode secondaire recursive pour la transformation de l'ArbreBin en
+	 * ArrayList 
+	 * 
+	 * @param listeNoeud   L'ArrayList à remplir avec les données de l'ArbreBin
+	 * @param indexEnCours L'index du noeud sur lequel on se situe
+	 * @param indexParent  L'index du noeud parent au noeud dans lequel on se trouve
+	 */
+	private void exportToArrayListOptionRechercheRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours,
+			int indexParent, RechercheMulticritere recherche) {
+		int indexEnCoursLocal = indexEnCours;
+
+		if (this.recupererIndexFilsGaucheBin(indexEnCours) != -1) {
+			indexParent = indexEnCours;
+			indexEnCours = this.recupererIndexFilsGaucheBin(indexEnCours);
+			this.exportToArrayListOptionRechercheRecursive(listeNoeud, indexEnCours, indexParent, recherche);
+		}
+
+		Noeud noeud = this.recupereNoeudBin(indexEnCoursLocal);
+		if (recherche.rechercheMulticritereNoeud(noeud) == true) {
+			listeNoeud.add(noeud);
+		}
+		indexEnCours = indexEnCoursLocal;
+
+		if (this.recupererIndexDoublonBin(indexEnCoursLocal) != -1) {
+			this.exportToArrayListDoublonOptionRecherche(listeNoeud, this.recupererIndexDoublonBin(indexEnCoursLocal),
+					recherche);
+		}
+
+		if (this.recupererIndexFilsDroitBin(indexEnCours) != -1) {
+			indexParent = indexEnCours;
+			indexEnCours = this.recupererIndexFilsDroitBin(indexEnCours);
+			this.exportToArrayListOptionRechercheRecursive(listeNoeud, indexEnCours, indexParent, recherche);
+		}
+
+	}
+
+	/**
+	 * Troisieme méthode pour la transformation de l'ArbreBin en ArrayList :
+	 * traitement des doublons
+	 * 
+	 * @param listeNoeud          L'ArrayList à compléter par les doublons
+	 * @param indexPremierDoublon Index du premier doublon (= DEUXIEME de la chaine
+	 *                            Doublons en comptant le noeud de départ)
+	 */
+	private void exportToArrayListDoublonOptionRecherche(ArrayList<Noeud> listeNoeud, int indexPremierDoublon,
+			RechercheMulticritere recherche) {
+		int indexParcours = indexPremierDoublon;
+		while (this.recupererIndexDoublonBin(indexParcours) != -1) {
+			Noeud noeud = this.recupereNoeudBin(indexParcours);
+			if (recherche.rechercheMulticritereNoeud(noeud) == true) {
 				listeNoeud.add(noeud);
 			}
-			indexEnCours = indexEnCoursLocal;
-			
-			if (this.recupererIndexDoublonBin(indexEnCoursLocal) != -1) {
-				this.exportToArrayListDoublonOptionRecherche(listeNoeud, this.recupererIndexDoublonBin(indexEnCoursLocal), recherche);
-			}
-			
-			if (this.recupererIndexFilsDroitBin(indexEnCours) != -1) {
-				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsDroitBin(indexEnCours);
-				this.exportToArrayListOptionRechercheRecursive(listeNoeud,indexEnCours, indexParent, recherche);
-			}
-			
+			indexParcours = this.recupererIndexDoublonBin(indexParcours);
 		}
+		Noeud noeud = this.recupereNoeudBin(indexParcours);
+		if (recherche.rechercheMulticritereNoeud(noeud) == true) {
+			listeNoeud.add(noeud);
+		}
+	}
 
-		/** Troisieme méthode pour la transformation de l'ArbreBin en ArrayList : traitement des doublons
-		 * 
-		 * @param listeNoeud L'ArrayList à compléter par les doublons
-		 * @param indexPremierDoublon Index du premier doublon (= DEUXIEME de la chaine Doublons en comptant le noeud de départ)
-		 */
-		private void exportToArrayListDoublonOptionRecherche(ArrayList<Noeud> listeNoeud, int indexPremierDoublon, RechercheMulticritere recherche){
-			int indexParcours = indexPremierDoublon; 
-	    	while (this.recupererIndexDoublonBin(indexParcours) != -1) {
-	    		Noeud noeud = this.recupereNoeudBin(indexParcours);
-				if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
-					listeNoeud.add(noeud);
-				}
-	    		indexParcours = this.recupererIndexDoublonBin(indexParcours);
-	    	}
-	    	Noeud noeud = this.recupereNoeudBin(indexParcours);
-	    	if (recherche.rechercheMulticritereNoeud(noeud) ==  true) {
-	    		listeNoeud.add(noeud);
-	    	}
-		}
-		
-		
-		 /**
-		  * Methode principale de la transformation de l'ArbreBin en ArrayList
-		  * Exporte l'ArbreBin dans l'ArrayList passee en argument
-		  * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
-		  */
-		public void exportToArrayList(ArrayList<Noeud> listeNoeud){
-			try {
-				
-				this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
-			    if (this.raf.length() == 0) {
-			    	listeNoeud = null;
-			    } else {
-			    	this.exportToArrayListRecursive(listeNoeud,0, 0);
+	/**
+	 * Methode principale de la transformation de l'ArbreBin en ArrayList Exporte
+	 * l'ArbreBin dans l'ArrayList passee en argument
+	 * 
+	 * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
+	 */
+	public void exportToArrayList(ArrayList<Noeud> listeNoeud) {
+		try {
+
+			this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
+			if (this.raf.length() == 0) {
+				listeNoeud = null;
+			} else {
+				this.exportToArrayListRecursive(listeNoeud, 0, 0);
 			}
-			
+
 			this.raf.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		/**
-		 * Methode secondaire recursive pour la transformation de l'ArbreBin en ArrayList :
-		 * @param listeNoeud L'ArrayList à remplir avec les données de l'ArbreBin
-		 * @param indexEnCours L'index du noeud sur lequel on se situe
-		 * @param indexParent L'index du noeud parent au noeud dans lequel on se trouve
-		 */
-		private void exportToArrayListRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent){
-			int indexEnCoursLocal = indexEnCours;
-		
-			if (this.recupererIndexFilsGaucheBin(indexEnCours) != -1) {
-				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsGaucheBin(indexEnCours);
+	}
 
-				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
-			}
-			
-			listeNoeud.add(this.recupereNoeudBin(indexEnCoursLocal));
-			indexEnCours = indexEnCoursLocal;
-			
-			if (this.recupererIndexDoublonBin(indexEnCoursLocal) != -1) {
-				this.exportToArrayListDoublon(listeNoeud, this.recupererIndexDoublonBin(indexEnCoursLocal));
-			}
-			
-			if (this.recupererIndexFilsDroitBin(indexEnCours) != -1) {
-				indexParent = indexEnCours;
-				indexEnCours = this.recupererIndexFilsDroitBin(indexEnCours);
-				this.exportToArrayListRecursive(listeNoeud,indexEnCours, indexParent);
-			}
-			
+	/**
+	 * Methode secondaire recursive pour la transformation de l'ArbreBin en
+	 * ArrayList :
+	 * 
+	 * @param listeNoeud   L'ArrayList à remplir avec les données de l'ArbreBin
+	 * @param indexEnCours L'index du noeud sur lequel on se situe
+	 * @param indexParent  L'index du noeud parent au noeud dans lequel on se trouve
+	 */
+	private void exportToArrayListRecursive(ArrayList<Noeud> listeNoeud, int indexEnCours, int indexParent) {
+		int indexEnCoursLocal = indexEnCours;
+
+		if (this.recupererIndexFilsGaucheBin(indexEnCours) != -1) {
+			indexParent = indexEnCours;
+			indexEnCours = this.recupererIndexFilsGaucheBin(indexEnCours);
+
+			this.exportToArrayListRecursive(listeNoeud, indexEnCours, indexParent);
 		}
 
-		/** Troisieme méthode pour la transformation de l'ArbreBin en ArrayList : traitement des doublons
-		 * 
-		 * @param listeNoeud L'ArrayList à compléter par les doublons
-		 * @param indexPremierDoublon Index du premier doublon (= DEUXIEME de la chaine Doublons en comptant le noeud de départ)
-		 */
-		private void exportToArrayListDoublon(ArrayList<Noeud> listeNoeud, int indexPremierDoublon){
-			int indexParcours = indexPremierDoublon; 
-	    	while (this.recupererIndexDoublonBin(indexParcours) != -1) {
-	    		listeNoeud.add(this.recupereNoeudBin(indexParcours));
-	    		indexParcours = this.recupererIndexDoublonBin(indexParcours);
-	    	}
-	    	listeNoeud.add(this.recupereNoeudBin(indexParcours));
+		listeNoeud.add(this.recupereNoeudBin(indexEnCoursLocal));
+		indexEnCours = indexEnCoursLocal;
+
+		if (this.recupererIndexDoublonBin(indexEnCoursLocal) != -1) {
+			this.exportToArrayListDoublon(listeNoeud, this.recupererIndexDoublonBin(indexEnCoursLocal));
 		}
-		
-		//public void modifierAttribut()
-		
-		
-		// test pour exporter une array list dans l'ordre initial de ses elements WIP
-				private void exportToArrayListDoublonV02(ArrayList<Noeud> listeNoeud, int indexPremierDoublon){
-					int cptDoublon = 2; // car si on entre dans cette methode, c'est qu'il y a déjà un doublon
-					
-					try {
-						
-						this.raf = new RandomAccessFile(this.adresseFichierBin, "rw");
-					    if (this.raf.length() == 0) {
-					    	listeNoeud = null;
-					    } else {
-					    	// on compte le nombre de doublons à partir de l'indexPremierDoublon
-					    	int indexB = indexPremierDoublon; 
-					    	while (this.recupererIndexDoublonBin(indexB) != -1) {
-					    		indexB = this.recupererIndexDoublonBin(indexB);
-					    		cptDoublon ++;
-					    	}
-//					    	int indexBuffer = indexPremierDoublon;
-//					    	int indexEncours = indexPremierDoublon;
-					    	int indexMin = indexPremierDoublon;
-					    	int indexATester = this.recupererIndexDoublonBin(indexMin);
-					    	for (int i = 0; i < cptDoublon; i ++) {
-					    		for (int k = i+1; k < cptDoublon; k++) {
-					    			if (this.recupereNoeudBin(indexATester).getCle().getPrenomFormate().compareTo(recuperePrenomFormateNoeudBin(indexMin)) < 0) {
-					    				indexMin = indexATester;
-					    				indexATester = this.recupererIndexDoublonBin(indexATester);
-							    	}
-					    			listeNoeud.add(this.recupereNoeudBin(indexMin));
-					    			indexATester = this.recupererIndexDoublonBin(indexATester);
-					    		}
-					    	}
-					    	
-					    	System.out.println("cptDoublon "+cptDoublon);
 
-					}
-					
-					this.raf.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				
-				
-				
-				
-				// ABIGAEL ----------------------------------- 20201209 --------------------------------
-				// Méthode pour supprimer un stagiaire
-				public void supprimerStagiaireNoeud(String stagiaireSupp) {
-					try {
-
-						this.raf = new RandomAccessFile(CHEMIN_BIN, "rw");
-						int indexNoeud = 0;
-						
-						Noeud noeudSupp = new Noeud();
-						noeudSupp = this.recupererNoeudSupp(noeudSupp, stagiaireSupp, indexNoeud);
-						System.out.println(noeudSupp);
-						
-						
-						
-						//Si c'est la racine
-						if(noeudSupp.getIndexNoeud()==indexNoeud) {
-							supprimerRacine(noeudSupp);
-						}else {
-							//Si le noeud à un doublon
-							if(noeudSupp.getIndexDoublon()!=-1) {
-								modifierNoeudAvecDoublon(noeudSupp);
-							}else {
-								
-						//Si le noeud à supprimer n'a pas de fils 
-						if(noeudSupp.getIndexFilsGauche()==-1 && noeudSupp.getIndexFilsDroit()==-1) {
-							modifierNoeudParentSansFils(noeudSupp);
-						//Si le noeud à supprimer à 2 fils	
-						}else if (noeudSupp.getIndexFilsGauche()!=-1 && noeudSupp.getIndexFilsDroit()!=-1) {
-							modifierNoeudParentAvecFilsDroit(noeudSupp);
-						//Si le noeud à supprimer a un fils droit
-						}else if (noeudSupp.getIndexFilsGauche()==-1) {
-							modifierNoeudParentAvecFilsDroit(noeudSupp);
-						//Si le noeud à supprimer a un fils gauche
-						}else if (noeudSupp.getIndexFilsDroit()==-1) {
-							modifierNoeudParentAvecFilsGauche(noeudSupp);
-						
-						}
-							}	
-						}
-					
-
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-				
-				private void modifierNoeudAvecDoublon(Noeud noeudFils) {
-					int indexNoeudSansFils = -1;
-					int indexNoeudFils = noeudFils.getIndexNoeud();
-					int indexNoeudParent = 0;
-
-					int indexDbNoeudSupp = noeudFils.getIndexDoublon();
-					int indexFDnoeudSupp = noeudFils.getIndexFilsDroit();
-					int indexFGnoeudSupp = noeudFils.getIndexFilsGauche();
-
-					// Chercher le parents
-					indexNoeudParent = recupererIndexParent(indexNoeudFils, indexNoeudParent);
-
-					int indexNoeud = 0;
-
-					int indexFilsNoeud = noeudFils.getIndexDoublon();
-
-					while (indexFilsNoeud != recupereIndexNoeudBin(indexNoeud)) {
-						indexNoeud++;
-					}
-
-					Noeud noeudRecup = new Noeud();
-					noeudRecup = this.recupererNoeud(noeudRecup, indexNoeud);
-
-					System.out.println(noeudRecup);
-
-					indexNoeudFils = noeudFils.getIndexNoeud();
-
-					System.out.println(indexNoeudFils);
-					System.out.println(indexNoeudParent);
-					// Modifier le parent
-					ecrireFilsGaucheBin(indexNoeudParent, indexNoeudFils);// écrire Doublon au parent du noeud supprimé
-					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa place, ie au doublon											
-					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa place, ie au doublon
-
-				}
-
-				private void supprimerRacine(Noeud noeudFils) {
-					int indexNoeudSansFils = -1;
-					int indexNoeudFils = noeudFils.getIndexNoeud();
-
-					int indexFDnoeudSupp = noeudFils.getIndexFilsDroit();
-					int indexFGnoeudSupp = noeudFils.getIndexFilsGauche();
-
-					int indexNoeud = 0;
-
-					int indexFilsNoeud = noeudFils.getIndexFilsDroit();
-
-					while (indexFilsNoeud != recupereIndexNoeudBin(indexNoeud)) {
-						indexNoeud++;
-					}
-
-					Noeud noeudRecup = new Noeud();
-					noeudRecup = this.recupererNoeud(noeudRecup, indexNoeud);
-
-					System.out.println(noeudRecup);
-
-					// chercher le fils du noeud supp
-					if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
-						indexNoeudFils = chercherFilsPlusPetit(noeudRecup, indexNoeudFils);
-					}
-					indexNoeudFils = noeudFils.getIndexNoeud();
-
-					System.out.println(indexNoeudFils);
-					// Modifier le parent
-					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
-																			// place
-					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
-																			// place
-
-				}
-
-				private void modifierNoeudParentAvecFilsGauche(Noeud noeudFils) {
-					int indexNoeudSansFils = -1;
-					int indexNoeudFils = noeudFils.getIndexNoeud();
-					int indexNoeudParent = 0;
-
-					int indexFDnoeudSupp = noeudFils.getIndexFilsDroit();
-					int indexFGnoeudSupp = noeudFils.getIndexFilsGauche();
-
-					// Chercher le parents
-					indexNoeudParent = recupererIndexParent(indexNoeudFils, indexNoeudParent);
-
-					int indexNoeud = 0;
-
-					int indexFilsNoeud = noeudFils.getIndexFilsGauche();
-
-					while (indexFilsNoeud != recupereIndexNoeudBin(indexNoeud)) {
-						indexNoeud++;
-					}
-
-					Noeud noeudRecup = new Noeud();
-					noeudRecup = this.recupererNoeud(noeudRecup, indexNoeud);
-
-					System.out.println(noeudRecup);
-
-					// chercher le fils du noeud supp
-					if (noeudRecup.getIndexFilsDroit() != indexNoeudSansFils) {
-						indexNoeudFils = chercherFilsPlusGrand(noeudRecup, indexNoeudFils);
-					}
-					indexNoeudFils = noeudFils.getIndexNoeud();
-
-					System.out.println(indexNoeudFils);
-					System.out.println(indexNoeudParent);
-					// Modifier le parent
-					ecrireFilsDroitBin(indexNoeudParent, indexNoeudFils);// écrire FG au parent du noeud supprimé
-					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
-																			// place
-					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
-																			// place
-
-				}
-
-				private int chercherFilsPlusGrand(Noeud noeudFils, int indexNoeudNouveauFils) {
-					int indexNoeudSansFils = -1;
-					int indexNoeud = 0;
-
-					int indexFilsNoeud = noeudFils.getIndexFilsDroit();
-
-					while (indexFilsNoeud != recupereIndexNoeudBin(indexNoeud)) {
-						indexNoeud++;
-					}
-
-					Noeud noeudRecup = new Noeud();
-					noeudRecup = this.recupererNoeud(noeudRecup, indexNoeud);
-					System.out.println(noeudRecup);
-
-					// Si pas de fils gauche
-					if (noeudRecup.getIndexFilsDroit() != indexNoeudSansFils) {
-						chercherFilsPlusGrand(noeudRecup, indexNoeudNouveauFils);
-					}
-					indexNoeudNouveauFils = noeudRecup.getIndexNoeud();
-
-					return indexNoeudNouveauFils;
-
-				}
-
-				// Méthode pour donner au Noeud Parents l'index du fils le plus petit à la place
-				// de l'index du noeud supp
-				private void modifierNoeudParentAvecFilsDroit(Noeud noeudFils) {
-					int indexNoeudSansFils = -1;
-					int indexNoeudFils = noeudFils.getIndexNoeud();
-					int indexNoeudParent = 0;
-
-					int indexFDnoeudSupp = noeudFils.getIndexFilsDroit();
-					int indexFGnoeudSupp = noeudFils.getIndexFilsGauche();
-
-					// Chercher le parents
-					indexNoeudParent = recupererIndexParent(indexNoeudFils, indexNoeudParent);
-
-					int indexNoeud = 0;
-
-					int indexFilsNoeud = noeudFils.getIndexFilsDroit();
-
-					while (indexFilsNoeud != recupereIndexNoeudBin(indexNoeud)) {
-						indexNoeud++;
-					}
-
-					Noeud noeudRecup = new Noeud();
-					noeudRecup = this.recupererNoeud(noeudRecup, indexNoeud);
-
-					System.out.println(noeudRecup);
-
-					// chercher le fils du noeud supp
-					if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
-						indexNoeudFils = chercherFilsPlusPetit(noeudRecup, indexNoeudFils);
-					}
-					indexNoeudFils = noeudFils.getIndexNoeud();
-
-					System.out.println(indexNoeudFils);
-					System.out.println(indexNoeudParent);
-					// Modifier le parent
-					ecrireFilsDroitBin(indexNoeudParent, indexNoeudFils);// écrire FG au parent du noeud supprimé
-					ecrireFilsDroitBin(indexNoeudFils, indexFDnoeudSupp);// écrire FD du noeud supprimé au noeud qui prend sa
-																			// place
-					ecrireFilsGaucheBin(indexNoeudFils, indexFGnoeudSupp);// écrire FG du noeud supprimé au noeud qui prend sa
-																			// place
-
-				}
-
-				private int recupererIndexParent(int indexNoeudFils, int indexNoeudParent) {
-					int indexNoeud = 0;
-					int indexNoeudSansFils = -1;
-
-					while ((indexNoeudFils != recupererIndexFilsGaucheBin(indexNoeud)
-							&& (indexNoeudFils != recupererIndexFilsDroitBin(indexNoeud))
-							&& (indexNoeudFils != recupererIndexDoublonBin(indexNoeud)))) {
-						indexNoeud++;
-					}
-
-					return indexNoeudParent = indexNoeud;
-
-				}
-
-				private int chercherFilsPlusPetit(Noeud noeudFils, int indexNoeudNouveauFils) {
-					int indexNoeudSansFils = -1;
-					int indexNoeud = 0;
-
-					int indexFilsNoeud = noeudFils.getIndexFilsGauche();
-
-					while (indexFilsNoeud != recupereIndexNoeudBin(indexNoeud)) {
-						indexNoeud++;
-					}
-
-					Noeud noeudRecup = new Noeud();
-					noeudRecup = this.recupererNoeud(noeudRecup, indexNoeud);
-					System.out.println(noeudRecup);
-
-					// Si pas de fils gauche
-					if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
-						chercherFilsPlusPetit(noeudRecup, indexNoeudNouveauFils);
-					}
-					indexNoeudNouveauFils = noeudRecup.getIndexNoeud();
-
-					return indexNoeudNouveauFils;
-
-				}
-
-				private Noeud recupererNoeud(Noeud noeudRecup, int indexNoeud) {
-
-					try {
-						this.raf.seek(indexNoeud * TAILLE_NOEUD_OCTET);
-
-						int indexNoeudSupp = 0;
-						String nomRecup = "";
-						String prenomRecup = "";
-						String departementRecup = "";
-						String formationRecup = "";
-						String anneeFormationRecup = "";
-						int indexFilsGauche = 0;
-						int indexFilsDroit = 0;
-						int indexDoublon = 0;
-
-						indexNoeudSupp = this.raf.readInt();
-
-						for (int k = 0; k < TAILLE_MAX_NOM; k++) {
-							nomRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
-							prenomRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
-							departementRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
-							formationRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
-							anneeFormationRecup += this.raf.readChar();
-						}
-
-						indexFilsGauche += this.raf.readInt();
-						indexFilsDroit += this.raf.readInt();
-						indexDoublon += this.raf.readInt();
-
-						// Création noeud
-						noeudRecup = new Noeud(indexNoeudSupp, null, indexFilsGauche, indexFilsDroit, indexDoublon);
-
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					return noeudRecup;
-				}
-
-				private void modifierNoeudParentSansFils(Noeud noeudFils) {
-
-					int indexNoeudSansFils = -1;
-
-					// Chercher le noeud parent du noeud à supprimer
-					int indexNoeudFils = noeudFils.getIndexNoeud();
-
-					int indexNoeud = 0;
-
-					while ((indexNoeudFils != recupererIndexFilsGaucheBin(indexNoeud)
-							&& (indexNoeudFils != recupererIndexFilsDroitBin(indexNoeud))
-							&& (indexNoeudFils != recupererIndexDoublonBin(indexNoeud)))) {
-						indexNoeud++;
-					}
-					if (indexNoeudFils == recupererIndexFilsGaucheBin(indexNoeud)) {
-						ecrireFilsGaucheBin(indexNoeud, indexNoeudSansFils);
-					} else if (indexNoeudFils == recupererIndexFilsDroitBin(indexNoeud)) {
-						ecrireFilsDroitBin(indexNoeud, indexNoeudSansFils);
-					} else {
-						ecrireDoublonBin(indexNoeud, indexNoeudSansFils);
-					}
-
-					System.out.println(indexNoeud);
-
-				}
-
-				// Méthode pour chercher le noeud qui à le nom à supprimer et recupérer ce noeud
-				private Noeud recupererNoeudSupp(Noeud noeudSupp, String stagiaireSupp, int indexNoeud) {
-
-					// rehcerhce du noeud à supprimer
-					while (stagiaireSupp.compareTo(recupereNomNoeudBin(indexNoeud)) != 0) {
-						indexNoeud++;
-					}
-
-					// Création noeud avec lecture .Bin
-					try {
-						this.raf.seek(indexNoeud * TAILLE_NOEUD_OCTET);
-
-						int indexNoeudSupp = 0;
-						String nomRecup = "";
-						String prenomRecup = "";
-						String departementRecup = "";
-						String formationRecup = "";
-						String anneeFormationRecup = "";
-						int indexFilsGauche = 0;
-						int indexFilsDroit = 0;
-						int indexDoublon = 0;
-
-						indexNoeudSupp = this.raf.readInt();
-
-						for (int k = 0; k < TAILLE_MAX_NOM; k++) {
-							nomRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
-							prenomRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
-							departementRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
-							formationRecup += this.raf.readChar();
-						}
-
-						for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
-							anneeFormationRecup += this.raf.readChar();
-						}
-
-						indexFilsGauche += this.raf.readInt();
-						indexFilsDroit += this.raf.readInt();
-						indexDoublon += this.raf.readInt();
-
-						// Création noeud
-						noeudSupp = new Noeud(indexNoeudSupp, null, indexFilsGauche, indexFilsDroit, indexDoublon);
-
-						// POUR VERIF DE RECUPERATION DU BON NOEUD
-
-						System.out.println("IndexRecup = " + indexNoeudSupp);
-						System.out.println("nomRecup = " + nomRecup.trim());
-						System.out.println("prenomRecup = " + prenomRecup.trim());
-						System.out.println("departementRecup = " + departementRecup.trim());
-						System.out.println("formationRecup = " + formationRecup.trim());
-						System.out.println("anneeFormationRecup = " + anneeFormationRecup.trim());
-						System.out.println("indexFilsGauche = " + indexFilsGauche);
-						System.out.println("indexFilsDroit = " + indexFilsDroit);
-						System.out.println("doublon = " + indexDoublon + "\n");
-
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					return noeudSupp;
-				}
-				
-				
-				
+		if (this.recupererIndexFilsDroitBin(indexEnCours) != -1) {
+			indexParent = indexEnCours;
+			indexEnCours = this.recupererIndexFilsDroitBin(indexEnCours);
+			this.exportToArrayListRecursive(listeNoeud, indexEnCours, indexParent);
+		}
+
+	}
+
+	/**
+	 * Troisieme méthode pour la transformation de l'ArbreBin en ArrayList :
+	 * traitement des doublons
+	 * 
+	 * @param listeNoeud          L'ArrayList à compléter par les doublons
+	 * @param indexPremierDoublon Index du premier doublon (= DEUXIEME de la chaine
+	 *                            Doublons en comptant le noeud de départ)
+	 */
+	private void exportToArrayListDoublon(ArrayList<Noeud> listeNoeud, int indexPremierDoublon) {
+		int indexParcours = indexPremierDoublon;
+		while (this.recupererIndexDoublonBin(indexParcours) != -1) {
+			listeNoeud.add(this.recupereNoeudBin(indexParcours));
+			indexParcours = this.recupererIndexDoublonBin(indexParcours);
+		}
+		listeNoeud.add(this.recupereNoeudBin(indexParcours));
+	}
 				
 }
 				

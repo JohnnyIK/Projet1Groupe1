@@ -4,16 +4,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+/**
+ * /**
+ * Classe pour instancier des Objets Noeud ( = indexNoeud / Stagiaire / indexFilsGauche / indexFilsDroit / indexDoublon
+ *
+ */
 public class Noeud implements ParametreGestionnaire {
 
-	// Attributs
+	// Attributs ----------------------------------------------------------------------------------------------------------
 	private int indexNoeud = 0;
 	private Stagiaire cle;
 	private int indexFilsGauche = -1;
 	private int indexFilsDroit = -1;
 	private int indexDoublon = -1;
 
-	// Constructeur
+	// Constructeur --------------------------------------------------------------------------------------------------------
 	public Noeud(int indexNoeud, Stagiaire cle, int indexFilsGauche, int indexFilsDroit, int indexDoublon) {
 		super();
 		this.indexNoeud = indexNoeud;
@@ -28,7 +33,8 @@ public class Noeud implements ParametreGestionnaire {
 
 	}
 
-	// Constructeur
+	// Constructeur avec un stagiaire en attributs (indexNoeud = -1 /
+	// indexFilsGauche = -1 / indexFilsDroit = -1 / indexDoublon = -1
 	public Noeud(Stagiaire cle) {
 		super();
 		this.indexNoeud = -1;
@@ -38,7 +44,7 @@ public class Noeud implements ParametreGestionnaire {
 		this.indexDoublon = -1;
 	}
 
-	// getters & setters
+	// getters & setters ---------------------------------------------------------------------------------------------------
 	public Stagiaire getCle() {
 		return cle;
 	}
@@ -78,7 +84,8 @@ public class Noeud implements ParametreGestionnaire {
 	public void setIndexNoeud(int indexNoeud) {
 		this.indexNoeud = indexNoeud;
 	}
-
+ 
+	// Methodes -------------------------------------------------------------------------------------------------------
 	@Override
 	public String toString() {
 		return "Noeud [indexNoeud=" + indexNoeud + ", cle=" + cle + ", indexFilsGauche=" + indexFilsGauche
@@ -500,36 +507,38 @@ public class Noeud implements ParametreGestionnaire {
 
 			int indexRacine = 0;
 			int indexSansFils = -1;
-			
+
 			RandomAccessFile raf = new RandomAccessFile(CHEMIN_BIN, "rw");
-			
+
 			Noeud noeudSupp = new Noeud();
 			noeudSupp = noeudSupp.recupererNoeudSupp(indexStagiaireSupp, raf);
 			System.out.println(noeudSupp);
 
-			//Si c'est la racine
-			if(noeudSupp.getIndexNoeud()==indexRacine) { 
+			// Si c'est la racine
+			if (noeudSupp.getIndexNoeud() == indexRacine) {
 				supprimerStagiaireRacine(noeudSupp, raf);
-			}else {
-				//Si le noeud à un doublon
-				if(noeudSupp.getIndexDoublon()!=indexSansFils) {
+			} else {
+				// Si le noeud à un doublon
+				if (noeudSupp.getIndexDoublon() != indexSansFils) {
 					modifierNoeudAvecDoublon(noeudSupp, raf);
-				}else {
-					
-			//Si le noeud à supprimer n'a pas de fils 
-			if(noeudSupp.getIndexFilsGauche()==indexSansFils && noeudSupp.getIndexFilsDroit()==indexSansFils) {
-				modifierNoeudParentSansFils(noeudSupp, raf);
-			//Si le noeud à supprimer à 2 fils mm méthode que pour la racine 
-			}else if (noeudSupp.getIndexFilsGauche()!=indexSansFils && noeudSupp.getIndexFilsDroit()!=indexSansFils) {
-				supprimerStagiaireRacine(noeudSupp, raf);
-			//Si le noeud à supprimer a un fils droit
-			}else if (noeudSupp.getIndexFilsGauche()==indexSansFils) {
-				modifierNoeudAvecFilsDroit(noeudSupp, raf);
-			//Si le noeud à supprimer a un fils gauche
-			}else if (noeudSupp.getIndexFilsDroit()==indexSansFils) {
-				modifierNoeudAvecFilsGauche(noeudSupp, raf);
-			}
-				}	
+				} else {
+
+					// Si le noeud à supprimer n'a pas de fils
+					if (noeudSupp.getIndexFilsGauche() == indexSansFils
+							&& noeudSupp.getIndexFilsDroit() == indexSansFils) {
+						modifierNoeudParentSansFils(noeudSupp, raf);
+						// Si le noeud à supprimer à 2 fils mm méthode que pour la racine
+					} else if (noeudSupp.getIndexFilsGauche() != indexSansFils
+							&& noeudSupp.getIndexFilsDroit() != indexSansFils) {
+						supprimerStagiaireRacine(noeudSupp, raf);
+						// Si le noeud à supprimer a un fils droit
+					} else if (noeudSupp.getIndexFilsGauche() == indexSansFils) {
+						modifierNoeudAvecFilsDroit(noeudSupp, raf);
+						// Si le noeud à supprimer a un fils gauche
+					} else if (noeudSupp.getIndexFilsDroit() == indexSansFils) {
+						modifierNoeudAvecFilsGauche(noeudSupp, raf);
+					}
+				}
 			}
 
 		} catch (FileNotFoundException e) {
@@ -539,213 +548,211 @@ public class Noeud implements ParametreGestionnaire {
 
 	}
 
-
-	private void supprimerStagiaireRacine (Noeud noeudSupp,RandomAccessFile raf) {
+	private void supprimerStagiaireRacine(Noeud noeudSupp, RandomAccessFile raf) {
 		int indexSansFils = -1;
 		int indexNoeudRemplacant = 0;
-		
+
 		int indexNoeudSupp = noeudSupp.getIndexNoeud();
 		int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
 
 		int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
 
 		Noeud noeudRecup = new Noeud();
-		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf); 
+		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf);
 
 		// chercher l'index du Noeud remplacant le noeud supp
 		if (noeudRecup.getIndexFilsGauche() != indexSansFils) {
 			indexNoeudSuppRecursif = chercherFilsPlusPetit(noeudRecup, raf, indexNoeudSuppRecursif);
 		}
 		indexNoeudRemplacant = getIndexNoeud();
-		
-		//Récupérer le noeud remplacant en noeud
+
+		// Récupérer le noeud remplacant en noeud
 		Noeud noeudRemplacant = new Noeud();
 		noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
-		
-		//Récupérer le stagiaire du noeud supp
+
+		// Récupérer le stagiaire du noeud supp
 		Stagiaire stgRecup = new Stagiaire();
 		stgRecup = lireNoeudStagiaire(indexNoeudRemplacant, raf);
-		
-		//Ecriture dans le fichier .Bin du stagiaire 
+
+		// Ecriture dans le fichier .Bin du stagiaire
 		ecrireNoeudStagiaire(stgRecup, raf, indexNoeudSupp);
-		
-		//Supprission du stagiaire remplacant dans son ancienne place
-		supprimerStagiaireNoeud(indexNoeudRemplacant);	
-		
+
+		// Supprission du stagiaire remplacant dans son ancienne place
+		supprimerStagiaireNoeud(indexNoeudRemplacant);
+
 	}
 
-	//Méthode pour écrire stagiaire dans fichier .Bin
+	// Méthode pour écrire stagiaire dans fichier .Bin
 	private void ecrireNoeudStagiaire(Stagiaire stgRecup, RandomAccessFile raf, int indexNoeudSupp) {
 
 		try {
-			raf.seek((indexNoeudSupp * TAILLE_NOEUD_OCTET)+4);
+			raf.seek((indexNoeudSupp * TAILLE_NOEUD_OCTET) + 4);
 
 			raf.writeChars(stgRecup.getNomFormate());
 			raf.writeChars(stgRecup.getPrenomFormate());
 			raf.writeChars(stgRecup.getDepartementFormate());
 			raf.writeChars(stgRecup.getFormationFormate());
 			raf.writeChars(stgRecup.getAnneeFormationFormate());
-	
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
-	//Méthode pour lire le stagiaire (noeud Remplacant) qu'on va mettre à la place du noeud supp
+	// Méthode pour lire le stagiaire (noeud Remplacant) qu'on va mettre à la place
+	// du noeud supp
 	private Stagiaire lireNoeudStagiaire(int indexNoeudRemplacant, RandomAccessFile raf) {
 
 		Stagiaire stgRecup = new Stagiaire();
-		
-			try {
-				raf.seek((indexNoeudRemplacant * TAILLE_NOEUD_OCTET));
 
-				int indexNoeudSupp = 0;
-				String nomRecup = "";
-				String prenomRecup = "";
-				String departementRecup = "";
-				String formationRecup = "";
-				String anneeFormationRecup = "";
+		try {
+			raf.seek((indexNoeudRemplacant * TAILLE_NOEUD_OCTET));
 
-				indexNoeudSupp = raf.readInt();
+			int indexNoeudSupp = 0;
+			String nomRecup = "";
+			String prenomRecup = "";
+			String departementRecup = "";
+			String formationRecup = "";
+			String anneeFormationRecup = "";
 
-				for (int k = 0; k < TAILLE_MAX_NOM; k++) {
-					nomRecup += raf.readChar();
-				}
+			indexNoeudSupp = raf.readInt();
 
-				for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
-					prenomRecup += raf.readChar();
-				}
-
-				for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
-					departementRecup += raf.readChar();
-				}
-
-				for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
-					formationRecup += raf.readChar();
-				}
-
-				for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
-					anneeFormationRecup += raf.readChar();
-				}
-
-				// Création Stagiaire qu'on récupère
-				stgRecup = new Stagiaire(nomRecup, prenomRecup, departementRecup, formationRecup, anneeFormationRecup);
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			for (int k = 0; k < TAILLE_MAX_NOM; k++) {
+				nomRecup += raf.readChar();
 			}
-			return stgRecup ;
-		}
 
-	//Méthode pour supprimer un noeud qui a un doublon
+			for (int k = 0; k < TAILLE_MAX_PRENOM; k++) {
+				prenomRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_DEPARTEMENT; k++) {
+				departementRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_FORMATION; k++) {
+				formationRecup += raf.readChar();
+			}
+
+			for (int k = 0; k < TAILLE_MAX_ANNEEFORMATION; k++) {
+				anneeFormationRecup += raf.readChar();
+			}
+
+			// Création Stagiaire qu'on récupère
+			stgRecup = new Stagiaire(nomRecup, prenomRecup, departementRecup, formationRecup, anneeFormationRecup);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stgRecup;
+	}
+
+	// Méthode pour supprimer un noeud qui a un doublon
 	private void modifierNoeudAvecDoublon(Noeud noeudSupp, RandomAccessFile raf) {
 		int indexNoeudSansFils = -1;
-		
-		int indexNoeudSupp = noeudSupp.getIndexNoeud();//23
+
+		int indexNoeudSupp = noeudSupp.getIndexNoeud();// 23
 		int indexNoeudParent = 0;
 
-		int indexFGnoeudSupp = noeudSupp.getIndexFilsGauche();//58
-		int indexFDnoeudSupp = noeudSupp.getIndexFilsDroit();//-1
-		int indexDbNoeudSupp = noeudSupp.getIndexDoublon();//28
+		int indexFGnoeudSupp = noeudSupp.getIndexFilsGauche();// 58
+		int indexFDnoeudSupp = noeudSupp.getIndexFilsDroit();// -1
+		int indexDbNoeudSupp = noeudSupp.getIndexDoublon();// 28
 		int indexNoeudRemplancant = indexDbNoeudSupp;
 
 		// Chercher le parents
-		indexNoeudParent = recupererIndexParent(indexNoeudSupp, raf, indexNoeudParent);//21
+		indexNoeudParent = recupererIndexParent(indexNoeudSupp, raf, indexNoeudParent);// 21
 
 		Noeud noeudParent = new Noeud();
 		noeudParent = noeudParent.recupererNoeud(noeudParent, indexNoeudParent, raf);
 
 		System.out.println("\nnoeud recup : " + noeudParent);
-		
+
 		indexNoeudParent = getIndexNoeud();
-		
+
 		System.out.println("\n" + indexNoeudSupp);
 		System.out.println("\n" + indexNoeudParent);
-		
+
 		// Modifier le parent du noeud Supp
-		if (noeudParent.getIndexFilsDroit()==indexNoeudSupp) {
+		if (noeudParent.getIndexFilsDroit() == indexNoeudSupp) {
 			ecrireFilsDroit(indexNoeudParent, raf, indexDbNoeudSupp);
-		}else if (noeudParent.getIndexFilsGauche()==indexNoeudSupp) {
+		} else if (noeudParent.getIndexFilsGauche() == indexNoeudSupp) {
 			ecrireFilsGauche(indexNoeudParent, raf, indexDbNoeudSupp);
-		}	
-		
-		//Modifier le noeud remplacant le noeud Supp
-		ecrireFilsGauche(indexNoeudRemplancant, raf, indexFGnoeudSupp);											
+		}
+
+		// Modifier le noeud remplacant le noeud Supp
+		ecrireFilsGauche(indexNoeudRemplancant, raf, indexFGnoeudSupp);
 		ecrireFilsDroit(indexNoeudRemplancant, raf, indexFDnoeudSupp);
-		
-		//Modifier noeud supp
+
+		// Modifier noeud supp
 		ecrireFilsGauche(indexNoeudSupp, raf, indexNoeudSansFils);
 		ecrireFilsDroit(indexNoeudSupp, raf, indexNoeudSansFils);
 		ecrireDoublon(indexNoeudSupp, raf, indexNoeudSansFils);
-		
-	
-		
+
 	}
-	//Méthode pour Noeud supprimé qui a un fils gauche
+
+	// Méthode pour Noeud supprimé qui a un fils gauche
 	private void modifierNoeudAvecFilsGauche(Noeud noeudSupp, RandomAccessFile raf) {
-			int indexNoeudSansFils = -1;
-	
-			int indexNoeudParentRemplacant = 0;
-			int indexNoeudParent = 0;
-			int indexNoeudRemplacant = 0;
-			int indexFilsNoeudRemplacant = 0;
-			
-			int indexNoeudSupp = noeudSupp.getIndexNoeud();
-			int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
-			
-			//Récupérer l'index du noeud parent du noeud Supp
-			indexNoeudParent = recupererIndexParent(indexNoeudSuppRecursif, raf, indexNoeudParent);
+		int indexNoeudSansFils = -1;
 
-			int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
-			int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+		int indexNoeudParentRemplacant = 0;
+		int indexNoeudParent = 0;
+		int indexNoeudRemplacant = 0;
+		int indexFilsNoeudRemplacant = 0;
 
-			Noeud noeudRecup = new Noeud();
-			noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFGNoeudSupp, raf); 
+		int indexNoeudSupp = noeudSupp.getIndexNoeud();
+		int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
 
-			// chercher le fils du noeud supp
-			if (noeudRecup.getIndexFilsDroit() != indexNoeudSansFils) {
-				indexNoeudSuppRecursif = chercherFilsPlusGrand(noeudRecup, raf, indexNoeudSuppRecursif);
-			}
-			indexNoeudRemplacant = getIndexNoeud();
-			
-			//Récupérer le noeud remplacant
-			Noeud noeudRemplacant = new Noeud();
-			noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
-			
-			//Récupérer l'index du noeud parent du noeud Remplacant
-			indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
-			
-			if(noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
-				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
-			}else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
-				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
-			}else {
-				indexFilsNoeudRemplacant = indexNoeudSansFils;
-			}
-			
-			// Modifier le parent du noeud Supp
-			ecrireFilsGauche(indexNoeudParent, raf, indexNoeudRemplacant);
-			
-			//Modifier le noeud remplacant le noeud Supp
-			ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
-			ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
-			
-			//Modifier le parent du noeud remplacant pour pas perdre le fils du noeud remplacant
-			ecrireFilsDroit(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
-			
-			//Modifier noeud supp
-			ecrireFilsGauche(indexNoeudSupp, raf, indexNoeudSansFils);
-			ecrireFilsDroit(indexNoeudSupp, raf, indexNoeudSansFils);
-			ecrireDoublon(indexNoeudSupp, raf, indexNoeudSansFils);
-	
+		// Récupérer l'index du noeud parent du noeud Supp
+		indexNoeudParent = recupererIndexParent(indexNoeudSuppRecursif, raf, indexNoeudParent);
+
+		int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
+		int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+
+		Noeud noeudRecup = new Noeud();
+		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFGNoeudSupp, raf);
+
+		// chercher le fils du noeud supp
+		if (noeudRecup.getIndexFilsDroit() != indexNoeudSansFils) {
+			indexNoeudSuppRecursif = chercherFilsPlusGrand(noeudRecup, raf, indexNoeudSuppRecursif);
 		}
-	
+		indexNoeudRemplacant = getIndexNoeud();
 
-	//Méthode pour chercher le plus grand dans mon arbre gauche
+		// Récupérer le noeud remplacant
+		Noeud noeudRemplacant = new Noeud();
+		noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
+
+		// Récupérer l'index du noeud parent du noeud Remplacant
+		indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
+
+		if (noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
+			indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
+		} else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
+			indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
+		} else {
+			indexFilsNoeudRemplacant = indexNoeudSansFils;
+		}
+
+		// Modifier le parent du noeud Supp
+		ecrireFilsGauche(indexNoeudParent, raf, indexNoeudRemplacant);
+
+		// Modifier le noeud remplacant le noeud Supp
+		ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
+		ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
+
+		// Modifier le parent du noeud remplacant pour pas perdre le fils du noeud
+		// remplacant
+		ecrireFilsDroit(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
+
+		// Modifier noeud supp
+		ecrireFilsGauche(indexNoeudSupp, raf, indexNoeudSansFils);
+		ecrireFilsDroit(indexNoeudSupp, raf, indexNoeudSansFils);
+		ecrireDoublon(indexNoeudSupp, raf, indexNoeudSansFils);
+
+	}
+
+	// Méthode pour chercher le plus grand dans mon arbre gauche
 	private int chercherFilsPlusGrand(Noeud noeudFils, RandomAccessFile raf, int indexNoeudNouveauFils) {
 		int indexNoeudSansFils = -1;
 
@@ -765,66 +772,66 @@ public class Noeud implements ParametreGestionnaire {
 
 	}
 
-	//Méthode pour Noeud supprimé qui a un fils droit
-		private void modifierNoeudAvecFilsDroit(Noeud noeudSupp, RandomAccessFile raf) {
-			int indexNoeudSansFils = -1;
-			
-			int indexNoeudParentRemplacant = 0;
-			int indexNoeudParent = 0;
-			int indexNoeudRemplacant = 0;
-			int indexFilsNoeudRemplacant = 0;
-			
-			int indexNoeudSupp = noeudSupp.getIndexNoeud();
-			int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
-			//Récupérer l'index du noeud parent du noeud Supp
-			indexNoeudParent = recupererIndexParent(indexNoeudSuppRecursif, raf, indexNoeudParent);
+	// Méthode pour Noeud supprimé qui a un fils droit
+	private void modifierNoeudAvecFilsDroit(Noeud noeudSupp, RandomAccessFile raf) {
+		int indexNoeudSansFils = -1;
 
-			int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
-			int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
+		int indexNoeudParentRemplacant = 0;
+		int indexNoeudParent = 0;
+		int indexNoeudRemplacant = 0;
+		int indexFilsNoeudRemplacant = 0;
 
-			Noeud noeudRecup = new Noeud();
-			noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf); 
+		int indexNoeudSupp = noeudSupp.getIndexNoeud();
+		int indexNoeudSuppRecursif = noeudSupp.getIndexNoeud();
+		// Récupérer l'index du noeud parent du noeud Supp
+		indexNoeudParent = recupererIndexParent(indexNoeudSuppRecursif, raf, indexNoeudParent);
 
-			// chercher le fils du noeud supp
-			if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
-				indexNoeudSuppRecursif = chercherFilsPlusPetit(noeudRecup, raf, indexNoeudSuppRecursif);
-			}
-			indexNoeudRemplacant = indexNoeudSuppRecursif;
-			
-			//Récupérer le noeud remplacant
-			Noeud noeudRemplacant = new Noeud();
-			noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
-			
-			//Récupérer l'index du noeud parent du noeud Remplacant
-			indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
-			
-			if(noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
-				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
-			}else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
-				indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
-			}else {
-				indexFilsNoeudRemplacant = indexNoeudSansFils;
-			}
-			
-			// Modifier le parent du noeud Supp
-			ecrireFilsDroit(indexNoeudParent, raf, indexNoeudRemplacant);
-			
-			//Modifier le noeud remplacant le noeud Supp
-			ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
-			ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
-			
-			//Modifier le parent du noeud remplacant pour pas perdre le fils du noeud remplacant
-			ecrireFilsGauche(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
-			
-			//Modifier noeud supp
-			ecrireFilsGauche(indexNoeudSupp, raf, indexNoeudSansFils);
-			ecrireFilsDroit(indexNoeudSupp, raf, indexNoeudSansFils);
-			ecrireDoublon(indexNoeudSupp, raf, indexNoeudSansFils);
-			
+		int indexFGNoeudSupp = noeudSupp.getIndexFilsGauche();
+		int indexFDNoeudSupp = noeudSupp.getIndexFilsDroit();
 
+		Noeud noeudRecup = new Noeud();
+		noeudRecup = noeudRecup.recupererNoeud(noeudRecup, indexFDNoeudSupp, raf);
+
+		// chercher le fils du noeud supp
+		if (noeudRecup.getIndexFilsGauche() != indexNoeudSansFils) {
+			indexNoeudSuppRecursif = chercherFilsPlusPetit(noeudRecup, raf, indexNoeudSuppRecursif);
+		}
+		indexNoeudRemplacant = indexNoeudSuppRecursif;
+
+		// Récupérer le noeud remplacant
+		Noeud noeudRemplacant = new Noeud();
+		noeudRemplacant = noeudRemplacant.recupererNoeud(noeudRemplacant, indexNoeudRemplacant, raf);
+
+		// Récupérer l'index du noeud parent du noeud Remplacant
+		indexNoeudParentRemplacant = recupererIndexParent(indexNoeudRemplacant, raf, indexNoeudParentRemplacant);
+
+		if (noeudRemplacant.getIndexFilsGauche() != indexNoeudSansFils) {
+			indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsGauche();
+		} else if (noeudRemplacant.getIndexFilsDroit() != indexNoeudSansFils) {
+			indexFilsNoeudRemplacant = noeudRemplacant.getIndexFilsDroit();
+		} else {
+			indexFilsNoeudRemplacant = indexNoeudSansFils;
 		}
 
-		//Méthode pour récupérer l'index du noeud Parent du noeud supp
+		// Modifier le parent du noeud Supp
+		ecrireFilsDroit(indexNoeudParent, raf, indexNoeudRemplacant);
+
+		// Modifier le noeud remplacant le noeud Supp
+		ecrireFilsGauche(indexNoeudRemplacant, raf, indexFGNoeudSupp);
+		ecrireFilsDroit(indexNoeudRemplacant, raf, indexFDNoeudSupp);
+
+		// Modifier le parent du noeud remplacant pour pas perdre le fils du noeud
+		// remplacant
+		ecrireFilsGauche(indexNoeudParentRemplacant, raf, indexFilsNoeudRemplacant);
+
+		// Modifier noeud supp
+		ecrireFilsGauche(indexNoeudSupp, raf, indexNoeudSansFils);
+		ecrireFilsDroit(indexNoeudSupp, raf, indexNoeudSansFils);
+		ecrireDoublon(indexNoeudSupp, raf, indexNoeudSansFils);
+
+	}
+
+	// Méthode pour récupérer l'index du noeud Parent du noeud supp
 	private int recupererIndexParent(int indexNoeudFils, RandomAccessFile raf, int indexNoeudParent) {
 		indexNoeud = 0;
 
@@ -836,8 +843,8 @@ public class Noeud implements ParametreGestionnaire {
 		return indexNoeudParent = indexNoeud;
 
 	}
-	
-	//Méthode pour chercher le plus grand dans mon arbre gauche
+
+	// Méthode pour chercher le plus grand dans mon arbre gauche
 	private int chercherFilsPlusPetit(Noeud noeudFils, RandomAccessFile raf, int indexNoeudNouveauFils) {
 		int indexNoeudSansFils = -1;
 		indexNoeud = 0;
@@ -862,7 +869,7 @@ public class Noeud implements ParametreGestionnaire {
 
 	}
 
-	//Méthode pour récupérer un noeud
+	// Méthode pour récupérer un noeud
 	private Noeud recupererNoeud(Noeud noeudRecup, int indexNoeud, RandomAccessFile raf) {
 
 		try {
@@ -914,7 +921,7 @@ public class Noeud implements ParametreGestionnaire {
 		return noeudRecup;
 	}
 
-	//Méthode pour supprimer un noeud qui n'a pas de fils
+	// Méthode pour supprimer un noeud qui n'a pas de fils
 	private void modifierNoeudParentSansFils(Noeud noeudSupp, RandomAccessFile raf) {
 		int indexNoeudSansFils = -1;
 
@@ -931,8 +938,8 @@ public class Noeud implements ParametreGestionnaire {
 				&& (indexNoeudSupp != recupererIndexDoublon(indexParent, raf)))) {
 			indexParent++;
 		}
-		
-		// Modif des index fils du parent 
+
+		// Modif des index fils du parent
 		if (indexNoeudSupp == recupererIndexFilsGauche(indexParent, raf)) {
 			ecrireFilsGauche(indexParent, raf, indexNoeudSansFils);
 		} else if (indexNoeudSupp == recupererIndexFilsDroit(indexParent, raf)) {
@@ -940,7 +947,7 @@ public class Noeud implements ParametreGestionnaire {
 		} else {
 			ecrireDoublon(indexParent, raf, indexNoeudSansFils);
 		}
-		
+
 		// Modif des index fils du noeud Supp
 		ecrireFilsGauche(indexNoeudSupp, raf, indexNoeudSansFils);
 		ecrireFilsDroit(indexNoeudSupp, raf, indexNoeudSansFils);
@@ -1015,5 +1022,4 @@ public class Noeud implements ParametreGestionnaire {
 		return noeudSupp;
 	}
 
-	
 }
