@@ -23,6 +23,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.util.*;
@@ -876,16 +877,24 @@ public class ArbreBin implements ParametreGestionnaire{
 	 * Ecrit la liste des stagiaires dans un fichier texte
 	 * @param listeStagiaire la liste des stagiaires de l'arbre sous la forme d'une liste de noeuds
 	 */
-	public void ecrireFichierTxt(ArrayList<Noeud> listeStagiaire) {
+	public void ecrireFichierTxt(ArrayList<Noeud> listeStagiaire, String cheminFichier) {
 		
 		int nbStagiaire = listeStagiaire.size();
 		System.out.println("lancement creation fichier texte");
 		
 		try {
+			/*
+			String newChemin = "";
+			for (int i = 0; i < cheminFichier.length(); i++){
+				//newChemin = cheminFichier.replace("\","/");"
+				newChemin = cheminFichier.
+			}
+			*/
 			
-			FileWriter fw = new FileWriter(CHEMIN_TXT_IMPRESSION,false);
+			//FileWriter fw = new FileWriter(CHEMIN_TXT_IMPRESSION,false);
+			FileWriter fw = new FileWriter(cheminFichier+"/AnnuaireImpression.txt",false);
 			
-			fw.write("Patrick School");
+			fw.write("Patrick School: ");
 			fw.write("LISTE DES STAGIAIRES\n\n");
 			
 			fw.write("Nombre de stagiaire : " + nbStagiaire + "\n\n");

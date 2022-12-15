@@ -55,10 +55,11 @@ public class VueAjouterStagiaire extends Scene implements ParametreGestionnaire 
 		rootAddIntern.setPadding(new Insets (50));
 		rootAddIntern.setHgap(16);
 		rootAddIntern.setVgap(16);
-		rootAddIntern.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/BG_Ajouter.png')");
 		
 		this.setRoot(rootAddIntern);
 		this.getRoot().setStyle("-fx-font-family: 'serif'");
+		
+		rootAddIntern.setStyle("-fx-font-family: 'serif'; -fx-background-image: url('file:src/main/java/icon/BG_Ajouter.png')");
 		
 		// creation et ajout du label dans la grille rootAddIntern
 		Label labelTitreAj = new Label("Enregistrez vos nouveaux stagiaires :");

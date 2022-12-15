@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import java.util.Currency;
 
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -108,7 +110,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 			if (modeUtilisateur == "admin") {
 				leftVboxControls.add(btnFile); 
 			}
-	         
+			
 			//Vbox mise dans le left
 			rootVueAppAdmin.setLeft(leftVbox);
 			
@@ -129,7 +131,7 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 			infoUser.setHgap(20);
 			Label espaceNom;
 			if (this.modeUtilisateur.equals("admin")) {
-				espaceNom = new Label ("Espace Administrateur: "+prenomUser+" "+nomUser);
+				espaceNom = new Label ("Espace Administrateur");
 			} else {
 				espaceNom = new Label ("Espace Utilisateur");
 			}
@@ -249,49 +251,18 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 				ArrayList<Noeud> listeNoeud = new ArrayList<Noeud>();
 				tableViewStagiaire.getSauvegardeBin().exportToArrayListOptionRecherche(listeNoeud,
 				tableViewStagiaire.getRechercheActivee(), tableViewStagiaire.getRechercheCritere());
-				tableViewStagiaire.getSauvegardeBin().ecrireFichierTxt(listeNoeud);
-				/* WIP Tests
 				Stage thisStage = (Stage) rootVueAppAdmin.getScene().getWindow();
-				
-				tableViewStagiaire.getSauvegardeBin().downloadTest(); 
-				
-				FileChooser fileChooser = new FileChooser();
-				 
-	            //Set extension filter for text files
-	            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-	            fileChooser.getExtensionFilters().add(extFilter);
-	 
-	            //Show save file dialog
-	            File file = fileChooser.showSaveDialog(thisStage);
-	            
-	            if (file != null) {
-	            	try {
-	                    PrintWriter writer;
-	                    writer = new PrintWriter(file);
-	                    writer.println("TESTE");
-	                    writer.close();
-	                } catch (IOException ex) {
-	                    //Logger.getLogger(SaveFileWithFileChooser.class.getName()).log(Level.SEVERE, null, ex);
-	                }
-	            }
-	     
-				FileChooser fileChooser = new FileChooser();
-				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-	            fileChooser.getExtensionFilters().add(extFilter);
-	            fileChooser.setInitialDirectory(new File("D:/ISIKA/CDA22/Projet1Groupe1/projet1Groupe1/src/main/java/Fichier"));
-				*/
-				//final DirectoryChooser directoryChooser = new DirectoryChooser();
-				
-				//directoryChooser.setInitialDirectory(new File("D:/ISIKA/CDA22/Projet1Groupe1/projet1Groupe1/src/main/java/Fichier/AnnuaireImpression.txt"));
-		        //final File selectedDirectory = directoryChooser.showDialog(thisStage);
+				DirectoryChooser directoryChooser = new DirectoryChooser();
+		        File selectedDirectory = directoryChooser.showDialog(thisStage);
+		        String cheminFichier = selectedDirectory.getAbsolutePath();
 		        
-		        /*
-		            if (selectedDirectory != null) {
-		                selectedDirectory.getAbsolutePath();
-		            }
-		            FileChooser fileChooser = new FileChooser();
-		            fileChooser.setInitialDirectory(selectedDirectory);
-		        */
+				
+		        System.out.println(selectedDirectory.getAbsolutePath());
+		        System.out.println(selectedDirectory.getPath());
+		        System.out.println(selectedDirectory.getAbsoluteFile());
+		        
+				tableViewStagiaire.getSauvegardeBin().ecrireFichierTxt(listeNoeud, cheminFichier);
+				
 
 			});
 			
@@ -327,6 +298,32 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 				dialog.showAndWait();
 
 			});
+			
+			/*
+			btnDoc.setOnAction(event -> {
+				
+				File file = new File("C:/Users/YourUsername/Desktop/Test.pdf");
+				try {
+	                Desktop.getDesktop().open(file);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+				
+				File file = new File("C:/filePath/Test.pdf");
+				HostServices hostServices = getHostServices();
+				hostServices.showDocument(file.getAbsolutePath());
+				//HostServices hostServices = getHostServices();
+				//hostServices.showDocument(getClass()
+					    //.getResource("computer_graphics_tutorial.pdf").toString());
+				//File file = new File("C:/Users/YourUsername/Desktop/Test.pdf");
+				//HostServices hostServices = getHostServices();
+				//hostServices.showDocument(file.getAbsolutePath());
+				 * 
+				 
+			});
+			*/
+			
+			
 			
 			// FALSE CSS
 			if (os.equals("PC")) {
@@ -403,5 +400,28 @@ public class VueAppAdmin extends Scene implements ParametreGestionnaire{
 		public void setBtnAjoutSta(Button btnAjoutSta) {
 			this.btnAjoutSta = btnAjoutSta;
 		}
+
+
+		public Button getBtnDoc() {
+			return btnDoc;
+		}
+
+
+		public void setBtnDoc(Button btnDoc) {
+			this.btnDoc = btnDoc;
+		}
+
+
+		public Button getBtnImpress() {
+			return btnImpress;
+		}
+
+
+		public void setBtnImpress(Button btnImpress) {
+			this.btnImpress = btnImpress;
+		}
+		
+		
+		
 			
 }
